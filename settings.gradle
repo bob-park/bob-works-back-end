@@ -1,0 +1,3 @@
+rootProject.name = "bob-works"
+
+include 'bob-works-authorization-service'
