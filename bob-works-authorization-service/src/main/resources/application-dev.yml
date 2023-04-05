@@ -1,9 +1,0 @@
-
-## logging
-logging:
-  file:
-    name:
-  level:
-    root: info
-    web: info
-    org.bobpark: debug

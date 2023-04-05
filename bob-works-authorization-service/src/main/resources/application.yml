@@ -27,6 +27,19 @@ management:
 spring:
   application:
     name: authorization-service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://${database_host}/${database_name}
+    username: ${database_username}
+    password: ${database_password}
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
 
 
 ## logging
