@@ -22,7 +22,7 @@ import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "authoriation_clients_redirects")
+@Table(name = "authorization_clients_redirects")
 public class AuthorizationClientRedirect extends BaseTimeEntity {
 
     @Id
