@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
+
 import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
 
 @ToString
@@ -38,6 +39,8 @@ public class AuthorizationClient extends BaseTimeEntity {
 
     private String clientId;
     private String clientSecret;
+    private String clientName;
+    private LocalDateTime clientIssueAt;
     private LocalDateTime clientSecretExpiresAt;
     private Boolean requiredAuthorizationConsent;
     private Long accessTokenTimeToLive;
@@ -51,15 +54,20 @@ public class AuthorizationClient extends BaseTimeEntity {
     private List<AuthorizationClientScope> scopes = new ArrayList<>();
 
     @Builder
-    private AuthorizationClient(Long id, LocalDateTime clientSecretExpiresAt, Boolean requiredAuthorizationConsent,
-        Long accessTokenTimeToLive) {
+    private AuthorizationClient(Long id, String clientId, String clientSecret, String clientName,
+        LocalDateTime clientIssueAt, LocalDateTime clientSecretExpiresAt,
+        Boolean requiredAuthorizationConsent, Long accessTokenTimeToLive) {
         this.id = id;
-        this.clientId = UUID.randomUUID().toString();
-        this.clientSecret = UUID.randomUUID().toString();
+        this.clientId = defaultIfNull(clientId, UUID.randomUUID().toString());
+        this.clientSecret = defaultIfNull(clientSecret, UUID.randomUUID().toString());
+        this.clientName = clientName;
+        this.clientIssueAt = defaultIfNull(clientIssueAt, LocalDateTime.now());
         this.clientSecretExpiresAt = clientSecretExpiresAt;
         this.requiredAuthorizationConsent = defaultIfNull(requiredAuthorizationConsent, true);
         this.accessTokenTimeToLive = defaultIfNull(accessTokenTimeToLive, 1_800L);
     }
+
+    // TODO form(..) 추가
 
     public void addRedirectUri(String redirectUri) {
         getRedirectUris().add(

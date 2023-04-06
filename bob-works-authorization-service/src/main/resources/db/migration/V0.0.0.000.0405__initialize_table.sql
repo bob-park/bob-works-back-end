@@ -16,6 +16,7 @@ create table authorization_clients
     id                             bigserial               not null primary key,
     client_id                      varchar(100)            not null,
     client_secret                  varchar(1000)           not null,
+    client_name                    varchar(100)            not null,
     client_issue_at                timestamp               not null,
     client_secret_expires_at       timestamp,
     required_authorization_consent bool      default false not null,
