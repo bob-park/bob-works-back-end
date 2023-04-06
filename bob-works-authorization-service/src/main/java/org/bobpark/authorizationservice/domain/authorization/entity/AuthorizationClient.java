@@ -23,7 +23,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
-
 import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
 
 @ToString
@@ -67,14 +66,19 @@ public class AuthorizationClient extends BaseTimeEntity {
         this.accessTokenTimeToLive = defaultIfNull(accessTokenTimeToLive, 1_800L);
     }
 
-    // TODO form(..) 추가
-
     public void addRedirectUri(String redirectUri) {
         getRedirectUris().add(
             AuthorizationClientRedirect.builder()
                 .client(this)
                 .redirectUri(redirectUri)
                 .build());
+    }
+
+    public void removeRedirectUri(String redirectUri) {
+        getRedirectUris().stream()
+            .filter(item -> item.getRedirectUri().equals(redirectUri))
+            .findAny()
+            .ifPresent(item -> getRedirectUris().remove(item));
     }
 
     public void addScope(AuthorizationScope scope) {
@@ -85,4 +89,34 @@ public class AuthorizationClient extends BaseTimeEntity {
                 .build());
     }
 
+    public void removeScope(AuthorizationScope scope) {
+        getScopes().stream()
+            .filter(item -> item.getScope() == scope)
+            .findAny()
+            .ifPresent(item -> getScopes().remove(item));
+    }
+
+    public void setRedirectUris(List<AuthorizationClientRedirect> redirectUris) {
+        this.redirectUris = redirectUris;
+    }
+
+    public void setScopes(List<AuthorizationClientScope> scopes) {
+        this.scopes = scopes;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public void setClientSecretExpiresAt(LocalDateTime clientSecretExpiresAt) {
+        this.clientSecretExpiresAt = clientSecretExpiresAt;
+    }
+
+    public void setRequiredAuthorizationConsent(Boolean requiredAuthorizationConsent) {
+        this.requiredAuthorizationConsent = requiredAuthorizationConsent;
+    }
+
+    public void setAccessTokenTimeToLive(Long accessTokenTimeToLive) {
+        this.accessTokenTimeToLive = accessTokenTimeToLive;
+    }
 }
