@@ -5,6 +5,7 @@ create table authorization_scopes
 (
     id                 bigserial               not null primary key,
     scope              varchar(100)            not null,
+    description        varchar(2000),
     created_date       timestamp default now() not null,
     last_modified_date timestamp
 );
