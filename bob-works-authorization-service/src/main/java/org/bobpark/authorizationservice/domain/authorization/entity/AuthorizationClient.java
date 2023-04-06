@@ -29,7 +29,7 @@ import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "authentication_clients")
+@Table(name = "authorization_clients")
 public class AuthorizationClient extends BaseTimeEntity {
 
     @Id
