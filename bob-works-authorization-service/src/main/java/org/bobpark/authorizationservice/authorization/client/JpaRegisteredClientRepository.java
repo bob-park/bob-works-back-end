@@ -7,7 +7,6 @@ import static org.springframework.security.oauth2.core.ClientAuthenticationMetho
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,50 +34,9 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationScopeRepository scopeRepository;
 
-    @Transactional
     @Override
     public void save(RegisteredClient registeredClient) {
-
-        RegisteredClient existingRegisteredClient = findByClientId(registeredClient.getClientId());
-
-        if (existingRegisteredClient != null) {
-
-            AuthorizationClient authorizationClient =
-                clientRepository.getByClientId(existingRegisteredClient.getClientId());
-
-            if (authorizationClient != null) {
-
-                authorizationClient.setClientName(existingRegisteredClient.getClientName());
-                authorizationClient.setClientSecretExpiresAt(
-                    registeredClient.getClientSecretExpiresAt() != null ?
-                        LocalDateTime.from(registeredClient.getClientSecretExpiresAt()) : null);
-                authorizationClient.setRequiredAuthorizationConsent(
-                    registeredClient.getClientSettings().isRequireAuthorizationConsent());
-                authorizationClient.setAccessTokenTimeToLive(
-                    registeredClient.getTokenSettings().getAccessTokenTimeToLive().toSeconds());
-
-                authorizationClient.setScopes(new ArrayList<>());
-                authorizationClient.setRedirectUris(new ArrayList<>());
-
-                Set<String> scopes = existingRegisteredClient.getScopes();
-
-                getScopes().stream()
-                    .filter(item -> scopes.contains(item.getScope()))
-                    .forEach(authorizationClient::addScope);
-
-                existingRegisteredClient.getRedirectUris()
-                    .forEach(authorizationClient::addRedirectUri);
-
-                log.debug("updated registered client. (id={})", authorizationClient.getId());
-
-                return;
-            }
-        }
-
-        AuthorizationClient saved = clientRepository.save(toAuthorizationClient(registeredClient));
-
-        log.debug("added registered client. (id={})", saved.getId());
-
+        // ? 이게 필요할지 고민됨.. 바로 넣고 읽으면 되지 않나?..
     }
 
     @Override
