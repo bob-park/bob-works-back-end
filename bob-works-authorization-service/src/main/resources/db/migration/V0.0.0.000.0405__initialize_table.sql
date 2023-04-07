@@ -49,3 +49,35 @@ create table authorization_clients_scopes
     foreign key (scope_id) references authorization_scopes (id)
 );
 
+
+-- authorization_client_sessions
+create table authorization_client_sessions
+(
+    id                          bigserial               not null primary key,
+    client_id                   bigint                  not null,
+    principal_name              varchar(100)            not null,
+    authorization_grant_type    varchar(100)            not null,
+    authorized_scopes           varchar(500)            not null,
+    attributes                  json,
+    state                       varchar(100),
+    authorization_code_value    varchar(100)            not null,
+    authorization_code_issued   timestamp default now() not null,
+    authorization_code_expire   timestamp               not null,
+    authorization_code_metadata varchar(500),
+    access_token_value          varchar(1000)           not null,
+    access_token_issued_at      timestamp default now() not null,
+    access_token_expires_at     timestamp               not null,
+    access_token_metadata       varchar(1000),
+    access_token_type           varchar(100)            not null,
+    access_token_scopes         varchar(1000)           not null,
+    oidc_id_token_value         varchar(1000),
+    oidc_id_token_issued_at     timestamp default now(),
+    oidc_id_token_expires_at    timestamp,
+    oidc_id_token_metadata      varchar(1000),
+    refresh_token_value         varchar(1000),
+    refresh_token_issued_at     timestamp default now(),
+    refresh_token_expires_at    timestamp,
+    refresh_token_metadata      varchar(1000),
+
+    foreign key (client_id) references authorization_clients (id)
+);
