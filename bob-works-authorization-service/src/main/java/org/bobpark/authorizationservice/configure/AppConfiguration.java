@@ -17,10 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -59,15 +55,7 @@ public class AppConfiguration {
         return (jwkSelector, context) -> jwkSelector.select(jwkSet);
     }
 
-    @Bean
-    public OAuth2AuthorizationService oAuth2AuthorizationService() {
-        return new InMemoryOAuth2AuthorizationService();
-    }
 
-    @Bean
-    public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
-        return new InMemoryOAuth2AuthorizationConsentService();
-    }
 
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {

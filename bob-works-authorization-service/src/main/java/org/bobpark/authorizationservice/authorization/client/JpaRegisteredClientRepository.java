@@ -14,6 +14,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
@@ -162,11 +163,13 @@ public class JpaRegisteredClientRepository implements RegisteredClientRepository
                             .map(AuthorizationClientRedirect::getRedirectUri)
                             .toList()))
             .scopes(
-                scopes ->
+                scopes -> {
+                    scopes.add(OidcScopes.OPENID);
                     scopes.addAll(
                         authorizationClient.getScopes().stream()
                             .map(item -> item.getScope().getScope())
-                            .toList()))
+                            .toList());
+                })
             .clientSettings(
                 ClientSettings.builder()
                     .requireAuthorizationConsent(authorizationClient.getRequiredAuthorizationConsent())
