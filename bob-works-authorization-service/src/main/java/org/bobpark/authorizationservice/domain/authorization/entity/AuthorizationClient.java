@@ -24,6 +24,7 @@ import lombok.ToString;
 import lombok.ToString.Exclude;
 
 import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
+import org.bobpark.authorizationservice.common.utils.random.RandomUtils;
 
 @ToString
 @Getter
@@ -58,7 +59,7 @@ public class AuthorizationClient extends BaseTimeEntity {
         Boolean requiredAuthorizationConsent, Long accessTokenTimeToLive) {
         this.id = id;
         this.clientId = defaultIfNull(clientId, UUID.randomUUID().toString());
-        this.clientSecret = defaultIfNull(clientSecret, UUID.randomUUID().toString());
+        this.clientSecret = defaultIfNull(clientSecret, RandomUtils.randomString(20));
         this.clientName = clientName;
         this.clientIssueAt = defaultIfNull(clientIssueAt, LocalDateTime.now());
         this.clientSecretExpiresAt = clientSecretExpiresAt;
