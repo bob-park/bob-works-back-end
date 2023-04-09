@@ -11,8 +11,6 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -28,7 +26,7 @@ import lombok.ToString.Exclude;
 import org.springframework.data.domain.Persistable;
 
 import org.bobpark.authorizationservice.domain.authorization.converter.BlobToMapConverter;
-import org.bobpark.authorizationservice.domain.authorization.converter.ScopeListConverter;
+import org.bobpark.authorizationservice.domain.authorization.converter.SpaceDelimitedConverter;
 import org.bobpark.authorizationservice.domain.authorization.entity.token.AccessToken;
 import org.bobpark.authorizationservice.domain.authorization.entity.token.OidcToken;
 import org.bobpark.authorizationservice.domain.authorization.entity.token.RefreshToken;
@@ -52,7 +50,7 @@ public class AuthorizationClientSession implements Persistable<String> {
 
     private String authorizationGrantType;
 
-    @Convert(converter = ScopeListConverter.class)
+    @Convert(converter = SpaceDelimitedConverter.class)
     private List<String> authorizedScopes;
 
     @Column(columnDefinition = "bytea")

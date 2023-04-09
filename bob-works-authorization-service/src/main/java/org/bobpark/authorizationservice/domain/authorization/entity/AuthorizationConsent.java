@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
-import org.bobpark.authorizationservice.domain.authorization.converter.ScopeListConverter;
+import org.bobpark.authorizationservice.domain.authorization.converter.SpaceDelimitedConverter;
 
 @ToString
 @Getter
@@ -39,7 +39,7 @@ public class AuthorizationConsent {
 
     private String principalName;
 
-    @Convert(converter = ScopeListConverter.class)
+    @Convert(converter = SpaceDelimitedConverter.class)
     private List<String> authorities;
 
     @Builder

@@ -10,7 +10,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter
-public class ScopeListConverter implements AttributeConverter<List<String>, String> {
+public class SpaceDelimitedConverter implements AttributeConverter<List<String>, String> {
 
     private static final String DEFAULT_DELIMITER = ",";
 

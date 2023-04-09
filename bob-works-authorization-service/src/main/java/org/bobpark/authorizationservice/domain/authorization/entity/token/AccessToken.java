@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import org.bobpark.authorizationservice.domain.authorization.converter.ScopeListConverter;
+import org.bobpark.authorizationservice.domain.authorization.converter.SpaceDelimitedConverter;
 
 @ToString
 @Getter
@@ -26,7 +26,7 @@ public class AccessToken{
     private String tokenType;
 
     @Column(name = "access_token_scopes")
-    @Convert(converter = ScopeListConverter.class)
+    @Convert(converter = SpaceDelimitedConverter.class)
     private List<String> scopes;
 
 
