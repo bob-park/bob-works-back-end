@@ -59,7 +59,7 @@ public class AuthorizationClient extends BaseTimeEntity {
         Boolean requiredAuthorizationConsent, Long accessTokenTimeToLive) {
         this.id = id;
         this.clientId = defaultIfNull(clientId, UUID.randomUUID().toString());
-        this.clientSecret = defaultIfNull(clientSecret, RandomUtils.randomString(20));
+        this.clientSecret = String.format("{noop}%s", defaultIfNull(clientSecret, RandomUtils.randomString(20)));
         this.clientName = clientName;
         this.clientIssueAt = defaultIfNull(clientIssueAt, LocalDateTime.now());
         this.clientSecretExpiresAt = clientSecretExpiresAt;
