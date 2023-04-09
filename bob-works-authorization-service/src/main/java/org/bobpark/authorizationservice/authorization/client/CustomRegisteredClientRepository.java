@@ -29,7 +29,7 @@ import org.bobpark.authorizationservice.domain.authorization.repository.Authoriz
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class JpaRegisteredClientRepository implements RegisteredClientRepository {
+public class CustomRegisteredClientRepository implements RegisteredClientRepository {
 
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationScopeRepository scopeRepository;
