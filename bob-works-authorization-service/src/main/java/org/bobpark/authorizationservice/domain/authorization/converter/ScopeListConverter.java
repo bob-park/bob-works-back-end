@@ -16,6 +16,11 @@ public class ScopeListConverter implements AttributeConverter<List<String>, Stri
 
     @Override
     public String convertToDatabaseColumn(List<String> attribute) {
+
+        if(attribute == null){
+            return "";
+        }
+
         return String.join(DEFAULT_DELIMITER, attribute);
     }
 
