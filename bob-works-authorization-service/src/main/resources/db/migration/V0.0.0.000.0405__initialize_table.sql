@@ -81,3 +81,14 @@ create table authorization_clients_sessions
 
     foreign key (client_id) references authorization_clients (id)
 );
+
+-- authorization_consents
+create table authorization_consents
+(
+    id             bigserial    not null primary key,
+    client_id      bigint       not null,
+    principal_name varchar(100) not null,
+    authorities    text         not null,
+
+    foreign key (client_id) references authorization_clients (id)
+);
