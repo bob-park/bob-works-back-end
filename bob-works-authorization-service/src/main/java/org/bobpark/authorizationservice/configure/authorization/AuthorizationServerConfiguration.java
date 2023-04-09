@@ -7,19 +7,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import org.bobpark.authorizationservice.authorization.client.JpaOAuth2AuthorizationService;
-import org.bobpark.authorizationservice.authorization.client.JpaRegisteredClientRepository;
+import org.bobpark.authorizationservice.authorization.client.CustomOAuth2AuthorizationConsentService;
+import org.bobpark.authorizationservice.authorization.client.CustomOAuth2AuthorizationService;
+import org.bobpark.authorizationservice.authorization.client.CustomRegisteredClientRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientSessionRepository;
+import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationConsentRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationScopeRepository;
 
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class AuthorizationServerConfiguration {
 
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationClientSessionRepository clientSessionRepository;
+    private final AuthorizationConsentRepository consentRepository;
     private final AuthorizationScopeRepository scopeRepository;
 
     private final CorsConfigurationSource corsConfigurationSource;
@@ -64,19 +67,19 @@ public class AuthorizationServerConfiguration {
     }
 
     @Bean
-    public JpaRegisteredClientRepository registeredClientRepository() {
-        return new JpaRegisteredClientRepository(clientRepository, scopeRepository);
+    public RegisteredClientRepository registeredClientRepository() {
+        return new CustomRegisteredClientRepository(clientRepository, scopeRepository);
     }
 
     @Bean
-    public OAuth2AuthorizationService oAuth2AuthorizationService() {
-        return new JpaOAuth2AuthorizationService(registeredClientRepository(), clientRepository,
+    public OAuth2AuthorizationService authorizationService() {
+        return new CustomOAuth2AuthorizationService(registeredClientRepository(), clientRepository,
             clientSessionRepository);
     }
 
     @Bean
-    public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
-        return new InMemoryOAuth2AuthorizationConsentService();
+    public OAuth2AuthorizationConsentService authorizationConsentService() {
+        return new CustomOAuth2AuthorizationConsentService(clientRepository, consentRepository);
     }
 
 }
