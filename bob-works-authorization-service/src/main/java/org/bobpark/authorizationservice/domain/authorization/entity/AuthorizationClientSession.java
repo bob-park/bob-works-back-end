@@ -1,5 +1,7 @@
 package org.bobpark.authorizationservice.domain.authorization.entity;
 
+import static org.springframework.util.StringUtils.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +25,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
+import org.springframework.data.domain.Persistable;
+
 import org.bobpark.authorizationservice.domain.authorization.converter.BlobToMapConverter;
 import org.bobpark.authorizationservice.domain.authorization.converter.ScopeListConverter;
 import org.bobpark.authorizationservice.domain.authorization.entity.token.AccessToken;
@@ -34,11 +38,10 @@ import org.bobpark.authorizationservice.domain.authorization.entity.token.Refres
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "authorization_clients_sessions")
-public class AuthorizationClientSession {
+public class AuthorizationClientSession implements Persistable<String> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Exclude
     @ManyToOne(fetch = FetchType.LAZY)
@@ -79,7 +82,7 @@ public class AuthorizationClientSession {
     private RefreshToken refreshToken;
 
     @Builder
-    private AuthorizationClientSession(Long id, AuthorizationClient client, String principalName,
+    private AuthorizationClientSession(String id, AuthorizationClient client, String principalName,
         String authorizationGrantType, List<String> authorizedScopes, Map<String, Object> attributes, String state,
         String authorizationCodeValue, LocalDateTime authorizationCodeIssued, LocalDateTime authorizationCodeExpire,
         Map<String, Object> authorizationCodeMetadata, AccessToken accessToken, OidcToken oidcToken,
@@ -98,5 +101,10 @@ public class AuthorizationClientSession {
         this.accessToken = accessToken;
         this.oidcToken = oidcToken;
         this.refreshToken = refreshToken;
+    }
+
+    @Override
+    public boolean isNew() {
+        return !hasText(id);
     }
 }

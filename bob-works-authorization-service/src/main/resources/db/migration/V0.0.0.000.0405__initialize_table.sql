@@ -53,7 +53,7 @@ create table authorization_clients_scopes
 -- authorization_client_sessions
 create table authorization_clients_sessions
 (
-    id                          bigserial    not null primary key,
+    id                          varchar(100) not null primary key,
     client_id                   bigint       not null,
     principal_name              varchar(100) not null,
     authorization_grant_type    varchar(100) not null,

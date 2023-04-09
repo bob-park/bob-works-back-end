@@ -28,8 +28,6 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClient;
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClientSession;
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClientSession.AuthorizationClientSessionBuilder;
@@ -50,8 +48,6 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
     private final RegisteredClientRepository registeredClientRepository;
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationClientSessionRepository clientSessionRepository;
-
-    private final ObjectMapper mapper = new ObjectMapper();
 
     @Transactional
     @Override
@@ -124,7 +120,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
 
         OAuth2Authorization.Builder builder = OAuth2Authorization.withRegisteredClient(registeredClient);
 
-        builder.id(String.valueOf(clientSession.getId()))
+        builder.id(clientSession.getId())
             .principalName(clientSession.getPrincipalName())
             .authorizationGrantType(new AuthorizationGrantType(grantType))
             .authorizedScopes(new HashSet<>(clientSession.getAuthorizedScopes()))
@@ -180,7 +176,6 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
 
     private AuthorizationClientSession toClientSession(OAuth2Authorization authorization) {
 
-        String id = authorization.getId();
         String clientId = authorization.getRegisteredClientId();
 
         AuthorizationClient authorizationClient =
@@ -194,7 +189,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
 
         AuthorizationClientSessionBuilder builder =
             AuthorizationClientSession.builder()
-                .id(hasText(id) ? toLong(id) : null)
+                .id(authorization.getId())
                 .client(authorizationClient)
                 .principalName(authorization.getPrincipalName())
                 .authorizationGrantType(authorization.getAuthorizationGrantType().getValue())
