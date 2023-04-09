@@ -34,7 +34,8 @@ public class AuthorizationClientSessionQueryRepositoryImpl implements Authorizat
 
         builder.and(eqAuthorizationCode(condition.authorizationCodeValue()))
             .and(eqAccessToken(condition.accessToken()))
-            .and(eqRefreshToken(condition.refreshToken()));
+            .and(eqRefreshToken(condition.refreshToken()))
+            .and(eqState(condition.state()));
 
         return builder;
     }
@@ -52,5 +53,10 @@ public class AuthorizationClientSessionQueryRepositoryImpl implements Authorizat
     private BooleanExpression eqRefreshToken(String refreshToken) {
         return hasText(refreshToken) ?
             authorizationClientSession.refreshToken.token.value.eq(refreshToken) : null;
+    }
+
+    private BooleanExpression eqState(String state) {
+        return hasText(state) ?
+            authorizationClientSession.state.eq(state) : null;
     }
 }

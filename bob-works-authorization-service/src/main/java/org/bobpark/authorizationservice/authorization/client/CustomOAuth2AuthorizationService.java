@@ -45,7 +45,7 @@ import org.bobpark.authorizationservice.domain.authorization.repository.Authoriz
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService {
+public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
     private final RegisteredClientRepository registeredClientRepository;
     private final AuthorizationClientRepository clientRepository;
@@ -91,7 +91,7 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
         if (tokenType == null) {
             // TODO token type 이 null 인 경우도 추가해보자
         } else if (OAuth2ParameterNames.STATE.equals(tokenType.getValue())) {
-            // TODO state 추가하자
+            builder.state(token);
         } else if (OAuth2ParameterNames.CODE.equals(tokenType.getValue())) {
             builder.authorizationCodeValue(token);
         } else if (OAuth2TokenType.ACCESS_TOKEN.equals(tokenType)) {
@@ -199,7 +199,8 @@ public class JpaOAuth2AuthorizationService implements OAuth2AuthorizationService
                 .principalName(authorization.getPrincipalName())
                 .authorizationGrantType(authorization.getAuthorizationGrantType().getValue())
                 .authorizedScopes(authorization.getAuthorizedScopes().stream().toList())
-                .attributes(authorization.getAttributes());
+                .attributes(authorization.getAttributes())
+                .state(authorization.getAttribute(OAuth2ParameterNames.STATE));
 
         if (authorizationToken != null) {
 

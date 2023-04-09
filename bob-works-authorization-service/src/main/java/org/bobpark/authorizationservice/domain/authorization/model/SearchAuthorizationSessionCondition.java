@@ -6,6 +6,7 @@ import lombok.Builder;
 public record SearchAuthorizationSessionCondition(
     String authorizationCodeValue,
     String accessToken,
-    String refreshToken
+    String refreshToken,
+    String state
 ) {
 }
