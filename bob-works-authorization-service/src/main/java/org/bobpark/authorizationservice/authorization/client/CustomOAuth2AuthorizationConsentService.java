@@ -28,7 +28,7 @@ public class CustomOAuth2AuthorizationConsentService implements OAuth2Authorizat
     @Override
     public void save(OAuth2AuthorizationConsent authorizationConsent) {
 
-        consentRepository.findBy(toLong(authorizationConsent.getRegisteredClientId()),
+        consentRepository.findBy(authorizationConsent.getRegisteredClientId(),
                 authorizationConsent.getPrincipalName())
             .ifPresentOrElse(
                 item ->
@@ -42,7 +42,7 @@ public class CustomOAuth2AuthorizationConsentService implements OAuth2Authorizat
     @Override
     public void remove(OAuth2AuthorizationConsent authorizationConsent) {
         AuthorizationConsent consent =
-            consentRepository.findBy(toLong(authorizationConsent.getRegisteredClientId()),
+            consentRepository.findBy(authorizationConsent.getRegisteredClientId(),
                     authorizationConsent.getPrincipalName())
                 .orElseThrow();
 
@@ -53,7 +53,7 @@ public class CustomOAuth2AuthorizationConsentService implements OAuth2Authorizat
     public OAuth2AuthorizationConsent findById(String registeredClientId, String principalName) {
 
         AuthorizationConsent consent =
-            consentRepository.findBy(toLong(registeredClientId), principalName)
+            consentRepository.findBy(registeredClientId, principalName)
                 .orElse(null);
 
         if (consent == null) {
@@ -71,7 +71,7 @@ public class CustomOAuth2AuthorizationConsentService implements OAuth2Authorizat
         String registeredClientId = consent.getRegisteredClientId();
 
         AuthorizationClient client =
-            clientRepository.findById(toLong(registeredClientId))
+            clientRepository.findByClientId(registeredClientId)
                 .orElseThrow();
 
         return AuthorizationConsent.builder()

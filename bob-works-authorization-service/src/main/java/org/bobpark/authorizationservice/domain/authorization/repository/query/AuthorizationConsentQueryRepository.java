@@ -6,5 +6,5 @@ import org.bobpark.authorizationservice.domain.authorization.entity.Authorizatio
 
 public interface AuthorizationConsentQueryRepository {
 
-    Optional<AuthorizationConsent> findBy(long clientId, String principalName);
+    Optional<AuthorizationConsent> findBy(String clientId, String principalName);
 }

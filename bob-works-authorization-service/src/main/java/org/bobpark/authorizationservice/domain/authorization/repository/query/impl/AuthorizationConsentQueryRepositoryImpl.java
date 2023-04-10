@@ -20,12 +20,12 @@ public class AuthorizationConsentQueryRepositoryImpl implements AuthorizationCon
     private final JPAQueryFactory query;
 
     @Override
-    public Optional<AuthorizationConsent> findBy(long clientId, String principalName) {
+    public Optional<AuthorizationConsent> findBy(String clientId, String principalName) {
         return Optional.ofNullable(
             query.selectFrom(authorizationConsent)
                 .join(authorizationConsent.client, authorizationClient).fetchJoin()
                 .where(
-                    authorizationClient.id.eq(clientId),
+                    authorizationClient.clientId.eq(clientId),
                     authorizationConsent.principalName.eq(principalName))
                 .fetchOne());
     }

@@ -179,7 +179,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
         String clientId = authorization.getRegisteredClientId();
 
         AuthorizationClient authorizationClient =
-            clientRepository.findById(toLong(clientId))
+            clientRepository.findByClientId(clientId)
                 .orElseThrow();
 
         Token<OAuth2AuthorizationCode> authorizationToken = authorization.getToken(OAuth2AuthorizationCode.class);

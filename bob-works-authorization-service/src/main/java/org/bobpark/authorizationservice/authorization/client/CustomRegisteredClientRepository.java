@@ -104,7 +104,7 @@ public class CustomRegisteredClientRepository implements RegisteredClientReposit
 
         LocalDateTime clientSecretExpiresAt = authorizationClient.getClientSecretExpiresAt();
 
-        return RegisteredClient.withId(authorizationClient.getId().toString())
+        return RegisteredClient.withId(authorizationClient.getClientId())
             .clientId(authorizationClient.getClientId())
             .clientSecret(authorizationClient.getClientSecret())
             .clientIdIssuedAt(authorizationClient.getClientIssueAt().atZone(ZoneId.systemDefault()).toInstant())
