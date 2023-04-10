@@ -5,5 +5,6 @@ import lombok.Builder;
 @Builder
 public record AuthorizationScopeResponse(
     Long id,
-    String scope) {
+    String scope,
+    String description) {
 }

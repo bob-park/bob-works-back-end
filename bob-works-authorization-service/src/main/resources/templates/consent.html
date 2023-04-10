@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <title>Bob Works</title>
+    <style>
+        body {
+            background-color: aliceblue;
+        }
+    </style>
+    <script>
+        function cancelConsent() {
+            document.consent_form.reset();
+            document.consent_form.submit();
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="py-5">
+        <h1 class="text-center text-primary">Sign in With Bob Works</h1>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <p>
+                이 App 인 '<span class="font-weight-bold text-primary" th:text="${clientName}"></span>' 이(가)
+                귀하의 계정인 '<span class="font-weight-bold" th:text="${principalName}"></span>' 에 접근하려고 합니다.
+            </p>
+        </div>
+    </div>
+    <div class="row pb-3">
+        <div class="col text-center">
+            <p>
+                이 앱에서 다음과 같은 권한을 요청합니다.
+                <br/>
+                이를 검토하고 승인하는 경우 동의하십시오.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <form name="consent_form" method="post" action="/oauth2/authorize">
+                <input type="hidden" name="client_id" th:value="${clientId}">
+                <input type="hidden" name="state" th:value="${state}">
+
+                <div th:each="scope: ${checkableScopes}" class="form-group form-check py-1">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="scope"
+                           th:value="${scope.scope}"
+                           th:id="${scope.scope}">
+                    <label class="form-check-label font-weight-bold" th:for="${scope.scope}"
+                           th:text="${scope.scope}"></label>
+                    <span class="text-primary" th:text="${scope.description}"></span>
+                </div>
+
+                <p th:if="${not #lists.isEmpty(prevScopes)}">You have already granted the following
+                    permissions to the above app:</p>
+                <div th:each="scope: ${prevScopes}" class="form-group form-check py-1">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           th:id="${scope.scope}"
+                           disabled
+                           checked>
+                    <label class="form-check-label font-weight-bold" th:for="${scope.scope}"
+                           th:text="${scope.scope}"></label>
+                    <span class="text-primary" th:text="${scope.description}"></span>
+                </div>
+
+                <div class="form-group pt-3">
+                    <button class="btn btn-primary btn-lg" type="submit" id="submit-consent">
+                        Submit Consent
+                    </button>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-link regular" type="button" id="cancel-consent" onclick="cancelConsent();">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row pt-4">
+        <div class="col text-center">
+            <p>
+                <small>
+                    Your consent to provide access is required.
+                    <br/>If you do not approve, click Cancel, in which case no information will be shared with the app.
+                </small>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
