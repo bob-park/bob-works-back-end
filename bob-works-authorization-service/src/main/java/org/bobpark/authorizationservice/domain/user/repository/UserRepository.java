@@ -1,12 +1,9 @@
 package org.bobpark.authorizationservice.domain.user.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.bobpark.authorizationservice.domain.user.entity.User;
+import org.bobpark.authorizationservice.domain.user.repository.query.UserQueryRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-
-    Optional<User> findByUserId(String userId);
+public interface UserRepository extends JpaRepository<User, Long>, UserQueryRepository {
 }
