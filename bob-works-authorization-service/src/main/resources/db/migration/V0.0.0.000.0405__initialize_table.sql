@@ -92,3 +92,67 @@ create table authorization_consents
 
     foreign key (client_id) references authorization_clients (id)
 );
+
+-- teams
+create table teams
+(
+    id                 bigserial               not null primary key,
+    name               varchar(100)            not null,
+    description        text,
+    created_date       timestamp default now() not null,
+    created_by         varchar(100)            not null,
+    last_modified_date timestamp,
+    last_modified_by   varchar(100)
+);
+
+-- users
+create table users
+(
+    id                 bigserial               not null primary key,
+    user_id            varchar(100)            not null,
+    password           varchar(200),
+    name               varchar(100)            not null,
+    email              varchar(100)            not null,
+    phone              varchar(100),
+    description        text,
+    created_date       timestamp default now() not null,
+    created_by         varchar(100)            not null,
+    last_modified_date timestamp,
+    last_modified_by   varchar(100)
+);
+
+-- teams_users
+create table teams_users
+(
+    id      bigserial not null primary key,
+    team_id bigint    not null,
+    user_id bigint    not null,
+
+    foreign key (team_id) references teams (id),
+    foreign key (user_id) references users (id)
+);
+
+-- roles
+create table roles
+(
+    id                 bigserial               not null primary key,
+    p_id               bigint,
+    role_name          varchar(100)            not null,
+    description        text,
+    created_date       timestamp default now() not null,
+    last_modified_date timestamp,
+
+    foreign key (p_id) references roles (id)
+);
+
+-- users_roles
+create table users_roles
+(
+    id      bigserial not null primary key,
+    user_id bigint    not null,
+    role_id bigint    not null,
+
+
+    foreign key (user_id) references users (id),
+    foreign key (role_id) references roles (id)
+);
