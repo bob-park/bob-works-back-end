@@ -1,4 +1,4 @@
-package org.bobpark.authorizationservice.domain.user;
+package org.bobpark.authorizationservice.domain.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +26,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username;
+    private String userId;
 
     @Column(name = "password")
     private String encryptPassword;
@@ -37,10 +37,10 @@ public class User extends BaseEntity {
     private String description;
 
     @Builder
-    private User(Long id, String username, String encryptPassword, String name, String email, String phone,
+    private User(Long id, String userId, String encryptPassword, String name, String email, String phone,
         String description) {
         this.id = id;
-        this.username = username;
+        this.userId = userId;
         this.encryptPassword = encryptPassword;
         this.name = name;
         this.email = email;
