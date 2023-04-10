@@ -1,6 +1,6 @@
 package org.bobpark.authorizationservice.domain.user.service.impl;
 
-import java.util.Collections;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.authorizationservice.domain.user.entity.User;
+import org.bobpark.authorizationservice.domain.user.entity.UserRole;
 import org.bobpark.authorizationservice.domain.user.model.UserDetailsImpl;
 import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
 
@@ -31,7 +32,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             userRepository.findByUserId(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return new UserDetailsImpl(user.getUserId(), user.getEncryptPassword(),
-            Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        List<SimpleGrantedAuthority> authorities =
+            user.getRoles().stream()
+                .map(UserRole::getRole)
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                .toList();
+
+        return new UserDetailsImpl(user.getUserId(), user.getEncryptPassword(), authorities);
     }
 }
