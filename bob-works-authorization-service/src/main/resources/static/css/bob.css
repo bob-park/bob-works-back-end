@@ -37,8 +37,9 @@ body {
 .sub-title {
     margin-bottom: 30px;
     text-align: center;
-    font-size: 18px;
     font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
 }
 .sub-title:after {
     content: '';
@@ -105,6 +106,11 @@ body {
 }
 .disagree-btn:hover {
     text-decoration: underline;
+}
+
+.font-weight-bold {
+    font-weight: bolder;
+    color: var(--main);
 }
 
 /* warning */
