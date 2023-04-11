@@ -34,3 +34,16 @@ create table document_types
     last_modified_date timestamp,
     last_modified_by   varchar(100)
 );
+
+-- document_types_approve_lines
+create table document_types_approve_lines
+(
+    id               bigserial not null primary key,
+    p_id             bigint,
+    document_type_id bigint    not null,
+    position_id      bigint    not null,
+
+    foreign key (p_id) references document_types_approve_lines (id),
+    foreign key (document_type_id) references document_types (id),
+    foreign key (position_id) references positions (id)
+);
