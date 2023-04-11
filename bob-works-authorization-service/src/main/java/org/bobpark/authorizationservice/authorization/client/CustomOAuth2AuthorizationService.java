@@ -5,9 +5,8 @@ import static org.springframework.util.StringUtils.*;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClient;
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClientSession;
@@ -124,14 +124,22 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
                     + "' was not found in the RegisteredClientRepository.");
         }
 
+        User user =
+            userRepository.findByUserId(clientSession.getPrincipalName())
+                .orElseThrow();
+
         String grantType = clientSession.getAuthorizationGrantType();
 
         OAuth2Authorization.Builder builder = OAuth2Authorization.withRegisteredClient(registeredClient);
 
+        Set<String> scopes = Sets.newHashSet(clientSession.getAuthorizedScopes());
+
+        user.getRoles().forEach(role -> scopes.add(role.getRole().getRoleName()));
+
         builder.id(clientSession.getId())
             .principalName(clientSession.getPrincipalName())
             .authorizationGrantType(new AuthorizationGrantType(grantType))
-            .authorizedScopes(new HashSet<>(clientSession.getAuthorizedScopes()))
+            .authorizedScopes(scopes)
             .attributes(attributes -> attributes.putAll(clientSession.getAttributes()));
 
         if (hasText(clientSession.getAuthorizationCodeValue())) {
@@ -158,17 +166,13 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
                     token.getValue(),
                     token.getIssuedAtInstant(),
                     token.getExpiresAtInstant(),
-                    new HashSet<>(clientSession.getAuthorizedScopes()));
+                    scopes);
 
             builder.token(oAuth2AccessToken, metadata -> metadata.putAll(token.getMetadata()));
         }
 
         if (oidcToken != null && oidcToken.getToken() != null && !oidcToken.getToken().isEmpty()) {
             AuthorizationToken token = oidcToken.getToken();
-
-            User user =
-                userRepository.findByUserId(clientSession.getPrincipalName())
-                    .orElseThrow();
 
             Map<String, Object> claims = Maps.newHashMap();
             claims.putAll(token.getMetadata());
