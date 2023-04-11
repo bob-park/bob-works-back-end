@@ -1,5 +1,8 @@
 package org.bobpark.authorizationservice.domain.authorization.entity;
 
+import java.util.List;
+
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -16,14 +19,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
-import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
+import org.bobpark.authorizationservice.domain.authorization.converter.SpaceDelimitedConverter;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "authorization_clients_redirects")
-public class AuthorizationClientRedirect extends BaseTimeEntity {
+@Table(name = "authorization_consents")
+public class AuthorizationConsent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +37,20 @@ public class AuthorizationClientRedirect extends BaseTimeEntity {
     @JoinColumn(name = "client_id")
     private AuthorizationClient client;
 
-    private String redirectUri;
+    private String principalName;
+
+    @Convert(converter = SpaceDelimitedConverter.class)
+    private List<String> authorities;
 
     @Builder
-    private AuthorizationClientRedirect(Long id, AuthorizationClient client, String redirectUri) {
+    private AuthorizationConsent(Long id, AuthorizationClient client, String principalName, List<String> authorities) {
         this.id = id;
         this.client = client;
-        this.redirectUri = redirectUri;
+        this.principalName = principalName;
+        this.authorities = authorities;
+    }
+
+    public void updateAuthorities(List<String> authorities){
+        this.authorities = authorities;
     }
 }

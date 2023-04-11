@@ -1,0 +1,122 @@
+:root {
+    --main: #0b67b3;
+    --white: #fff;
+    --black: #000;
+    --grey : #9c9c9c;
+    --dark-grey : #545454;
+    --light-grey : #ededed;
+    --h1 : 36px
+}
+body {
+    background: var(--light-grey);
+}
+.container {
+    width: 700px;
+    height: 100%;
+    margin: 50px auto;
+    padding: 40px 100px;
+    background: var(--white);
+    border-radius: 6px;
+    box-shadow: 0px 0px 10px var(--grey);
+    box-sizing: border-box;
+}
+
+/* title */
+.title {
+    width: 100%;
+    margin-bottom: 30px;
+}
+.title h1 {
+    text-align: center;
+    font-size: var(--h1);
+    font-weight: 900;
+    color: var(--main);
+}
+
+/* sub-title */
+.sub-title {
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 30px;
+}
+.sub-title:after {
+    content: '';
+    display: block;
+    margin: 0 auto;
+    margin-top: 30px;
+    width: 500px;
+    border-bottom: 1px solid var(--grey);
+    text-align: center;
+}
+
+/* conten1 */
+.content1 {
+    margin-bottom: 30px;
+    font-size: 14px;
+    width: 500px;
+}
+
+/* content2 */
+.content2 {
+    margin-bottom: 20px;
+}
+.already {
+    margin-bottom: 30px;
+    font-size: 14px;
+}
+.check-box {
+    margin: 0 auto;
+    width: 500px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items:baseline;
+}
+.check-box input {
+    margin-right: 6px;
+}
+.check-box span {
+    color: var(--dark-grey);
+}
+.btn-group {
+    width: 130px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.btn {
+    cursor: pointer;
+    width: 60px;
+    height: 40px;
+}
+.agree-btn {
+    border-radius: 6px;
+    background-color: var(--main);
+    color: var(--white);
+    transition: 0.2s;
+}
+.agree-btn:hover {
+    opacity: 0.7;
+}
+.disagree-btn {
+    box-sizing: border-box;
+    transition: 0.2s;
+}
+.disagree-btn:hover {
+    text-decoration: underline;
+}
+
+.font-weight-bold {
+    font-weight: bolder;
+    color: var(--main);
+}
+
+/* warning */
+.warning {
+    text-align: center;
+    line-height: 26px;
+    font-size: 10px;
+    color: var(--grey);
+}

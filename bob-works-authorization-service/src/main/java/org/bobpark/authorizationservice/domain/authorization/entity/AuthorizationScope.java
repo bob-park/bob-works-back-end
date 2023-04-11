@@ -26,10 +26,12 @@ public class AuthorizationScope extends BaseTimeEntity {
     private Long id;
 
     private String scope;
+    private String description;
 
     @Builder
-    private AuthorizationScope(Long id, String scope) {
+    private AuthorizationScope(Long id, String scope, String description) {
         this.id = id;
         this.scope = scope;
+        this.description = description;
     }
 }

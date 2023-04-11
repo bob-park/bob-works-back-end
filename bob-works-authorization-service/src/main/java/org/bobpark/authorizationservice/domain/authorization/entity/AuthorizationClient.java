@@ -24,12 +24,13 @@ import lombok.ToString;
 import lombok.ToString.Exclude;
 
 import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
+import org.bobpark.authorizationservice.common.utils.random.RandomUtils;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "authentication_clients")
+@Table(name = "authorization_clients")
 public class AuthorizationClient extends BaseTimeEntity {
 
     @Id
@@ -38,6 +39,8 @@ public class AuthorizationClient extends BaseTimeEntity {
 
     private String clientId;
     private String clientSecret;
+    private String clientName;
+    private LocalDateTime clientIssueAt;
     private LocalDateTime clientSecretExpiresAt;
     private Boolean requiredAuthorizationConsent;
     private Long accessTokenTimeToLive;
@@ -51,11 +54,14 @@ public class AuthorizationClient extends BaseTimeEntity {
     private List<AuthorizationClientScope> scopes = new ArrayList<>();
 
     @Builder
-    private AuthorizationClient(Long id, LocalDateTime clientSecretExpiresAt, Boolean requiredAuthorizationConsent,
-        Long accessTokenTimeToLive) {
+    private AuthorizationClient(Long id, String clientId, String clientSecret, String clientName,
+        LocalDateTime clientIssueAt, LocalDateTime clientSecretExpiresAt,
+        Boolean requiredAuthorizationConsent, Long accessTokenTimeToLive) {
         this.id = id;
-        this.clientId = UUID.randomUUID().toString();
-        this.clientSecret = UUID.randomUUID().toString();
+        this.clientId = defaultIfNull(clientId, UUID.randomUUID().toString());
+        this.clientSecret = String.format("{noop}%s", defaultIfNull(clientSecret, RandomUtils.randomString(20)));
+        this.clientName = clientName;
+        this.clientIssueAt = defaultIfNull(clientIssueAt, LocalDateTime.now());
         this.clientSecretExpiresAt = clientSecretExpiresAt;
         this.requiredAuthorizationConsent = defaultIfNull(requiredAuthorizationConsent, true);
         this.accessTokenTimeToLive = defaultIfNull(accessTokenTimeToLive, 1_800L);
@@ -69,6 +75,13 @@ public class AuthorizationClient extends BaseTimeEntity {
                 .build());
     }
 
+    public void removeRedirectUri(String redirectUri) {
+        getRedirectUris().stream()
+            .filter(item -> item.getRedirectUri().equals(redirectUri))
+            .findAny()
+            .ifPresent(item -> getRedirectUris().remove(item));
+    }
+
     public void addScope(AuthorizationScope scope) {
         getScopes().add(
             AuthorizationClientScope.builder()
@@ -77,4 +90,34 @@ public class AuthorizationClient extends BaseTimeEntity {
                 .build());
     }
 
+    public void removeScope(AuthorizationScope scope) {
+        getScopes().stream()
+            .filter(item -> item.getScope() == scope)
+            .findAny()
+            .ifPresent(item -> getScopes().remove(item));
+    }
+
+    public void setRedirectUris(List<AuthorizationClientRedirect> redirectUris) {
+        this.redirectUris = redirectUris;
+    }
+
+    public void setScopes(List<AuthorizationClientScope> scopes) {
+        this.scopes = scopes;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
+    }
+
+    public void setClientSecretExpiresAt(LocalDateTime clientSecretExpiresAt) {
+        this.clientSecretExpiresAt = clientSecretExpiresAt;
+    }
+
+    public void setRequiredAuthorizationConsent(Boolean requiredAuthorizationConsent) {
+        this.requiredAuthorizationConsent = requiredAuthorizationConsent;
+    }
+
+    public void setAccessTokenTimeToLive(Long accessTokenTimeToLive) {
+        this.accessTokenTimeToLive = accessTokenTimeToLive;
+    }
 }

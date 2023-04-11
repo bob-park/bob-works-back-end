@@ -1,4 +1,7 @@
-package org.bobpark.authorizationservice.domain.authorization.entity;
+package org.bobpark.authorizationservice.domain.role.entity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -7,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -22,8 +26,8 @@ import org.bobpark.authorizationservice.common.entity.BaseTimeEntity;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "authorization_clients_redirects")
-public class AuthorizationClientRedirect extends BaseTimeEntity {
+@Table(name = "roles")
+public class Role extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,15 +35,20 @@ public class AuthorizationClientRedirect extends BaseTimeEntity {
 
     @Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id")
-    private AuthorizationClient client;
+    @JoinColumn(name = "p_id")
+    private Role parent;
 
-    private String redirectUri;
+    @Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    private List<Role> children = new ArrayList<>();
+
+    private String roleName;
+    private String description;
 
     @Builder
-    private AuthorizationClientRedirect(Long id, AuthorizationClient client, String redirectUri) {
+    private Role(Long id, String roleName, String description) {
         this.id = id;
-        this.client = client;
-        this.redirectUri = redirectUri;
+        this.roleName = roleName;
+        this.description = description;
     }
 }
