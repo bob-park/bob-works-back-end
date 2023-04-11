@@ -39,6 +39,12 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${issuer_host}
+
 
 
 ## logging
