@@ -23,6 +23,7 @@ import org.bobpark.authorizationservice.domain.authorization.repository.Authoriz
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientSessionRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationConsentRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationScopeRepository;
+import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
 
 @RequiredArgsConstructor
 @Configuration
@@ -32,6 +33,7 @@ public class AuthorizationServerConfiguration {
     private final AuthorizationClientSessionRepository clientSessionRepository;
     private final AuthorizationConsentRepository consentRepository;
     private final AuthorizationScopeRepository scopeRepository;
+    private final UserRepository userRepository;
 
     private final CorsConfigurationSource corsConfigurationSource;
 
@@ -74,7 +76,7 @@ public class AuthorizationServerConfiguration {
     @Bean
     public OAuth2AuthorizationService authorizationService() {
         return new CustomOAuth2AuthorizationService(registeredClientRepository(), clientRepository,
-            clientSessionRepository);
+            clientSessionRepository, userRepository);
     }
 
     @Bean

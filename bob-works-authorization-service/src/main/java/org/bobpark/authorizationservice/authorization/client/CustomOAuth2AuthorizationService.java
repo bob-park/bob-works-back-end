@@ -6,6 +6,8 @@ import static org.springframework.util.StringUtils.*;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization.Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationCode;
@@ -27,6 +30,8 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+
+import com.google.common.collect.Maps;
 
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClient;
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClientSession;
@@ -39,6 +44,8 @@ import org.bobpark.authorizationservice.domain.authorization.model.SearchAuthori
 import org.bobpark.authorizationservice.domain.authorization.model.SearchAuthorizationSessionCondition.SearchAuthorizationSessionConditionBuilder;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientSessionRepository;
+import org.bobpark.authorizationservice.domain.user.entity.User;
+import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -48,6 +55,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
     private final RegisteredClientRepository registeredClientRepository;
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationClientSessionRepository clientSessionRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
@@ -145,8 +153,12 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
             AuthorizationToken token = accessToken.getToken();
 
             OAuth2AccessToken oAuth2AccessToken =
-                new OAuth2AccessToken(TokenType.BEARER, token.getValue(), token.getIssuedAtInstant(),
-                    token.getExpiresAtInstant());
+                new OAuth2AccessToken(
+                    TokenType.BEARER,
+                    token.getValue(),
+                    token.getIssuedAtInstant(),
+                    token.getExpiresAtInstant(),
+                    new HashSet<>(clientSession.getAuthorizedScopes()));
 
             builder.token(oAuth2AccessToken, metadata -> metadata.putAll(token.getMetadata()));
         }
@@ -154,9 +166,22 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
         if (oidcToken != null && oidcToken.getToken() != null && !oidcToken.getToken().isEmpty()) {
             AuthorizationToken token = oidcToken.getToken();
 
+            User user =
+                userRepository.findByUserId(clientSession.getPrincipalName())
+                    .orElseThrow();
+
+            Map<String, Object> claims = Maps.newHashMap();
+            claims.putAll(token.getMetadata());
+
+            claims.put(OidcScopes.EMAIL, user.getEmail());
+            claims.put(OidcScopes.PHONE, user.getPhone());
+
+            // TODO profile 은 추후에 추가 예정
+            // claims.put(OidcScopes.PROFILE, user.getEmail());
+
             OidcIdToken oidcIdToken =
                 new OidcIdToken(token.getValue(), token.getIssuedAtInstant(),
-                    token.getExpiresAtInstant(), token.getMetadata());
+                    token.getExpiresAtInstant(), claims);
 
             builder.token(oidcIdToken, metadata -> metadata.putAll(token.getMetadata()));
         }
