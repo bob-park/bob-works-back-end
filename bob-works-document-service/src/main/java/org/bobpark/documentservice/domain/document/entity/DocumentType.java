@@ -49,4 +49,11 @@ public class DocumentType extends BaseEntity {
         this.name = name;
         this.description = description;
     }
+
+    public void updateName(String name) {
+
+        checkArgument(hasText(name), "name must be provided.");
+
+        this.name = name;
+    }
 }

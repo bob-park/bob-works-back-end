@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,6 +20,7 @@ import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeRequest;
+import org.bobpark.documentservice.domain.document.model.UpdateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
 
 @RequiredArgsConstructor
@@ -38,6 +40,12 @@ public class DocumentTypeController {
     @GetMapping(path = "{typeId:\\d+}")
     public DocumentTypeResponse getType(@PathVariable long typeId) {
         return documentTypeService.getDocumentType(Id.of(DocumentType.class, typeId));
+    }
+
+    @PutMapping(path = "{typeId:\\d+}")
+    public DocumentTypeResponse updateType(@PathVariable long typeId,
+        @RequestBody UpdateDocumentTypeRequest updateRequest) {
+        return documentTypeService.updateDocumentType(Id.of(DocumentType.class, typeId), updateRequest);
     }
 
     @GetMapping(path = "search")

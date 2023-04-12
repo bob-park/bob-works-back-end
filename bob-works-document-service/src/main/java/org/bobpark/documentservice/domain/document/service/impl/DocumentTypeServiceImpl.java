@@ -14,6 +14,7 @@ import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeRequest;
+import org.bobpark.documentservice.domain.document.model.UpdateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
 
@@ -38,7 +39,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 
         documentTypeRepository.save(createdType);
 
-        log.debug("added document type. ({})", createdType.getId());
+        log.debug("added document type. (id={})", createdType.getId());
 
         return toResponse(createdType);
     }
@@ -56,11 +57,28 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     @Override
     public DocumentTypeResponse getDocumentType(Id<DocumentType, Long> documentTypeId) {
 
-        DocumentType documentType =
-            documentTypeRepository.findById(documentTypeId.getValue())
-                .orElseThrow(() -> new NotFoundException(documentTypeId));
+        DocumentType documentType = getType(documentTypeId);
 
         return toResponse(documentType);
+    }
+
+    @Transactional
+    @Override
+    public DocumentTypeResponse updateDocumentType(Id<DocumentType, Long> documentTypeId,
+        UpdateDocumentTypeRequest updateRequest) {
+
+        DocumentType documentType = getType(documentTypeId);
+
+        documentType.updateName(updateRequest.name());
+
+        log.debug("updated document type. (id={})", documentType.getId());
+
+        return toResponse(documentType);
+    }
+
+    private DocumentType getType(Id<DocumentType, Long> documentTypeId) {
+        return documentTypeRepository.findById(documentTypeId.getValue())
+            .orElseThrow(() -> new NotFoundException(documentTypeId));
     }
 
     private DocumentTypeResponse toResponse(DocumentType entity) {
