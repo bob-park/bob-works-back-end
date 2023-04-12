@@ -41,7 +41,7 @@ public class RoleHierarchyServiceImpl implements RoleHierarchyService {
                 roleHierarchies.stream().filter(item -> item.getRole().equals(role.getParent().getRoleName()))
                     .findAny()
                     .ifPresent(roleHierarchy ->
-                        roleHierarchy.getChildern().add(role.getRoleName()));
+                        roleHierarchy.getChildren().add(role.getRoleName()));
             }
 
             roleHierarchies.add(new RoleHierarchy(role.getRoleName()));
@@ -49,8 +49,8 @@ public class RoleHierarchyServiceImpl implements RoleHierarchyService {
 
         roleHierarchies
             .stream()
-            .filter(roleHierarchy -> !roleHierarchy.getChildern().isEmpty())
-            .forEach(roleHierarchy -> result.put(roleHierarchy.getRole(), roleHierarchy.getChildern()));
+            .filter(roleHierarchy -> !roleHierarchy.getChildren().isEmpty())
+            .forEach(roleHierarchy -> result.put(roleHierarchy.getRole(), roleHierarchy.getChildren()));
 
         return result;
     }
@@ -59,7 +59,7 @@ public class RoleHierarchyServiceImpl implements RoleHierarchyService {
     @Getter
     private class RoleHierarchy {
         private final String role;
-        private final List<String> childern = new ArrayList<>();
+        private final List<String> children = new ArrayList<>();
 
         public RoleHierarchy(String role) {
             this.role = role;
