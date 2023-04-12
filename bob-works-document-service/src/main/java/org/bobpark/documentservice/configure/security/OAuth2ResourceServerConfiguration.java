@@ -17,8 +17,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.bobpark.documentservice.common.security.handler.RestAuthenticationEntryPoint;
 import org.bobpark.documentservice.configure.security.converter.JwtRoleGrantAuthoritiesConverter;
 import org.bobpark.documentservice.domain.role.service.RoleHierarchyService;
 
@@ -29,6 +33,7 @@ import org.bobpark.documentservice.domain.role.service.RoleHierarchyService;
 public class OAuth2ResourceServerConfiguration {
 
     private final RoleHierarchyService roleHierarchyService;
+    private final ObjectMapper om;
 
     @Bean
     public SecurityFilterChain resourceSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -42,6 +47,10 @@ public class OAuth2ResourceServerConfiguration {
                 resourceServer.jwt(
                     jwtConfigurer ->
                         jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())));
+
+        http.exceptionHandling(
+            exceptionHandler ->
+                exceptionHandler.authenticationEntryPoint(authenticationEntryPoint()));
 
         return http.build();
     }
@@ -82,6 +91,14 @@ public class OAuth2ResourceServerConfiguration {
         roleHierarchy.setHierarchy(rolesHierarchyStr);
 
         return roleHierarchy;
+    }
+
+    /*
+    authentication entry point
+     */
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new RestAuthenticationEntryPoint(om);
     }
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
