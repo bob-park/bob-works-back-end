@@ -11,18 +11,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyUtils;
-import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 
 import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
 
 @Slf4j
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableMethodSecurity
 @Configuration
 public class DefaultSecurityConfiguration {
 
@@ -48,16 +46,6 @@ public class DefaultSecurityConfiguration {
     /*
       role hierarchy
      */
-    @Bean
-    public AuthorityAuthorizationManager<RequestAuthorizationContext> authorizationManager() {
-
-        AuthorityAuthorizationManager<RequestAuthorizationContext> authorizationManager =
-            AuthorityAuthorizationManager.hasAnyAuthority("USER");
-
-        authorizationManager.setRoleHierarchy(roleHierarchy());
-
-        return authorizationManager;
-    }
 
     @Bean
     public RoleHierarchyImpl roleHierarchy() {
