@@ -1,6 +1,5 @@
 package org.bobpark.core.exception;
 
-import java.text.ChoiceFormat;
 import java.text.MessageFormat;
 
 import org.bobpark.core.model.common.Id;

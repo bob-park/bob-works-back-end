@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.bobpark.core.exception.NotFoundException;
+import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
@@ -49,6 +51,16 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         return result.stream()
             .map(this::toResponse)
             .toList();
+    }
+
+    @Override
+    public DocumentTypeResponse getDocumentType(Id<DocumentType, Long> documentTypeId) {
+
+        DocumentType documentType =
+            documentTypeRepository.findById(documentTypeId.getValue())
+                .orElseThrow(() -> new NotFoundException(documentTypeId));
+
+        return toResponse(documentType);
     }
 
     private DocumentTypeResponse toResponse(DocumentType entity) {

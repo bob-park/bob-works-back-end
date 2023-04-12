@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.api.ApiResult;
 
 @Slf4j
@@ -25,6 +26,13 @@ public class GlobalControllerExceptionHandler {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccessDeniedException.class)
     public <T> ApiResult<T> accessDenied(AccessDeniedException e) {
+        return error(e);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public <T> ApiResult<T> notFound(NotFoundException e) {
+        log.warn("not found - {}", e.getMessage());
         return error(e);
     }
 
