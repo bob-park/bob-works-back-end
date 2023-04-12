@@ -1,4 +1,4 @@
-package org.bobpark.authorizationservice.common.handler;
+package org.bobpark.documentservice.common.handler;
 
 import static org.bobpark.core.model.api.ApiResult.*;
 
