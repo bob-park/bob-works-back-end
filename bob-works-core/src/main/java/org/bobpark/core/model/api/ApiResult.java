@@ -1,4 +1,4 @@
-package org.bobpark.authorizationservice.common.model;
+package org.bobpark.core.model.api;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -7,8 +7,11 @@ import lombok.ToString;
 @Getter
 public class ApiResult<T> {
 
-    private final T result;
-    private final Error error;
+    private T result;
+    private Error error;
+
+    private ApiResult() {
+    }
 
     private ApiResult(T result, Error error) {
         this.result = result;
@@ -20,6 +23,7 @@ public class ApiResult<T> {
     }
 
     public static <T> ApiResult<T> error(Throwable e) {
-        return new ApiResult<>(null, new Error(e.getMessage()));
+        return new ApiResult<>(null, new Error(e.getMessage(), null));
     }
+
 }
