@@ -1,4 +1,4 @@
-package org.bobpark.authorizationservice.common.utils.random;
+package org.bobpark.core.utils;
 
 import java.util.Arrays;
 
