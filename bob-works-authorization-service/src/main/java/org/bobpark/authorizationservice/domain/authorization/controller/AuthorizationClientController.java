@@ -2,6 +2,7 @@ package org.bobpark.authorizationservice.domain.authorization.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.bobpark.authorizationservice.domain.authorization.service.Authorizati
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("authorization/client")
+@PreAuthorize("hasRole('MANAGER')")
 public class AuthorizationClientController {
 
     private final AuthorizationClientService clientService;

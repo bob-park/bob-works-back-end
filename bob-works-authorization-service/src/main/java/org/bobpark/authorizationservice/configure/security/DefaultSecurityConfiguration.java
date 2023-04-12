@@ -9,13 +9,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyUtils;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.bobpark.authorizationservice.common.security.handler.RestAccessDeniedHandler;
 import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
 
 @Slf4j
@@ -25,17 +33,20 @@ import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService
 public class DefaultSecurityConfiguration {
 
     private final RoleHierarchyService roleHierarchyService;
+    private final ObjectMapper om;
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(
             requests ->
-                requests
-                    .requestMatchers(HttpMethod.POST, "/authorization/client").permitAll()
-                    .anyRequest().authenticated());
+                requests.anyRequest().authenticated());
 
         http.formLogin();
+
+        http.exceptionHandling(
+            exceptionHandler ->
+                exceptionHandler.accessDeniedHandler(accessDeniedHandler()));
 
         http.cors(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable);
@@ -46,6 +57,14 @@ public class DefaultSecurityConfiguration {
     /*
       role hierarchy
      */
+    @Bean
+    public static MethodSecurityExpressionHandler expressionHandler(RoleHierarchy roleHierarchy) {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
+
+        expressionHandler.setRoleHierarchy(roleHierarchy);
+
+        return expressionHandler;
+    }
 
     @Bean
     public RoleHierarchyImpl roleHierarchy() {
@@ -60,6 +79,11 @@ public class DefaultSecurityConfiguration {
         roleHierarchy.setHierarchy(rolesHierarchyStr);
 
         return roleHierarchy;
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new RestAccessDeniedHandler(om);
     }
 
 }
