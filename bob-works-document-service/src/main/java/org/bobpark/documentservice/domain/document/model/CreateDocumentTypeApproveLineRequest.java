@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record CreateDocumentTypeApproveLineRequest(
     Long parentId,
-    Long documentTypeId,
-    Long positionId
+    Long userId
 ) {
 }

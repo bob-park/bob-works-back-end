@@ -6,10 +6,15 @@ import org.bobpark.core.model.common.Id;
 
 public class NotFoundException extends RuntimeException {
 
-    private static final MessageFormat DEFAULT_FORMAT = new MessageFormat("Not found ''{1}'' with query values ''{0,number,#}''");
+    private static final MessageFormat DEFAULT_FORMAT = new MessageFormat(
+        "Not found ''{1}'' with query values ''{0,number,#}''");
 
     public NotFoundException(String message) {
         super("Not found - " + message);
+    }
+
+    public NotFoundException(Class<?> clazz, Object value) {
+        super(DEFAULT_FORMAT.format(new Object[] {value, clazz.getSimpleName()}));
     }
 
     public NotFoundException(Throwable cause) {

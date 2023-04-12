@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
+import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeApproveLineRequest;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.UpdateDocumentTypeRequest;
+import org.bobpark.documentservice.domain.document.service.DocumentTypeApproveLineService;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
 
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
 public class DocumentTypeController {
 
     private final DocumentTypeService documentTypeService;
+    private final DocumentTypeApproveLineService documentTypeApproveLineService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "")
@@ -58,6 +61,15 @@ public class DocumentTypeController {
     @GetMapping(path = "search")
     public List<DocumentTypeResponse> search(SearchDocumentTypeRequest searchRequest) {
         return documentTypeService.search(searchRequest);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "{typeId:\\d+}/approve/line")
+    public DocumentTypeResponse addApproveLine(
+        @PathVariable long typeId,
+        @RequestBody CreateDocumentTypeApproveLineRequest createRequest) {
+
+        return documentTypeApproveLineService.addApproveLine(Id.of(DocumentType.class, typeId), createRequest);
     }
 
 }

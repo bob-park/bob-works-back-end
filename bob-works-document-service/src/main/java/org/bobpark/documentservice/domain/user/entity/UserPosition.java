@@ -1,4 +1,4 @@
-package org.bobpark.documentservice.domain.position.entity;
+package org.bobpark.documentservice.domain.user.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,24 +13,25 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
-import org.bobpark.documentservice.common.entity.BaseEntity;
-import org.bobpark.documentservice.domain.user.entity.User;
-import org.bobpark.documentservice.domain.user.entity.UserPosition;
+import org.bobpark.documentservice.domain.position.entity.Position;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "positions")
-public class Position extends BaseEntity {
+@Table(name = "users_positions")
+public class UserPosition {
 
     @Id
     private Long id;
 
-    private String name;
-
+    @Exclude
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Exclude
-    @OneToOne(mappedBy = "position")
-    private UserPosition userPosition;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "position_id")
+    private Position position;
 }

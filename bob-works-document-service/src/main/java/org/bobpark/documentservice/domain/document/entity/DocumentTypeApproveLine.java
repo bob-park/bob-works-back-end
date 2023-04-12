@@ -1,8 +1,5 @@
 package org.bobpark.documentservice.domain.document.entity;
 
-import static com.google.common.base.Preconditions.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,19 +15,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
 import org.bobpark.documentservice.domain.position.entity.Position;
+import org.bobpark.documentservice.domain.user.entity.User;
 
 @ToString
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @Entity
-@Table(name = "document_types_apporve_lines")
+@Table(name = "document_types_approve_lines")
 public class DocumentTypeApproveLine {
 
     @Id
@@ -53,19 +50,8 @@ public class DocumentTypeApproveLine {
 
     @Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "position_id")
-    private Position position;
-
-    @Builder
-    private DocumentTypeApproveLine(Long id, DocumentType documentType, Position position) {
-
-        checkArgument(isNotEmpty(documentType), "documentType must be provided.");
-        checkArgument(isNotEmpty(position), "position must be provided.");
-
-        this.id = id;
-        this.documentType = documentType;
-        this.position = position;
-    }
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public void setParent(DocumentTypeApproveLine parent) {
         this.parent = parent;
@@ -78,5 +64,13 @@ public class DocumentTypeApproveLine {
 
         child.setParent(this);
         getChildren().add(child);
+    }
+
+    public void setDocumentType(DocumentType documentType) {
+        this.documentType = documentType;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
