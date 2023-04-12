@@ -76,6 +76,19 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         return toResponse(documentType);
     }
 
+    @Transactional
+    @Override
+    public DocumentTypeResponse deleteDocumentType(Id<DocumentType, Long> documentTypeId) {
+
+        DocumentType documentType = getType(documentTypeId);
+
+        documentTypeRepository.delete(documentType);
+
+        return DocumentTypeResponse.builder()
+            .id(documentTypeId.getValue())
+            .build();
+    }
+
     private DocumentType getType(Id<DocumentType, Long> documentTypeId) {
         return documentTypeRepository.findById(documentTypeId.getValue())
             .orElseThrow(() -> new NotFoundException(documentTypeId));

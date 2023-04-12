@@ -18,4 +18,6 @@ public interface DocumentTypeService {
     DocumentTypeResponse getDocumentType(Id<DocumentType, Long> documentTypeId);
 
     DocumentTypeResponse updateDocumentType(Id<DocumentType, Long> documentTypeId, UpdateDocumentTypeRequest updateRequest);
+
+    DocumentTypeResponse deleteDocumentType(Id<DocumentType, Long> documentTypeId);
 }

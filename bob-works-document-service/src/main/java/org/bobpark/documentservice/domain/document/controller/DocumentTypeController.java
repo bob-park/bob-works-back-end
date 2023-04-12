@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +47,12 @@ public class DocumentTypeController {
     public DocumentTypeResponse updateType(@PathVariable long typeId,
         @RequestBody UpdateDocumentTypeRequest updateRequest) {
         return documentTypeService.updateDocumentType(Id.of(DocumentType.class, typeId), updateRequest);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping(path = "{typeId:\\d+}")
+    public DocumentTypeResponse deleteType(@PathVariable long typeId) {
+        return documentTypeService.deleteDocumentType(Id.of(DocumentType.class, typeId));
     }
 
     @GetMapping(path = "search")

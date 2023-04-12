@@ -26,4 +26,8 @@ public class ApiResult<T> {
         return new ApiResult<>(null, new Error(e.getMessage(), null));
     }
 
+    public static <T> ApiResult<T> error(String msg, Throwable e){
+        return new ApiResult<>(null, new Error(msg, e.getMessage()));
+    }
+
 }
