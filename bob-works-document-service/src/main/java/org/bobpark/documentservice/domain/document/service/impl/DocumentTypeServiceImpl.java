@@ -1,5 +1,7 @@
 package org.bobpark.documentservice.domain.document.service.impl;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
+import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
 
@@ -36,6 +39,16 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         log.debug("added document type. ({})", createdType.getId());
 
         return toResponse(createdType);
+    }
+
+    @Override
+    public List<DocumentTypeResponse> search(SearchDocumentTypeRequest searchRequest) {
+
+        List<DocumentType> result = documentTypeRepository.search(searchRequest);
+
+        return result.stream()
+            .map(this::toResponse)
+            .toList();
     }
 
     private DocumentTypeResponse toResponse(DocumentType entity) {
