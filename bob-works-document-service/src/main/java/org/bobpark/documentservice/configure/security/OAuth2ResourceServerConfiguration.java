@@ -13,12 +13,11 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyUtils;
-import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 
 import org.bobpark.documentservice.configure.security.converter.JwtRoleGrantAuthoritiesConverter;
 import org.bobpark.documentservice.domain.role.service.RoleHierarchyService;
@@ -47,27 +46,27 @@ public class OAuth2ResourceServerConfiguration {
         return http.build();
     }
 
+    /*
+      role hierarchy
+     */
+
+    /**
+     * Spring Security 6 의 api 를 사용할 경우 더이상 {@link EnableGlobalMethodSecurity} 를 사용하여 method security (ex:) @PreAuthorize(..) 등) 에 사용이 되지 않는다.
+     * <p>
+     * Spring Security 6 부터 {@link EnableMethodSecurity} 를 사용해야하며, method security 를 custom 하려면 (ex:) role hierarchy) 아래와 같이 써야한다.
+     * <p>
+     * ! 반드시 static method 로 선언해주어야 한다.
+     *
+     * @param roleHierarchy role 계층
+     * @return void
+     */
     @Bean
-    static MethodSecurityExpressionHandler expressionHandler(RoleHierarchy roleHierarchy) {
+    public static MethodSecurityExpressionHandler expressionHandler(RoleHierarchy roleHierarchy) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
 
         expressionHandler.setRoleHierarchy(roleHierarchy);
 
         return expressionHandler;
-    }
-
-    /*
-      role hierarchy
-     */
-    @Bean
-    public AuthorityAuthorizationManager<RequestAuthorizationContext> authorizationManager() {
-
-        AuthorityAuthorizationManager<RequestAuthorizationContext> authorizationManager =
-            AuthorityAuthorizationManager.hasRole("USER");
-
-        authorizationManager.setRoleHierarchy(roleHierarchy());
-
-        return authorizationManager;
     }
 
     @Bean
