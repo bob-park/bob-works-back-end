@@ -1,13 +1,12 @@
 package org.bobpark.documentservice.domain.document.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Builder;
 
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
-import org.bobpark.documentservice.domain.document.entity.DocumentTypeApproveLine;
+import org.bobpark.documentservice.domain.document.entity.DocumentTypeApprovalLine;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
 
@@ -21,27 +20,27 @@ public record DocumentTypeResponse(
     String createdBy,
     LocalDateTime lastModifiedDate,
     String lastModifiedBy,
-    DocumentTypeApproveLineResponse approveLine
+    DocumentTypeApprovalLineResponse approvalLine
 ) {
 
     public static DocumentTypeResponse toResponse(DocumentType documentType) {
 
-        List<DocumentTypeApproveLine> approveLines = documentType.getApproveLines();
+        List<DocumentTypeApprovalLine> approveLines = documentType.getApproveLines();
 
-        DocumentTypeApproveLine rootApproveLine =
+        DocumentTypeApprovalLine rootApproveLine =
             approveLines.stream()
                 .filter(item -> item.getParent() == null)
                 .findAny()
                 .orElse(null);
 
-        DocumentTypeApproveLineResponse rootApproveLineResponse = null;
+        DocumentTypeApprovalLineResponse rootApprovalLine = null;
 
         if (rootApproveLine != null) {
 
-            DocumentTypeApproveLineResponse next = getNext(rootApproveLine, approveLines);
+            DocumentTypeApprovalLineResponse next = getNext(rootApproveLine, approveLines);
 
-            rootApproveLineResponse =
-                DocumentTypeApproveLineResponse.builder()
+            rootApprovalLine =
+                DocumentTypeApprovalLineResponse.builder()
                     .id(rootApproveLine.getId())
                     .user(UserResponse.toResponse(rootApproveLine.getUser()))
                     .next(next)
@@ -58,14 +57,14 @@ public record DocumentTypeResponse(
             .createdBy(documentType.getCreatedBy())
             .lastModifiedDate(documentType.getLastModifiedDate())
             .lastModifiedBy(documentType.getLastModifiedBy())
-            .approveLine(rootApproveLineResponse)
+            .approvalLine(rootApprovalLine)
             .build();
     }
 
-    private static DocumentTypeApproveLineResponse getNext(
-        DocumentTypeApproveLine parent, List<DocumentTypeApproveLine> approveLines) {
+    private static DocumentTypeApprovalLineResponse getNext(
+        DocumentTypeApprovalLine parent, List<DocumentTypeApprovalLine> approveLines) {
 
-        List<DocumentTypeApproveLine> children =
+        List<DocumentTypeApprovalLine> children =
             approveLines.stream()
                 .filter(item -> parent == item.getParent())
                 .toList();
@@ -73,9 +72,9 @@ public record DocumentTypeResponse(
         return children.stream()
             .map(item -> {
 
-                DocumentTypeApproveLineResponse subNext = getNext(item, approveLines);
+                DocumentTypeApprovalLineResponse subNext = getNext(item, approveLines);
 
-                return DocumentTypeApproveLineResponse.builder()
+                return DocumentTypeApprovalLineResponse.builder()
                     .id(item.getId())
                     .user(UserResponse.toResponse(item.getUser()))
                     .next(subNext)

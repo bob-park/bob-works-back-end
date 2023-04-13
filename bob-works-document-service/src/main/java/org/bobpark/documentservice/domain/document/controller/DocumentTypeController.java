@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
-import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeApproveLineRequest;
+import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeApprovalLineRequest;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeRequest;
@@ -67,7 +67,7 @@ public class DocumentTypeController {
     @PostMapping(path = "{typeId:\\d+}/approve/line")
     public DocumentTypeResponse addApproveLine(
         @PathVariable long typeId,
-        @RequestBody CreateDocumentTypeApproveLineRequest createRequest) {
+        @RequestBody CreateDocumentTypeApprovalLineRequest createRequest) {
 
         return documentTypeApproveLineService.addApproveLine(Id.of(DocumentType.class, typeId), createRequest);
     }

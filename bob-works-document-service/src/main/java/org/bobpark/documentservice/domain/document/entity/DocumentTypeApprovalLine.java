@@ -14,21 +14,19 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
-import org.bobpark.documentservice.domain.position.entity.Position;
 import org.bobpark.documentservice.domain.user.entity.User;
 
 @ToString
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "document_types_approve_lines")
-public class DocumentTypeApproveLine {
+@Table(name = "document_types_approval_lines")
+public class DocumentTypeApprovalLine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +35,11 @@ public class DocumentTypeApproveLine {
     @Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "p_id")
-    private DocumentTypeApproveLine parent;
+    private DocumentTypeApprovalLine parent;
 
     @Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DocumentTypeApproveLine> children = new ArrayList<>();
+    private List<DocumentTypeApprovalLine> children = new ArrayList<>();
 
     @Exclude
     @ManyToOne(fetch = FetchType.LAZY)
@@ -53,11 +51,11 @@ public class DocumentTypeApproveLine {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public void setParent(DocumentTypeApproveLine parent) {
+    public void setParent(DocumentTypeApprovalLine parent) {
         this.parent = parent;
     }
 
-    public void addChild(DocumentTypeApproveLine child) {
+    public void addChild(DocumentTypeApprovalLine child) {
         if (getChildren().stream().anyMatch(item -> item == child)) {
             return;
         }

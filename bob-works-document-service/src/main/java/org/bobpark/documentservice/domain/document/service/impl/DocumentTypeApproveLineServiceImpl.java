@@ -10,22 +10,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.apache.commons.lang3.ObjectUtils;
-
-import com.google.common.base.Preconditions;
-
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
-import org.bobpark.documentservice.domain.document.entity.DocumentTypeApproveLine;
-import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeApproveLineRequest;
-import org.bobpark.documentservice.domain.document.model.DocumentTypeApproveLineResponse;
+import org.bobpark.documentservice.domain.document.entity.DocumentTypeApprovalLine;
+import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeApprovalLineRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeApproveLineRepository;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeApproveLineService;
-import org.bobpark.documentservice.domain.position.entity.Position;
-import org.bobpark.documentservice.domain.position.repository.PositionRepository;
 import org.bobpark.documentservice.domain.user.entity.User;
 import org.bobpark.documentservice.domain.user.repository.UserRepository;
 
@@ -42,7 +35,7 @@ public class DocumentTypeApproveLineServiceImpl implements DocumentTypeApproveLi
     @Transactional
     @Override
     public DocumentTypeResponse addApproveLine(Id<DocumentType, Long> typeId,
-        CreateDocumentTypeApproveLineRequest createRequest) {
+        CreateDocumentTypeApprovalLineRequest createRequest) {
 
         checkArgument(isNotEmpty(createRequest.userId()), "userId must be provided.");
 
@@ -54,12 +47,12 @@ public class DocumentTypeApproveLineServiceImpl implements DocumentTypeApproveLi
             userRepository.findById(createRequest.userId())
                 .orElseThrow(() -> new NotFoundException(User.class, createRequest.userId()));
 
-        DocumentTypeApproveLine parent = null;
+        DocumentTypeApprovalLine parent = null;
 
         if (createRequest.parentId() != null) {
             parent = documentTypeApproveLineRepository.findById(
                     createRequest.parentId())
-                .orElseThrow(() -> new NotFoundException(DocumentTypeApproveLine.class, createRequest.parentId()));
+                .orElseThrow(() -> new NotFoundException(DocumentTypeApprovalLine.class, createRequest.parentId()));
         }
 
         documentType.addApproveLine(parent, user);

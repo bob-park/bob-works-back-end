@@ -16,7 +16,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -28,7 +27,6 @@ import lombok.ToString.Exclude;
 
 import org.bobpark.documentservice.common.entity.BaseEntity;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
-import org.bobpark.documentservice.domain.position.entity.Position;
 import org.bobpark.documentservice.domain.user.entity.User;
 
 @ToString
@@ -50,7 +48,7 @@ public class DocumentType extends BaseEntity {
 
     @Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "documentType", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DocumentTypeApproveLine> approveLines = new ArrayList<>();
+    private List<DocumentTypeApprovalLine> approveLines = new ArrayList<>();
 
     @Builder
     private DocumentType(Long id, DocumentTypeName type, String name, String description) {
@@ -71,9 +69,9 @@ public class DocumentType extends BaseEntity {
         this.name = name;
     }
 
-    public void addApproveLine(DocumentTypeApproveLine parent, User user) {
+    public void addApproveLine(DocumentTypeApprovalLine parent, User user) {
 
-        DocumentTypeApproveLine createApproveLine = new DocumentTypeApproveLine();
+        DocumentTypeApprovalLine createApproveLine = new DocumentTypeApprovalLine();
 
         if (parent != null) {
             parent.addChild(createApproveLine);
