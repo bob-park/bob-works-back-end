@@ -65,3 +65,11 @@ insert into positions (id, name, created_by) values (17, '이사', 'admin');
 insert into users_positions(user_id, position_id) values (11, 17);
 insert into users_positions(user_id, position_id) values (12, 16);
 insert into users_positions(user_id, position_id) values (13, 11);
+
+-- document_types
+insert into document_types (id, type, name, created_by) values (1, 'VACATION', '휴가계', 'admin');
+
+-- document_types_approve_lines
+insert into document_types_approve_lines (id, p_id, document_type_id, user_id) values (1, null, 1, 11);
+insert into document_types_approve_lines (id, p_id, document_type_id, user_id) values (2, 1, 1, 12);
+insert into document_types_approve_lines (id, p_id, document_type_id, user_id) values (3, 2, 1, 13);
