@@ -48,7 +48,7 @@ public class DocumentType extends BaseEntity {
 
     @Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "documentType", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DocumentTypeApprovalLine> approveLines = new ArrayList<>();
+    private List<DocumentTypeApprovalLine> approvalLines = new ArrayList<>();
 
     @Builder
     private DocumentType(Long id, DocumentTypeName type, String name, String description) {
@@ -80,7 +80,7 @@ public class DocumentType extends BaseEntity {
         createApproveLine.setDocumentType(this);
         createApproveLine.setUser(user);
 
-        getApproveLines().add(createApproveLine);
+        getApprovalLines().add(createApproveLine);
 
     }
 }

@@ -71,4 +71,4 @@ insert into document_types (id, type, name, created_by) values (1, 'VACATION', '
 
 -- document_types_approve_lines
 insert into document_types_approval_lines (id, p_id, document_type_id, user_id) values (1, null, 1, 12);
-insert into document_types_approval_lines (id, p_id, document_type_id, user_id) values (2, 1, 1, 13);
+insert into document_types_approval_lines (id, p_id, document_type_id, user_id) values (2, 1, 1, 11);

@@ -25,7 +25,7 @@ public record DocumentTypeResponse(
 
     public static DocumentTypeResponse toResponse(DocumentType documentType) {
 
-        List<DocumentTypeApprovalLine> approveLines = documentType.getApproveLines();
+        List<DocumentTypeApprovalLine> approveLines = documentType.getApprovalLines();
 
         DocumentTypeApprovalLine rootApproveLine =
             approveLines.stream()
