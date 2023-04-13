@@ -10,15 +10,14 @@ import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Builder
-public record VacationDocumentResponse(
-    Long id,
-    DocumentTypeName type,
-    UserResponse writer,
-    DocumentStatus status,
-    LocalDateTime createdDate,
-    String createdBy,
-    LocalDateTime lastModifiedDate,
-    String lastModifiedBy
+public record VacationDocumentResponse(Long id,
+                                       DocumentTypeName type,
+                                       UserResponse writer,
+                                       DocumentStatus status,
+                                       LocalDateTime createdDate,
+                                       String createdBy,
+                                       LocalDateTime lastModifiedDate,
+                                       String lastModifiedBy
 ) {
 
     public static VacationDocumentResponse toResponse(VacationDocument vacationDocument) {

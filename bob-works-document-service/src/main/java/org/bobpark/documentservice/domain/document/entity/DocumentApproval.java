@@ -51,6 +51,8 @@ public class DocumentApproval extends BaseTimeEntity {
 
     private LocalDateTime approvedDateTime;
 
+    private String reason;
+
     @Builder
     private DocumentApproval(Long id, DocumentStatus status) {
         this.id = id;
@@ -65,13 +67,29 @@ public class DocumentApproval extends BaseTimeEntity {
         this.approvalLine = approvalLine;
     }
 
-    public void updateStatus(DocumentStatus status) {
+    public void updateStatus(DocumentStatus status, String reason) {
         this.status = status;
+        this.reason = reason;
+        this.approvedDateTime = LocalDateTime.now();
 
         if (status == DocumentStatus.APPROVE) {
-            this.approvedDateTime = LocalDateTime.now();
 
-            // TODO 다음 결제 라인 작업 진행
+            DocumentTypeApprovalLine nextApprovalLine = approvalLine.getNext();
+            if (nextApprovalLine != null) {
+
+                DocumentApproval nextApproval =
+                    DocumentApproval.builder()
+                        .build();
+
+                nextApproval.setDocument(getDocument());
+                nextApproval.setApprovalLine(nextApprovalLine);
+
+                getDocument().addApproval(nextApproval);
+                return;
+            }
+
         }
+
+        getDocument().updateStatus(status);
     }
 }

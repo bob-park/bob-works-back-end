@@ -41,6 +41,7 @@ create table documents_approvals
     line_id            bigint                        not null,
     status             varchar(20) default 'WAITING' not null,
     approved_date_time timestamp,
+    reason             text,
     created_date       timestamp   default now()     not null,
     last_modified_date timestamp,
 

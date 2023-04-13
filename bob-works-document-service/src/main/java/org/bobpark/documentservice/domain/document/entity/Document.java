@@ -97,4 +97,8 @@ public abstract class Document extends BaseEntity {
     public void addApproval(DocumentApproval approval) {
         getApprovals().add(approval);
     }
+
+    public void updateStatus(DocumentStatus status) {
+        this.status = status;
+    }
 }
