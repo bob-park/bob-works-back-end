@@ -43,5 +43,5 @@ create table document_approvals
     created_date       timestamp   default now()     not null,
     last_modified_date timestamp,
 
-    foreign key (line_id) references document_types_approve_lines (id)
+    foreign key (line_id) references document_types_approval_lines (id)
 );
