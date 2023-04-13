@@ -18,8 +18,8 @@ create table documents
     foreign key (writer_id) references users (id)
 );
 
--- documents_vacations
-create table documents_vacations
+-- vacation_documents
+create table vacation_documents
 (
     document_id        bigint       not null primary key,
     vacation_type      varchar(20)  not null,
