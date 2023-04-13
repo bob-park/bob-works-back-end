@@ -21,7 +21,7 @@ create table documents
 -- vacation_documents
 create table vacation_documents
 (
-    id        bigint       not null primary key,
+    id                 bigint       not null primary key,
     vacation_type      varchar(20)  not null,
     vacation_sub_type  varchar(20),
     vacation_date_from date         not null,
@@ -33,15 +33,17 @@ create table vacation_documents
 );
 
 -- documents_approvals
-create table document_approvals
+create table documents_approvals
 (
 
     id                 bigserial                     not null primary key,
+    document_id        bigint                        not null,
     line_id            bigint                        not null,
     status             varchar(20) default 'WAITING' not null,
-    approved_time      timestamp,
+    approved_date_time timestamp,
     created_date       timestamp   default now()     not null,
     last_modified_date timestamp,
 
+    foreign key (document_id) references documents (id),
     foreign key (line_id) references document_types_approval_lines (id)
 );

@@ -3,6 +3,10 @@ package org.bobpark.documentservice.domain.document.entity;
 import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
@@ -16,6 +20,7 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -59,6 +64,10 @@ public abstract class Document extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;
 
+    @Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DocumentApproval> approvals = new ArrayList<>();
+
     protected Document(Long id, DocumentType documentType, User writer, DocumentStatus status) {
 
         checkArgument(isNotEmpty(documentType), "documentType must be provided.");
@@ -68,5 +77,24 @@ public abstract class Document extends BaseEntity {
         this.documentType = documentType;
         this.writer = writer;
         this.status = defaultIfNull(status, DocumentStatus.PROCEEDING);
+
+        // 문서의 처음 결제 작업 생성
+        DocumentApproval approval =
+            DocumentApproval.builder()
+                .build();
+
+        DocumentTypeApprovalLine approvalLine =
+            documentType.getApprovalLines().stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("approvalLines must not empty"));
+
+        approval.setDocument(this);
+        approval.setApprovalLine(approvalLine);
+
+        addApproval(approval);
+    }
+
+    public void addApproval(DocumentApproval approval) {
+        getApprovals().add(approval);
     }
 }
