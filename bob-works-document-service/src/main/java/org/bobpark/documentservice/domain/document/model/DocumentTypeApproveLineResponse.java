@@ -10,8 +10,8 @@ import org.bobpark.documentservice.domain.user.model.UserResponse;
 @Builder
 public record DocumentTypeApproveLineResponse(
     Long id,
-    List<DocumentTypeApproveLineResponse> children,
-    UserResponse user
+    UserResponse user,
+    DocumentTypeApproveLineResponse next
 ) {
     public static DocumentTypeApproveLineResponse toResponse(DocumentTypeApproveLine approveLine) {
         return DocumentTypeApproveLineResponse.builder()

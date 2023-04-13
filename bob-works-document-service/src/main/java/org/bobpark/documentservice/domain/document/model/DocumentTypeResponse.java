@@ -38,13 +38,13 @@ public record DocumentTypeResponse(
 
         if (rootApproveLine != null) {
 
-            List<DocumentTypeApproveLineResponse> children = getChildren(rootApproveLine, approveLines);
+            DocumentTypeApproveLineResponse next = getNext(rootApproveLine, approveLines);
 
             rootApproveLineResponse =
                 DocumentTypeApproveLineResponse.builder()
                     .id(rootApproveLine.getId())
                     .user(UserResponse.toResponse(rootApproveLine.getUser()))
-                    .children(children)
+                    .next(next)
                     .build();
 
         }
@@ -62,7 +62,7 @@ public record DocumentTypeResponse(
             .build();
     }
 
-    private static List<DocumentTypeApproveLineResponse> getChildren(
+    private static DocumentTypeApproveLineResponse getNext(
         DocumentTypeApproveLine parent, List<DocumentTypeApproveLine> approveLines) {
 
         List<DocumentTypeApproveLine> children =
@@ -73,14 +73,16 @@ public record DocumentTypeResponse(
         return children.stream()
             .map(item -> {
 
-                List<DocumentTypeApproveLineResponse> subChildren = getChildren(item, approveLines);
+                DocumentTypeApproveLineResponse subNext = getNext(item, approveLines);
 
                 return DocumentTypeApproveLineResponse.builder()
                     .id(item.getId())
                     .user(UserResponse.toResponse(item.getUser()))
-                    .children(subChildren)
+                    .next(subNext)
                     .build();
             })
-            .toList();
+            .findAny()
+            .orElse(null);
+
     }
 }
