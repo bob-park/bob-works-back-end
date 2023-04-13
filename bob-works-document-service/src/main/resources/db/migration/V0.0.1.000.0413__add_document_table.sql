@@ -21,7 +21,7 @@ create table documents
 -- vacation_documents
 create table vacation_documents
 (
-    document_id        bigint       not null primary key,
+    id        bigint       not null primary key,
     vacation_type      varchar(20)  not null,
     vacation_sub_type  varchar(20),
     vacation_date_from date         not null,
@@ -29,7 +29,7 @@ create table vacation_documents
     days_count         real         not null,
     reason             varchar(255) not null,
 
-    foreign key (document_id) references documents (id)
+    foreign key (id) references documents (id)
 );
 
 -- documents_approvals

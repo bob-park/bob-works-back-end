@@ -42,7 +42,7 @@ public abstract class Document extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(updatable = false)
+    @Column(insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private DocumentTypeName type;
 
@@ -54,19 +54,19 @@ public abstract class Document extends BaseEntity {
     @Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
-    private User user;
+    private User writer;
 
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;
 
-    protected Document(Long id, DocumentType documentType, User user, DocumentStatus status) {
+    protected Document(Long id, DocumentType documentType, User writer, DocumentStatus status) {
 
         checkArgument(isNotEmpty(documentType), "documentType must be provided.");
-        checkArgument(isNotEmpty(user), "user must be provided.");
+        checkArgument(isNotEmpty(writer), "writer must be provided.");
 
         this.id = id;
         this.documentType = documentType;
-        this.user = user;
+        this.writer = writer;
         this.status = defaultIfNull(status, DocumentStatus.PROCEEDING);
     }
 }
