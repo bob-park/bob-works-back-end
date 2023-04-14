@@ -46,7 +46,6 @@ spring:
           issuer-uri: ${issuer_host}
 
 
-
 ## logging
 logging:
   charset:
