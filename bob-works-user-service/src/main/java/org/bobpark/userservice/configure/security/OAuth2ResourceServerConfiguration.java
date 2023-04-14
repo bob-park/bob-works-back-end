@@ -1,6 +1,5 @@
 package org.bobpark.userservice.configure.security;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +13,6 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyUtils;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -22,9 +20,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 
 import org.bobpark.userservice.common.security.handler.RestAuthenticationEntryPoint;
 import org.bobpark.userservice.configure.security.converter.JwtRoleGrantAuthoritiesConverter;
+import org.bobpark.userservice.domain.role.feign.client.RoleClient;
+import org.bobpark.userservice.domain.role.model.RoleResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,8 +33,9 @@ import org.bobpark.userservice.configure.security.converter.JwtRoleGrantAuthorit
 @Configuration
 public class OAuth2ResourceServerConfiguration {
 
-    // private final RoleHierarchyService roleHierarchyService;
     private final ObjectMapper om;
+
+    private final RoleClient roleClient;
 
     @Bean
     public SecurityFilterChain resourceSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -58,17 +60,6 @@ public class OAuth2ResourceServerConfiguration {
     /*
       role hierarchy
      */
-
-    /**
-     * Spring Security 6 의 api 를 사용할 경우 더이상 {@link EnableGlobalMethodSecurity} 를 사용하여 method security (ex:) @PreAuthorize(..) 등) 에 사용이 되지 않는다.
-     * <p>
-     * Spring Security 6 부터 {@link EnableMethodSecurity} 를 사용해야하며, method security 를 custom 하려면 (ex:) role hierarchy) 아래와 같이 써야한다.
-     * <p>
-     * ! 반드시 static method 로 선언해주어야 한다.
-     *
-     * @param roleHierarchy role 계층
-     * @return void
-     */
     @Bean
     public static MethodSecurityExpressionHandler expressionHandler(RoleHierarchy roleHierarchy) {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
@@ -82,9 +73,7 @@ public class OAuth2ResourceServerConfiguration {
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 
-        // Map<String, List<String>> roleHierarchyMap = roleHierarchyService.getRoleHierarchyToMap();
-
-        Map<String, List<String>> roleHierarchyMap = Collections.emptyMap();
+        Map<String, List<String>> roleHierarchyMap = parseRoleHierarchyMap();
 
         String rolesHierarchyStr = RoleHierarchyUtils.roleHierarchyFromMap(roleHierarchyMap);
 
@@ -109,5 +98,23 @@ public class OAuth2ResourceServerConfiguration {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new JwtRoleGrantAuthoritiesConverter());
 
         return jwtAuthenticationConverter;
+    }
+
+    private Map<String, List<String>> parseRoleHierarchyMap() {
+
+        Map<String, List<String>> result = Maps.newHashMap();
+
+        List<RoleResponse> roles = roleClient.getRoles();
+
+        for (RoleResponse role : roles) {
+
+            if (role.children().isEmpty()) {
+                continue;
+            }
+
+            result.put(role.roleName(), role.children().stream().map(RoleResponse::roleName).toList());
+        }
+
+        return result;
     }
 }
