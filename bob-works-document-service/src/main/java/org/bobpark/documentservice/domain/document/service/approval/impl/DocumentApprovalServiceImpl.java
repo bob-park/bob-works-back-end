@@ -5,6 +5,8 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
 import static org.springframework.util.StringUtils.*;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,12 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
+import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.approval.ApprovalDocumentRequest;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.document.service.approval.DocumentApprovalService;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
+import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,11 +45,14 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
         approval.updateStatus(approvalRequest.status(), approvalRequest.reason());
 
-        return toResponse(approval.getDocument());
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+
+        return toResponse(approval.getDocument(), users);
     }
 
     private DocumentApproval getApproval(Id<DocumentApproval, Long> approvalId) {
         return documentApprovalRepository.findById(approvalId.getValue())
             .orElseThrow(() -> new NotFoundException(approvalId));
     }
+
 }

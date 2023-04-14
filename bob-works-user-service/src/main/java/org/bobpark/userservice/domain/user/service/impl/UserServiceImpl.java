@@ -2,6 +2,8 @@ package org.bobpark.userservice.domain.user.service.impl;
 
 import static org.bobpark.userservice.domain.user.model.UserResponse.*;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,5 +32,12 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new NotFoundException(userId));
 
         return toResponse(user);
+    }
+
+    @Override
+    public List<UserResponse> getUserAll() {
+        return userRepository.findAll().stream()
+            .map(UserResponse::toResponse)
+            .toList();
     }
 }

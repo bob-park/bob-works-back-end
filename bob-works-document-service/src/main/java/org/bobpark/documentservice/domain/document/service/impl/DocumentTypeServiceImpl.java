@@ -1,7 +1,5 @@
 package org.bobpark.documentservice.domain.document.service.impl;
 
-import static org.bobpark.documentservice.domain.document.model.DocumentTypeResponse.*;
-
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -12,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
+import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.model.CreateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
@@ -19,6 +18,7 @@ import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeReque
 import org.bobpark.documentservice.domain.document.model.UpdateDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
+import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,8 +51,10 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 
         List<DocumentType> result = documentTypeRepository.search(searchRequest);
 
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+
         return result.stream()
-            .map(DocumentTypeResponse::toResponse)
+            .map(item -> DocumentTypeResponse.toResponse(item, users))
             .toList();
     }
 
@@ -95,4 +97,12 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         return documentTypeRepository.findById(documentTypeId.getValue())
             .orElseThrow(() -> new NotFoundException(documentTypeId));
     }
+
+    private DocumentTypeResponse toResponse(DocumentType entity) {
+
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+
+        return DocumentTypeResponse.toResponse(entity, users);
+    }
+
 }

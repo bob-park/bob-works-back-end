@@ -1,7 +1,10 @@
-package org.bobpark.userservice.domain.user;
+package org.bobpark.userservice.domain.user.controller;
+
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,5 +25,11 @@ public class UserController {
     @GetMapping(path = "")
     public UserResponse getUser(@RequestParam("userId") String userId) {
         return userService.getUser(Id.of(User.class, userId));
+    }
+
+    @PreAuthorize("hasRole('MANAGER')")
+    @GetMapping(path = "all")
+    public List<UserResponse> getUserAll() {
+        return userService.getUserAll();
     }
 }

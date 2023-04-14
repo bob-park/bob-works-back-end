@@ -2,8 +2,6 @@ package org.bobpark.documentservice.domain.document.repository.query.impl;
 
 import static org.bobpark.documentservice.domain.document.entity.QDocument.*;
 import static org.bobpark.documentservice.domain.document.entity.QDocumentType.*;
-import static org.bobpark.documentservice.domain.user.entity.QUser.*;
-import static org.springframework.util.StringUtils.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -42,7 +40,6 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
         List<Document> content =
             query.selectFrom(document)
                 .join(document.documentType, documentType).fetchJoin()
-                .join(document.writer, user).fetchJoin()
                 .where(mappingCondition(searchRequest))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
@@ -53,7 +50,6 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
             query.select(document.id.count())
                 .from(document)
                 .join(document.documentType, documentType)
-                .join(document.writer, user)
                 .where(mappingCondition(searchRequest));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
@@ -66,7 +62,7 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
         builder.and(eqTypeName(searchRequest.typeName()))
             .and(eqTypeId(searchRequest.typeId()))
             .and(eqStatus(searchRequest.status()))
-            .and(eqWriter(searchRequest.writer()))
+            .and(eqWriter(searchRequest.writerId()))
             .and(afterCreatedDate(searchRequest.createdDateFrom()))
             .and(beforeCreatedDate(searchRequest.createdDateTo()));
 
@@ -85,8 +81,8 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
         return status != null ? document.status.eq(status) : null;
     }
 
-    private BooleanExpression eqWriter(String writer) {
-        return hasText(writer) ? user.userId.eq(writer) : null;
+    private BooleanExpression eqWriter(Long writerId) {
+        return writerId != null ? document.writerId.eq(writerId) : null;
     }
 
     private BooleanExpression afterCreatedDate(LocalDate from) {
@@ -105,7 +101,7 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
                     List.of(
                         new QueryDslPath<>("id", document.id),
                         new QueryDslPath<>("type", document.type),
-                        new QueryDslPath<>("writer", user.userId),
+                        new QueryDslPath<>("writerId", document.writerId),
                         new QueryDslPath<>("status", document.status),
                         new QueryDslPath<>("createdDate", document.createdDate))),
                 new OrderSpecifier<?>[] {document.createdDate.desc()})

@@ -1,5 +1,9 @@
 package org.bobpark.documentservice.domain.document.service.impl;
 
+import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
+
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,12 +16,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest.SearchDocumentRequestBuilder;
 import org.bobpark.documentservice.domain.document.repository.DocumentRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentService;
+import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,19 +42,22 @@ public class DocumentServiceImpl implements DocumentService {
 
         Authentication authentication = getAuthentication();
 
-        boolean isManager =
-            roleHierarchy.getReachableGrantedAuthorities(authentication.getAuthorities())
-                .contains(new SimpleGrantedAuthority(ROLE_NAME_MANAGER));
+        boolean isManager = AuthenticationUtils.getInstance().isManager();
 
         SearchDocumentRequestBuilder searchRequestBuilder = SearchDocumentRequest.withoutWriter(searchRequest);
 
         if (!isManager) {
-            searchRequestBuilder.writer(authentication.getName());
+
+            UserResponse writer = AuthenticationUtils.getInstance().getUser(authentication.getName());
+
+            searchRequestBuilder.writerId(writer.id());
         }
 
         Page<Document> result = documentRepository.search(searchRequestBuilder.build(), pageable);
 
-        return result.map(DocumentResponse::toResponse);
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+
+        return result.map(item -> toResponse(item, users));
     }
 
     private Authentication getAuthentication() {

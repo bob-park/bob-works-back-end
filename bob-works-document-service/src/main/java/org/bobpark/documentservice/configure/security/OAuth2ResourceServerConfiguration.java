@@ -21,10 +21,12 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 
 import org.bobpark.documentservice.common.security.handler.RestAuthenticationEntryPoint;
 import org.bobpark.documentservice.configure.security.converter.JwtRoleGrantAuthoritiesConverter;
-import org.bobpark.documentservice.domain.role.service.RoleHierarchyService;
+import org.bobpark.documentservice.domain.role.model.RoleResponse;
+import org.bobpark.documentservice.domain.role.model.feign.client.RoleClient;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,8 +34,9 @@ import org.bobpark.documentservice.domain.role.service.RoleHierarchyService;
 @Configuration
 public class OAuth2ResourceServerConfiguration {
 
-    private final RoleHierarchyService roleHierarchyService;
     private final ObjectMapper om;
+
+    private final RoleClient roleClient;
 
     @Bean
     public SecurityFilterChain resourceSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -82,7 +85,7 @@ public class OAuth2ResourceServerConfiguration {
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 
-        Map<String, List<String>> roleHierarchyMap = roleHierarchyService.getRoleHierarchyToMap();
+        Map<String, List<String>> roleHierarchyMap = parseRoleHierarchyMap();
 
         String rolesHierarchyStr = RoleHierarchyUtils.roleHierarchyFromMap(roleHierarchyMap);
 
@@ -107,5 +110,23 @@ public class OAuth2ResourceServerConfiguration {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new JwtRoleGrantAuthoritiesConverter());
 
         return jwtAuthenticationConverter;
+    }
+
+    private Map<String, List<String>> parseRoleHierarchyMap() {
+
+        Map<String, List<String>> result = Maps.newHashMap();
+
+        List<RoleResponse> roles = roleClient.getRoles();
+
+        for (RoleResponse role : roles) {
+
+            if (role.children().isEmpty()) {
+                continue;
+            }
+
+            result.put(role.roleName(), role.children().stream().map(RoleResponse::roleName).toList());
+        }
+
+        return result;
     }
 }

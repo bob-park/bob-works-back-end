@@ -32,7 +32,6 @@ import lombok.ToString.Exclude;
 import org.bobpark.documentservice.common.entity.BaseEntity;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
-import org.bobpark.documentservice.domain.user.entity.User;
 
 @ToString
 @Getter
@@ -56,10 +55,7 @@ public abstract class Document extends BaseEntity {
     @JoinColumn(name = "type_id")
     private DocumentType documentType;
 
-    @Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
-    private User writer;
+    private Long writerId;
 
     @Enumerated(EnumType.STRING)
     private DocumentStatus status;
@@ -68,14 +64,14 @@ public abstract class Document extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DocumentApproval> approvals = new ArrayList<>();
 
-    protected Document(Long id, DocumentType documentType, User writer, DocumentStatus status) {
+    protected Document(Long id, DocumentType documentType, Long writerId, DocumentStatus status) {
 
         checkArgument(isNotEmpty(documentType), "documentType must be provided.");
-        checkArgument(isNotEmpty(writer), "writer must be provided.");
+        checkArgument(isNotEmpty(writerId), "writer must be provided.");
 
         this.id = id;
         this.documentType = documentType;
-        this.writer = writer;
+        this.writerId = writerId;
         this.status = defaultIfNull(status, DocumentStatus.PROCEEDING);
 
         // 문서의 처음 결제 작업 생성

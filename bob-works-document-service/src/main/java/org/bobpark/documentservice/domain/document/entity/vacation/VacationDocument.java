@@ -22,7 +22,6 @@ import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.VacationSubType;
 import org.bobpark.documentservice.domain.document.type.VacationType;
-import org.bobpark.documentservice.domain.user.entity.User;
 
 @ToString
 @Getter
@@ -44,10 +43,10 @@ public class VacationDocument extends Document {
     private String reason;
 
     @Builder
-    private VacationDocument(Long id, DocumentType documentType, User writer, DocumentStatus status,
+    private VacationDocument(Long id, DocumentType documentType, Long writerId, DocumentStatus status,
         VacationType vacationType, VacationSubType vacationSubType, LocalDate vacationDateFrom,
         LocalDate vacationDateTo, String reason) {
-        super(id, documentType, writer, status);
+        super(id, documentType, writerId, status);
 
         checkArgument(isNotEmpty(vacationType), "vacationType must be provided.");
         checkArgument(isNotEmpty(vacationDateFrom), "vacationDateFrom must be provided.");
@@ -74,9 +73,6 @@ public class VacationDocument extends Document {
             return 0.5;
         }
 
-
-
         return to.getDayOfYear() - from.getDayOfYear() + 1f;
-
     }
 }

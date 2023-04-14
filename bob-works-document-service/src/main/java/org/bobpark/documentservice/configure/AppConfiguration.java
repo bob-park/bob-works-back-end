@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
+import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
+
 @EnableTransactionManagement
 @Configuration
 public class AppConfiguration {
@@ -43,5 +45,10 @@ public class AppConfiguration {
         builder.modulesToInstall(jtm);
 
         return builder;
+    }
+
+    @Bean
+    public AuthenticationUtils authenticationUtils() {
+        return AuthenticationUtils.getInstance();
     }
 }

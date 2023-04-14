@@ -27,7 +27,6 @@ import lombok.ToString.Exclude;
 
 import org.bobpark.documentservice.common.entity.BaseEntity;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
-import org.bobpark.documentservice.domain.user.entity.User;
 
 @ToString
 @Getter
@@ -69,16 +68,17 @@ public class DocumentType extends BaseEntity {
         this.name = name;
     }
 
-    public void addApproveLine(DocumentTypeApprovalLine parent, User user) {
+    public void addApproveLine(DocumentTypeApprovalLine parent, Long userId) {
 
-        DocumentTypeApprovalLine createApproveLine = new DocumentTypeApprovalLine();
+        DocumentTypeApprovalLine createApproveLine =
+            DocumentTypeApprovalLine.builder()
+                .userId(userId)
+                .documentType(this)
+                .build();
 
         if (parent != null) {
             parent.addChild(createApproveLine);
         }
-
-        createApproveLine.setDocumentType(this);
-        createApproveLine.setUser(user);
 
         getApprovalLines().add(createApproveLine);
 
