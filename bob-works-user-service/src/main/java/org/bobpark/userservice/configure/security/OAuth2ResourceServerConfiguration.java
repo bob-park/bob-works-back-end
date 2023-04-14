@@ -1,5 +1,6 @@
 package org.bobpark.userservice.configure.security;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.bobpark.userservice.common.security.handler.RestAuthenticationEntryPoint;
 import org.bobpark.userservice.configure.security.converter.JwtRoleGrantAuthoritiesConverter;
-import org.bobpark.userservice.domain.role.service.RoleHierarchyService;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ import org.bobpark.userservice.domain.role.service.RoleHierarchyService;
 @Configuration
 public class OAuth2ResourceServerConfiguration {
 
-    private final RoleHierarchyService roleHierarchyService;
+    // private final RoleHierarchyService roleHierarchyService;
     private final ObjectMapper om;
 
     @Bean
@@ -82,7 +82,9 @@ public class OAuth2ResourceServerConfiguration {
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 
-        Map<String, List<String>> roleHierarchyMap = roleHierarchyService.getRoleHierarchyToMap();
+        // Map<String, List<String>> roleHierarchyMap = roleHierarchyService.getRoleHierarchyToMap();
+
+        Map<String, List<String>> roleHierarchyMap = Collections.emptyMap();
 
         String rolesHierarchyStr = RoleHierarchyUtils.roleHierarchyFromMap(roleHierarchyMap);
 

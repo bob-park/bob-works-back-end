@@ -53,6 +53,8 @@ subprojects {
         set('snippetsDir', file("build/generated-snippets"))
 
         queryDslVersion = "5.0.0"
+
+        springCloudNetflixVersion = "4.0.1"
     }
 
     dependencies {
