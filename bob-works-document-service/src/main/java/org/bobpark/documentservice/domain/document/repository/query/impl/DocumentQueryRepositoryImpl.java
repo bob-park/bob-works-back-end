@@ -39,7 +39,7 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
     public Page<Document> search(SearchDocumentRequest searchRequest, Pageable pageable) {
 
         List<Document> content =
-            query.select(document)
+            query.selectFrom(document)
                 .join(document.documentType, documentType).fetchJoin()
                 .join(document.writer, user).fetchJoin()
                 .where(mappingCondition(searchRequest))

@@ -25,7 +25,7 @@ public interface RepositoryUtils {
                 Order direction = order.getDirection().isAscending() ? Order.ASC : Order.DESC;
 
                 QueryDslPath<?> queryDslPath = paths.stream()
-                    .filter(item -> StringUtils.equals(item.getName(), property))
+                    .filter(item -> StringUtils.equals(item.name(), property))
                     .findAny()
                     .orElse(null);
 
@@ -33,7 +33,7 @@ public interface RepositoryUtils {
                     continue;
                 }
 
-                sortList.add(new OrderSpecifier<>(direction, queryDslPath.getPath()));
+                sortList.add(new OrderSpecifier<>(direction, queryDslPath.path()));
 
             }
         }
