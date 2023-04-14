@@ -25,8 +25,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 
 import org.bobpark.authorizationservice.common.security.handler.RestAccessDeniedHandler;
+import org.bobpark.authorizationservice.domain.role.model.RoleResponse;
 import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
 
 @Slf4j
@@ -43,7 +45,9 @@ public class DefaultSecurityConfiguration {
 
         http.authorizeHttpRequests(
             requests ->
-                requests.anyRequest().authenticated());
+                requests
+                    .requestMatchers("/role/**").permitAll()
+                    .anyRequest().authenticated());
 
         http.formLogin();
 
@@ -73,8 +77,7 @@ public class DefaultSecurityConfiguration {
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 
-        Map<String, List<String>> roleHierarchyMap = roleHierarchyService.getRoleHierarchyToMap();
-
+        Map<String, List<String>> roleHierarchyMap = parseRoleHierarchyMap();
         String rolesHierarchyStr = RoleHierarchyUtils.roleHierarchyFromMap(roleHierarchyMap);
 
         log.debug("role hierarchy={}", rolesHierarchyStr);
@@ -90,8 +93,26 @@ public class DefaultSecurityConfiguration {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    private Map<String, List<String>> parseRoleHierarchyMap() {
+
+        Map<String, List<String>> result = Maps.newHashMap();
+
+        List<RoleResponse> roles = roleHierarchyService.getRoles();
+
+        for (RoleResponse role : roles) {
+
+            if (role.children().isEmpty()) {
+                continue;
+            }
+
+            result.put(role.roleName(), role.children().stream().map(RoleResponse::roleName).toList());
+        }
+
+        return result;
     }
 
 }

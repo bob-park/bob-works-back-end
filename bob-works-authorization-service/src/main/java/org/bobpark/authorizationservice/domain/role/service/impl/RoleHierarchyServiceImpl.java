@@ -1,5 +1,7 @@
 package org.bobpark.authorizationservice.domain.role.service.impl;
 
+import static org.bobpark.authorizationservice.domain.role.model.RoleResponse.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,12 +11,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Maps;
 
 import org.bobpark.authorizationservice.domain.role.entity.Role;
+import org.bobpark.authorizationservice.domain.role.model.RoleResponse;
 import org.bobpark.authorizationservice.domain.role.repository.RoleRepository;
 import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
 
@@ -25,44 +29,26 @@ import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService
 public class RoleHierarchyServiceImpl implements RoleHierarchyService {
 
     private final RoleRepository roleRepository;
-
     @Override
-    public Map<String, List<String>> getRoleHierarchyToMap() {
+    public List<RoleResponse> getRoles() {
 
-        Map<String, List<String>> result = Maps.newHashMap();
-
+        List<RoleResponse> result = new ArrayList<>();
         List<Role> roles = roleRepository.findAll();
-
-        List<RoleHierarchy> roleHierarchies = new ArrayList<>();
 
         for (Role role : roles) {
 
+            RoleResponse response = toResponse(role);
+
             if (role.getParent() != null) {
-                roleHierarchies.stream().filter(item -> item.getRole().equals(role.getParent().getRoleName()))
+                result.stream()
+                    .filter(item -> item.id().equals(role.getParent().getId()))
                     .findAny()
-                    .ifPresent(roleHierarchy ->
-                        roleHierarchy.getChildren().add(role.getRoleName()));
+                    .ifPresent(item -> item.children().add(response));
             }
 
-            roleHierarchies.add(new RoleHierarchy(role.getRoleName()));
+            result.add(response);
         }
-
-        roleHierarchies
-            .stream()
-            .filter(roleHierarchy -> !roleHierarchy.getChildren().isEmpty())
-            .forEach(roleHierarchy -> result.put(roleHierarchy.getRole(), roleHierarchy.getChildren()));
 
         return result;
-    }
-
-    @ToString
-    @Getter
-    private class RoleHierarchy {
-        private final String role;
-        private final List<String> children = new ArrayList<>();
-
-        public RoleHierarchy(String role) {
-            this.role = role;
-        }
     }
 }
