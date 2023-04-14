@@ -28,6 +28,7 @@ import org.bobpark.documentservice.common.utils.repository.RepositoryUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest;
 import org.bobpark.documentservice.domain.document.repository.query.DocumentQueryRepository;
+import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 
 @RequiredArgsConstructor
@@ -64,6 +65,7 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
 
         builder.and(eqTypeName(searchRequest.typeName()))
             .and(eqTypeId(searchRequest.typeId()))
+            .and(eqStatus(searchRequest.status()))
             .and(eqWriter(searchRequest.writer()))
             .and(afterCreatedDate(searchRequest.createdDateFrom()))
             .and(beforeCreatedDate(searchRequest.createdDateTo()));
@@ -77,6 +79,10 @@ public class DocumentQueryRepositoryImpl implements DocumentQueryRepository {
 
     private BooleanExpression eqTypeId(Long typeId) {
         return typeId != null ? documentType.id.eq(typeId) : null;
+    }
+
+    private BooleanExpression eqStatus(DocumentStatus status) {
+        return status != null ? document.status.eq(status) : null;
     }
 
     private BooleanExpression eqWriter(String writer) {
