@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import org.bobpark.documentservice.common.utils.authentication.AuthenticationUti
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest;
-import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest.SearchDocumentRequestBuilder;
 import org.bobpark.documentservice.domain.document.repository.DocumentRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentService;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
@@ -41,19 +39,17 @@ public class DocumentServiceImpl implements DocumentService {
     public Page<DocumentResponse> search(SearchDocumentRequest searchRequest, Pageable pageable) {
 
         Authentication authentication = getAuthentication();
-
         boolean isManager = AuthenticationUtils.getInstance().isManager();
-
-        SearchDocumentRequestBuilder searchRequestBuilder = SearchDocumentRequest.withoutWriter(searchRequest);
+        SearchDocumentRequest condition = searchRequest;
 
         if (!isManager) {
 
             UserResponse writer = AuthenticationUtils.getInstance().getUser(authentication.getName());
 
-            searchRequestBuilder.writerId(writer.id());
+            condition = SearchDocumentRequest.withoutWriter(searchRequest).writerId(writer.id()).build();
         }
 
-        Page<Document> result = documentRepository.search(searchRequestBuilder.build(), pageable);
+        Page<Document> result = documentRepository.search(condition, pageable);
 
         List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
 
