@@ -156,3 +156,48 @@ create table users_roles
     foreign key (user_id) references users (id),
     foreign key (role_id) references roles (id)
 );
+
+/*
+    insert data
+*/
+-- authorization_clients
+insert into authorization_clients (id, client_id, client_secret, client_name, client_issue_at, required_authorization_consent, access_token_time_to_live) values (1, '82606268-9d8f-47a6-b2ea-5e4fb396516d', '{noop}SMHnl3kU494VujaZDOqp', 'oauth2-client-app1', '2023-04-07 11:06:06.061715', true, 1800);
+insert into authorization_clients (id, client_id, client_secret, client_name, client_issue_at, required_authorization_consent, access_token_time_to_live) values (2, '69a59cc4-3954-4f3f-9efd-b7a293b4bc18', '{noop}a3nZ3vsmdWS0ewu52rKG', 'Bob Works 문서 서비스', '2023-04-11 16:44:19.806866', true, 1800);
+
+-- authorization_clients_redirects
+insert into authorization_clients_redirects(client_id, redirect_uri) values (1, 'https://oauth.pstmn.io/v1/callback');
+insert into authorization_clients_redirects(client_id, redirect_uri) values (1, 'http://127.0.0.1:8080/');
+insert into authorization_clients_redirects(client_id, redirect_uri) values (2, 'https://oauth.pstmn.io/v1/callback');
+insert into authorization_clients_redirects(client_id, redirect_uri) values (2, 'http://127.0.0.1:8081/');
+
+-- authorization_scopes
+insert into authorization_scopes (id, scope, description) values (1, 'profile', '사용자 프로필에 접근합니다.');
+insert into authorization_scopes (id, scope, description) values (2, 'document', '사용자가 작성한 문서에 접근합니다.');
+insert into authorization_scopes (id, scope, description) values (3, 'email', '사용자의 email 에 접근합니다.');
+insert into authorization_scopes (id, scope, description) values (4, 'phone', '사용자의 휴대전화 정보에 접근합니다.');
+
+-- authorization_clients_scopes
+insert into authorization_clients_scopes(client_id, scope_id) values (1, 1);
+insert into authorization_clients_scopes(client_id, scope_id) values (1, 2);
+insert into authorization_clients_scopes(client_id, scope_id) values (1, 3);
+insert into authorization_clients_scopes(client_id, scope_id) values (1, 4);
+insert into authorization_clients_scopes(client_id, scope_id) values (2, 1);
+insert into authorization_clients_scopes(client_id, scope_id) values (2, 2);
+insert into authorization_clients_scopes(client_id, scope_id) values (2, 3);
+insert into authorization_clients_scopes(client_id, scope_id) values (2, 4);
+
+
+-- users
+insert into users(id, user_id, password, name, email, created_by) values (11, 'admin', '{bcrypt}$2a$12$t8WLpJ8FFm7eUYrQatHcCODdtaGKUWm2c6Fkftrg2q5VEQ.q1alCq', 'admin', 'admin@admin.com', 'admin');
+insert into users(id, user_id, password, name, email, created_by) values (12, 'manager', '{bcrypt}$2a$12$t8WLpJ8FFm7eUYrQatHcCODdtaGKUWm2c6Fkftrg2q5VEQ.q1alCq', 'manager', 'manager@manager.com', 'admin');
+insert into users(id, user_id, password, name, email, created_by) values (13, 'user', '{bcrypt}$2a$12$t8WLpJ8FFm7eUYrQatHcCODdtaGKUWm2c6Fkftrg2q5VEQ.q1alCq', 'user', 'user@user.com', 'admin');
+
+-- roles
+insert into roles (id, p_id, role_name, description) values (11, null, 'ROLE_ADMIN', '관리자');
+insert into roles (id, p_id, role_name, description) values (12, 11, 'ROLE_MANAGER', '매니저');
+insert into roles (id, p_id, role_name, description) values (13, 12, 'ROLE_USER', '사용자');
+
+-- users_roles
+insert into users_roles(user_id, role_id) values (11, 11);
+insert into users_roles(user_id, role_id) values (12, 12);
+insert into users_roles(user_id, role_id) values (13, 13);

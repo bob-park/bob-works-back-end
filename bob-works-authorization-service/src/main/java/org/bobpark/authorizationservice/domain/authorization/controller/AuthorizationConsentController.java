@@ -9,30 +9,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsent;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.google.common.collect.Lists;
-
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClient;
 import org.bobpark.authorizationservice.domain.authorization.entity.AuthorizationClientScope;
 import org.bobpark.authorizationservice.domain.authorization.model.response.AuthorizationScopeResponse;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientRepository;
+import org.bobpark.authorizationservice.domain.user.entity.User;
+import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
+import org.bobpark.core.exception.NotFoundException;
 
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("oauth2/consent")
 public class AuthorizationConsentController {
 
-    // private final RegisteredClientRepository clientRepository;
     private final OAuth2AuthorizationConsentService consentService;
 
     private final AuthorizationClientRepository clientRepository;
+    private final UserRepository userRepository;
 
     @GetMapping(path = "")
     public String consent(Principal principal, Model model,
@@ -40,9 +39,12 @@ public class AuthorizationConsentController {
         @RequestParam(OAuth2ParameterNames.SCOPE) String scope,
         @RequestParam(OAuth2ParameterNames.STATE) String state) {
 
-        // RegisteredClient client = clientRepository.findByClientId(clientId);
         AuthorizationClient client = clientRepository.findByClientId(clientId).orElseThrow();
         OAuth2AuthorizationConsent consent = consentService.findById(clientId, principal.getName());
+
+        User user =
+            userRepository.findByUserId(principal.getName())
+                .orElseThrow(() -> new NotFoundException(User.class, principal.getName()));
 
         List<AuthorizationScopeResponse> scopes =
             client.getScopes().stream()
@@ -70,7 +72,9 @@ public class AuthorizationConsentController {
         model.addAttribute("clientName", client.getClientName());
         model.addAttribute("clientId", clientId);
         model.addAttribute("state", state);
-        model.addAttribute("principalName", principal.getName());
+
+        model.addAttribute("userId", user.getUserId());
+        model.addAttribute("username", user.getName());
 
         model.addAttribute("checkableScopes", checkableScopes);
         model.addAttribute("prevScopes", prevScopes);

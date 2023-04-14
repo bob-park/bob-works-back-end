@@ -4,10 +4,14 @@ import static com.google.common.base.Preconditions.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +31,8 @@ import org.bobpark.authorizationservice.domain.authorization.service.Authorizati
 @Service
 @Transactional(readOnly = true)
 public class AuthorizationClientServiceImpl implements AuthorizationClientService {
+
+    private static final Pattern DEFAULT_CLIENT_SECRET_PATTERN = Pattern.compile("\\{(.*)\\}(.*)");
 
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationScopeRepository scopeRepository;
@@ -54,10 +60,15 @@ public class AuthorizationClientServiceImpl implements AuthorizationClientServic
 
         log.debug("added authorization client. (id={})", createClient.getId());
 
+        Matcher matcher = DEFAULT_CLIENT_SECRET_PATTERN.matcher(createClient.getClientSecret());
+        matcher.find();
+
+        log.debug("clientSecret={}", matcher.group(2));
+
         return AuthorizationClientResponse.builder()
             .id(createClient.getId())
             .clientId(createClient.getClientId())
-            .clientSecret(createClient.getClientSecret())
+            .clientSecret(matcher.group(2))
             .clientIssueAt(createClient.getClientIssueAt())
             .clientSecretExpiredAt(createClient.getClientSecretExpiresAt())
             .requiredAuthorizationConsent(createClient.getRequiredAuthorizationConsent())

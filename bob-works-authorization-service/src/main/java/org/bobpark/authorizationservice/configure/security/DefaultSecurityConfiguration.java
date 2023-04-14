@@ -9,35 +9,47 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
+import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyUtils;
-import org.springframework.security.authorization.AuthorityAuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.bobpark.authorizationservice.common.security.handler.RestAccessDeniedHandler;
 import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
 
 @Slf4j
 @RequiredArgsConstructor
-@EnableWebSecurity
+@EnableMethodSecurity
 @Configuration
 public class DefaultSecurityConfiguration {
 
     private final RoleHierarchyService roleHierarchyService;
+    private final ObjectMapper om;
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(
             requests ->
-                requests
-                    .requestMatchers(HttpMethod.POST, "/authorization/client").permitAll()
-                    .anyRequest().authenticated());
+                requests.anyRequest().authenticated());
 
         http.formLogin();
+
+        http.exceptionHandling(
+            exceptionHandler ->
+                exceptionHandler.accessDeniedHandler(accessDeniedHandler()));
 
         http.cors(AbstractHttpConfigurer::disable);
         http.csrf(AbstractHttpConfigurer::disable);
@@ -49,14 +61,12 @@ public class DefaultSecurityConfiguration {
       role hierarchy
      */
     @Bean
-    public AuthorityAuthorizationManager<RequestAuthorizationContext> authorizationManager() {
+    public static MethodSecurityExpressionHandler expressionHandler(RoleHierarchy roleHierarchy) {
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
 
-        AuthorityAuthorizationManager<RequestAuthorizationContext> authorizationManager =
-            AuthorityAuthorizationManager.hasAnyAuthority("USER");
+        expressionHandler.setRoleHierarchy(roleHierarchy);
 
-        authorizationManager.setRoleHierarchy(roleHierarchy());
-
-        return authorizationManager;
+        return expressionHandler;
     }
 
     @Bean
@@ -72,6 +82,16 @@ public class DefaultSecurityConfiguration {
         roleHierarchy.setHierarchy(rolesHierarchyStr);
 
         return roleHierarchy;
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new RestAccessDeniedHandler(om);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
 }

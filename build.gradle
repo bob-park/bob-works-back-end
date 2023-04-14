@@ -88,6 +88,12 @@ subprojects {
         implementation 'commons-io:commons-io:2.11.0'
 
         implementation 'io.micrometer:micrometer-registry-prometheus'
+
+        // core
+        if (project.name != 'bob-works-core') {
+            implementation project(':bob-works-core')
+            testImplementation project(path: ':bob-works-core', configuration: 'testClasses')
+        }
     }
 
     dependencyManagement {
