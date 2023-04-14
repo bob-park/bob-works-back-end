@@ -9,15 +9,15 @@ import org.bobpark.authorizationservice.domain.role.entity.Role;
 
 @Builder
 public record RoleResponse(Long id,
-                           RoleResponse parent,
                            String roleName,
                            String description,
+                           RoleResponse parent,
                            List<RoleResponse> children) {
 
     public static RoleResponse toResponse(Role role) {
         return RoleResponse.builder()
             .id(role.getId())
-            .parent(role.getParent() != null ? toResponse(role.getParent()) : null)
+            // .parent(role.getParent() != null ? toResponse(role.getParent()) : null)
             .roleName(role.getRoleName())
             .description(role.getDescription())
             .children(new ArrayList<>())

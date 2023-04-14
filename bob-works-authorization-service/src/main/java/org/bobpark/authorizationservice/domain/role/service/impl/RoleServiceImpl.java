@@ -4,29 +4,23 @@ import static org.bobpark.authorizationservice.domain.role.model.RoleResponse.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.collect.Maps;
 
 import org.bobpark.authorizationservice.domain.role.entity.Role;
 import org.bobpark.authorizationservice.domain.role.model.RoleResponse;
 import org.bobpark.authorizationservice.domain.role.repository.RoleRepository;
-import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
+import org.bobpark.authorizationservice.domain.role.service.RoleService;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
-public class RoleHierarchyServiceImpl implements RoleHierarchyService {
+public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
     @Override
