@@ -1,5 +1,7 @@
 package org.bobpark.userservice.domain.user.model;
 
+import java.time.LocalDate;
+
 import lombok.Builder;
 
 import org.bobpark.userservice.domain.position.model.PositionResponse;
@@ -7,13 +9,12 @@ import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserPosition;
 
 @Builder
-public record UserResponse(
-    Long id,
-    String userId,
-    String email,
-    String name,
-    PositionResponse position
-) {
+public record UserResponse(Long id,
+                           String userId,
+                           String email,
+                           String name,
+                           PositionResponse position,
+                           UserVacationResponse nowVacation) {
 
     public static UserResponse toResponse(User user) {
 
@@ -28,12 +29,20 @@ public record UserResponse(
                     .build();
         }
 
+        UserVacationResponse userVacation =
+            user.getVacations().stream()
+                .filter(item -> item.getYear() == LocalDate.now().getYear())
+                .map(UserVacationResponse::toResponse)
+                .findAny()
+                .orElse(null);
+
         return UserResponse.builder()
             .id(user.getId())
             .userId(user.getUserId())
             .email(user.getEmail())
             .name(user.getName())
             .position(positionResponse)
+            .nowVacation(userVacation)
             .build();
     }
 
