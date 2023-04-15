@@ -30,7 +30,7 @@ public class Vacation {
             throw new OverUsableVacationException(getTotalCount(), (getUsedCount() + count));
         }
 
-        this.usedCount += 1;
+        this.usedCount += count;
     }
 
     public void cancelVacation(double count) {
@@ -38,6 +38,6 @@ public class Vacation {
             throw new IllegalArgumentException("Invalid cancel request. (current=" + getUsedCount() + ")");
         }
 
-        this.usedCount -= 1;
+        this.usedCount -= count;
     }
 }
