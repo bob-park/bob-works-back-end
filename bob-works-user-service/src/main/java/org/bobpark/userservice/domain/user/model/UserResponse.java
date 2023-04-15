@@ -7,6 +7,7 @@ import lombok.Builder;
 import org.bobpark.userservice.domain.position.model.PositionResponse;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserPosition;
+import org.bobpark.userservice.domain.user.model.vacation.UserVacationResponse;
 
 @Builder
 public record UserResponse(Long id,

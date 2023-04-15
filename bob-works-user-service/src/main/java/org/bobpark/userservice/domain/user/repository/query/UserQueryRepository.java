@@ -10,6 +10,8 @@ public interface UserQueryRepository {
 
     Optional<User> findByUserId(Id<User, String> userId);
 
+    Optional<User> findById(Id<User, Long> id);
+
     List<User> getUsersAll();
 
 }

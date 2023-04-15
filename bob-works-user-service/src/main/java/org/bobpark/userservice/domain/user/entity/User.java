@@ -1,7 +1,6 @@
 package org.bobpark.userservice.domain.user.entity;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,18 +61,18 @@ public class User extends BaseEntity {
         getVacations().add(vacation);
     }
 
-    public void increaseVacation(VacationType type, double increaseCount) {
+    public void cancelVacation(VacationType type, double increaseCount) {
 
         Vacation vacation = selectVacation(type);
 
-        vacation.useVacation(increaseCount);
+        vacation.cancelVacation(increaseCount);
 
     }
 
-    public void decreaseVacation(VacationType type, double decreaseCount) {
+    public void useVacation(VacationType type, double decreaseCount) {
         Vacation vacation = selectVacation(type);
 
-        vacation.cancelVacation(decreaseCount);
+        vacation.useVacation(decreaseCount);
     }
 
     private Vacation selectVacation(VacationType type) {

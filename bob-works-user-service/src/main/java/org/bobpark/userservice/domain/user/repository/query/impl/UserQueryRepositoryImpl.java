@@ -38,6 +38,19 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
     }
 
     @Override
+    public Optional<User> findById(Id<User, Long> id) {
+        return Optional.ofNullable(
+            query.selectFrom(user)
+                .leftJoin(user.vacations, userVacation).fetchJoin()
+                .leftJoin(user.position, userPosition).fetchJoin()
+                .leftJoin(userPosition.position, position).fetchJoin()
+                .where(
+                    user.id.eq(id.getValue()),
+                    userVacation.year.eq(LocalDate.now().getYear()))
+                .fetchOne());
+    }
+
+    @Override
     public List<User> getUsersAll() {
         return query.selectFrom(user)
             .leftJoin(user.vacations, userVacation).fetchJoin()
