@@ -25,5 +25,8 @@ dependencies {
     annotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
     testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
 
+    // eureka client
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudNetflixVersion}"
+
 
 }

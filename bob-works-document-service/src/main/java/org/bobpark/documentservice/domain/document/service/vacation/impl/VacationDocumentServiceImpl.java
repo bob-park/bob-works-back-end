@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.documentservice.domain.document.model.vacation.VacationDocumentResponse.*;
 
 import java.security.Principal;
+import java.util.Collections;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
+import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
 import org.bobpark.documentservice.domain.document.model.vacation.CreateVacationDocumentRequest;
@@ -20,8 +22,7 @@ import org.bobpark.documentservice.domain.document.model.vacation.VacationDocume
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
 import org.bobpark.documentservice.domain.document.service.vacation.VacationDocumentService;
-import org.bobpark.documentservice.domain.user.entity.User;
-import org.bobpark.documentservice.domain.user.repository.UserRepository;
+import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -30,7 +31,6 @@ import org.bobpark.documentservice.domain.user.repository.UserRepository;
 public class VacationDocumentServiceImpl implements VacationDocumentService {
 
     private final DocumentTypeRepository documentTypeRepository;
-    private final UserRepository userRepository;
     private final VacationDocumentRepository vacationDocumentRepository;
 
     @Transactional
@@ -43,14 +43,12 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
             documentTypeRepository.findById(createRequest.typeId())
                 .orElseThrow(() -> new NotFoundException(DocumentType.class, createRequest.typeId()));
 
-        User writer =
-            userRepository.findByUserId(principal.getName())
-                .orElseThrow(() -> new NotFoundException(User.class, principal.getName()));
+        UserResponse writer = AuthenticationUtils.getInstance().getUser(principal.getName());
 
         VacationDocument createDocument =
             VacationDocument.builder()
                 .documentType(documentType)
-                .writer(writer)
+                .writerId(writer.id())
                 .vacationType(createRequest.vacationType())
                 .vacationSubType(createRequest.vacationSubType())
                 .vacationDateFrom(createRequest.vacationDateFrom())
@@ -62,6 +60,6 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
 
         log.debug("added vacation document. (id={})", createDocument.getId());
 
-        return toResponse(createDocument);
+        return toResponse(createDocument, Collections.singletonList(writer));
     }
 }

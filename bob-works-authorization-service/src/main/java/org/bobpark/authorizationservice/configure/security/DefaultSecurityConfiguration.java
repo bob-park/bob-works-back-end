@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -19,15 +17,16 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 
 import org.bobpark.authorizationservice.common.security.handler.RestAccessDeniedHandler;
-import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService;
+import org.bobpark.authorizationservice.domain.role.model.RoleResponse;
+import org.bobpark.authorizationservice.domain.role.service.RoleService;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +34,7 @@ import org.bobpark.authorizationservice.domain.role.service.RoleHierarchyService
 @Configuration
 public class DefaultSecurityConfiguration {
 
-    private final RoleHierarchyService roleHierarchyService;
+    private final RoleService roleService;
     private final ObjectMapper om;
 
     @Bean
@@ -43,7 +42,9 @@ public class DefaultSecurityConfiguration {
 
         http.authorizeHttpRequests(
             requests ->
-                requests.anyRequest().authenticated());
+                requests
+                    .requestMatchers("/role/**").permitAll()
+                    .anyRequest().authenticated());
 
         http.formLogin();
 
@@ -73,8 +74,7 @@ public class DefaultSecurityConfiguration {
     public RoleHierarchyImpl roleHierarchy() {
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
 
-        Map<String, List<String>> roleHierarchyMap = roleHierarchyService.getRoleHierarchyToMap();
-
+        Map<String, List<String>> roleHierarchyMap = parseRoleHierarchyMap();
         String rolesHierarchyStr = RoleHierarchyUtils.roleHierarchyFromMap(roleHierarchyMap);
 
         log.debug("role hierarchy={}", rolesHierarchyStr);
@@ -90,8 +90,26 @@ public class DefaultSecurityConfiguration {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    private Map<String, List<String>> parseRoleHierarchyMap() {
+
+        Map<String, List<String>> result = Maps.newHashMap();
+
+        List<RoleResponse> roles = roleService.getRoles();
+
+        for (RoleResponse role : roles) {
+
+            if (role.children().isEmpty()) {
+                continue;
+            }
+
+            result.put(role.roleName(), role.children().stream().map(RoleResponse::roleName).toList());
+        }
+
+        return result;
     }
 
 }

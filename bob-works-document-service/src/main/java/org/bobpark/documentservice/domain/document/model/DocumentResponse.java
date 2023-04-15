@@ -1,6 +1,9 @@
 package org.bobpark.documentservice.domain.document.model;
 
+import static org.bobpark.documentservice.domain.user.utils.UserUtils.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Builder;
 
@@ -19,16 +22,16 @@ public record DocumentResponse(Long id,
                                LocalDateTime lastModifiedDate,
                                String lastModifiedBy) {
 
-    public static DocumentResponse toResponse(Document vacationDocument) {
+    public static DocumentResponse toResponse(Document document, List<UserResponse> users) {
         return DocumentResponse.builder()
-            .id(vacationDocument.getId())
-            .type(vacationDocument.getType())
-            .writer(UserResponse.toResponse(vacationDocument.getWriter()))
-            .status(vacationDocument.getStatus())
-            .createdDate(vacationDocument.getCreatedDate())
-            .createdBy(vacationDocument.getCreatedBy())
-            .lastModifiedDate(vacationDocument.getLastModifiedDate())
-            .lastModifiedBy(vacationDocument.getLastModifiedBy())
+            .id(document.getId())
+            .type(document.getType())
+            .writer(findByUser(users, document.getWriterId()))
+            .status(document.getStatus())
+            .createdDate(document.getCreatedDate())
+            .createdBy(document.getCreatedBy())
+            .lastModifiedDate(document.getLastModifiedDate())
+            .lastModifiedBy(document.getLastModifiedBy())
             .build();
     }
 

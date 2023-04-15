@@ -1,10 +1,13 @@
 package org.bobpark.documentservice.domain.document.model;
 
+import static org.bobpark.documentservice.domain.user.utils.UserUtils.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Builder;
 
+import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.DocumentTypeApprovalLine;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
@@ -23,7 +26,7 @@ public record DocumentTypeResponse(
     DocumentTypeApprovalLineResponse approvalLine
 ) {
 
-    public static DocumentTypeResponse toResponse(DocumentType documentType) {
+    public static DocumentTypeResponse toResponse(DocumentType documentType, List<UserResponse> users) {
 
         List<DocumentTypeApprovalLine> approveLines = documentType.getApprovalLines();
 
@@ -37,12 +40,12 @@ public record DocumentTypeResponse(
 
         if (rootApproveLine != null) {
 
-            DocumentTypeApprovalLineResponse next = getNext(rootApproveLine, approveLines);
+            DocumentTypeApprovalLineResponse next = getNext(rootApproveLine, approveLines, users);
 
             rootApprovalLine =
                 DocumentTypeApprovalLineResponse.builder()
                     .id(rootApproveLine.getId())
-                    .user(UserResponse.toResponse(rootApproveLine.getUser()))
+                    .user(findByUser(users, rootApproveLine.getUserId()))
                     .next(next)
                     .build();
 
@@ -62,7 +65,7 @@ public record DocumentTypeResponse(
     }
 
     private static DocumentTypeApprovalLineResponse getNext(
-        DocumentTypeApprovalLine parent, List<DocumentTypeApprovalLine> approveLines) {
+        DocumentTypeApprovalLine parent, List<DocumentTypeApprovalLine> approveLines, List<UserResponse> users) {
 
         List<DocumentTypeApprovalLine> children =
             approveLines.stream()
@@ -72,11 +75,11 @@ public record DocumentTypeResponse(
         return children.stream()
             .map(item -> {
 
-                DocumentTypeApprovalLineResponse subNext = getNext(item, approveLines);
+                DocumentTypeApprovalLineResponse subNext = getNext(item, approveLines, users);
 
                 return DocumentTypeApprovalLineResponse.builder()
                     .id(item.getId())
-                    .user(UserResponse.toResponse(item.getUser()))
+                    .user(findByUser(users, item.getUserId()))
                     .next(subNext)
                     .build();
             })
@@ -84,4 +87,6 @@ public record DocumentTypeResponse(
             .orElse(null);
 
     }
+
+
 }

@@ -11,16 +11,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
-import org.bobpark.documentservice.domain.user.entity.User;
-
 @ToString
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "document_types_approval_lines")
 public class DocumentTypeApprovalLine {
@@ -43,10 +43,14 @@ public class DocumentTypeApprovalLine {
     @JoinColumn(name = "document_type_id")
     private DocumentType documentType;
 
-    @Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    private Long userId;
+
+    @Builder
+    private DocumentTypeApprovalLine(Long id, DocumentType documentType, Long userId) {
+        this.id = id;
+        this.documentType = documentType;
+        this.userId = userId;
+    }
 
     public void setParent(DocumentTypeApprovalLine parent) {
         this.parent = parent;
@@ -56,13 +60,5 @@ public class DocumentTypeApprovalLine {
 
         child.setParent(this);
         this.next = child;
-    }
-
-    public void setDocumentType(DocumentType documentType) {
-        this.documentType = documentType;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

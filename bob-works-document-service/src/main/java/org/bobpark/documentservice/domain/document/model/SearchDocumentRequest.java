@@ -16,7 +16,7 @@ import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 @Builder
 public record SearchDocumentRequest(DocumentTypeName typeName,
                                     Long typeId,
-                                    String writer,
+                                    Long writerId,
                                     DocumentStatus status,
                                     LocalDate createdDateFrom,
                                     LocalDate createdDateTo
