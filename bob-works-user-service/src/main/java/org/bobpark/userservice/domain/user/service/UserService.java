@@ -10,6 +10,6 @@ public interface UserService {
 
     UserResponse getUser(Id<User, String> userId);
 
-    List<UserResponse> getUserAll();
+    List<UserResponse> getUsersAll();
 
 }

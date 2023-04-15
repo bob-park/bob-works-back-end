@@ -29,7 +29,7 @@ public class UserController {
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping(path = "all")
-    public List<UserResponse> getUserAll() {
-        return userService.getUserAll();
+    public List<UserResponse> getUsersAll() {
+        return userService.getUsersAll();
     }
 }

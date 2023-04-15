@@ -1,9 +1,12 @@
 package org.bobpark.userservice.domain.user.repository.query.impl;
 
+import static org.bobpark.userservice.domain.position.entity.QPosition.*;
 import static org.bobpark.userservice.domain.user.entity.QUser.*;
+import static org.bobpark.userservice.domain.user.entity.QUserPosition.*;
 import static org.bobpark.userservice.domain.user.entity.QUserVacation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.bobpark.core.model.common.Id;
+import org.bobpark.userservice.domain.position.entity.QPosition;
+import org.bobpark.userservice.domain.user.entity.QUserPosition;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.repository.query.UserQueryRepository;
 
@@ -24,9 +29,21 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
         return Optional.ofNullable(
             query.selectFrom(user)
                 .leftJoin(user.vacations, userVacation).fetchJoin()
+                .leftJoin(user.position, userPosition).fetchJoin()
+                .leftJoin(userPosition.position, position).fetchJoin()
                 .where(
                     user.userId.eq(userId.getValue()),
                     userVacation.year.eq(LocalDate.now().getYear()))
                 .fetchOne());
+    }
+
+    @Override
+    public List<User> getUsersAll() {
+        return query.selectFrom(user)
+            .leftJoin(user.vacations, userVacation).fetchJoin()
+            .leftJoin(user.position, userPosition).fetchJoin()
+            .leftJoin(userPosition.position, position).fetchJoin()
+            .where(userVacation.year.eq(LocalDate.now().getYear()))
+            .fetch();
     }
 }
