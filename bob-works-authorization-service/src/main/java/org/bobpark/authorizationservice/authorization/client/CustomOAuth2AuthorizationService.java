@@ -177,6 +177,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
             Map<String, Object> claims = Maps.newHashMap();
             claims.putAll(token.getMetadata());
 
+            claims.put("sub", user.getUserId());
             claims.put(OidcScopes.EMAIL, user.getEmail());
             claims.put(OidcScopes.PHONE, user.getPhone());
 
