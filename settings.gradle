@@ -7,4 +7,6 @@ include 'bob-works-authorization-service'
 include 'bob-works-document-service'
 include 'bob-works-user-service'
 
+include 'bob-works-client'
+
 
