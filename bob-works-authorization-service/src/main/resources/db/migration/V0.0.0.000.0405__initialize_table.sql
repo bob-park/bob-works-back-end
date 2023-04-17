@@ -163,12 +163,17 @@ create table users_roles
 -- authorization_clients
 insert into authorization_clients (id, client_id, client_secret, client_name, client_issue_at, required_authorization_consent, access_token_time_to_live) values (1, '82606268-9d8f-47a6-b2ea-5e4fb396516d', '{noop}SMHnl3kU494VujaZDOqp', 'oauth2-client-app1', '2023-04-07 11:06:06.061715', true, 1800);
 insert into authorization_clients (id, client_id, client_secret, client_name, client_issue_at, required_authorization_consent, access_token_time_to_live) values (2, '69a59cc4-3954-4f3f-9efd-b7a293b4bc18', '{noop}a3nZ3vsmdWS0ewu52rKG', 'Bob Works 문서 서비스', '2023-04-11 16:44:19.806866', true, 1800);
+insert into authorization_clients (id, client_id, client_secret, client_name, client_issue_at, required_authorization_consent, access_token_time_to_live) values (3, '9c2c5b1c-0064-4a09-af45-6c495f07da48', '{noop}3PoJi9df20S88YgNv3mb', 'Bob Works Client', '2023-04-17 11:15:51.960184', true, 1800);
+
 
 -- authorization_clients_redirects
 insert into authorization_clients_redirects(client_id, redirect_uri) values (1, 'https://oauth.pstmn.io/v1/callback');
 insert into authorization_clients_redirects(client_id, redirect_uri) values (1, 'http://127.0.0.1:8080/');
 insert into authorization_clients_redirects(client_id, redirect_uri) values (2, 'https://oauth.pstmn.io/v1/callback');
 insert into authorization_clients_redirects(client_id, redirect_uri) values (2, 'http://127.0.0.1:8081/');
+insert into authorization_clients_redirects(client_id, redirect_uri) values (3, 'https://oauth.pstmn.io/v1/callback');
+insert into authorization_clients_redirects(client_id, redirect_uri) values (3, 'http://127.0.0.1:8083/login/oauth2/code/bob-works');
+
 
 -- authorization_scopes
 insert into authorization_scopes (id, scope, description) values (1, 'profile', '사용자 프로필에 접근합니다.');
@@ -177,14 +182,19 @@ insert into authorization_scopes (id, scope, description) values (3, 'email', '�
 insert into authorization_scopes (id, scope, description) values (4, 'phone', '사용자의 휴대전화 정보에 접근합니다.');
 
 -- authorization_clients_scopes
-insert into authorization_clients_scopes(client_id, scope_id) values (1, 1);
-insert into authorization_clients_scopes(client_id, scope_id) values (1, 2);
-insert into authorization_clients_scopes(client_id, scope_id) values (1, 3);
-insert into authorization_clients_scopes(client_id, scope_id) values (1, 4);
-insert into authorization_clients_scopes(client_id, scope_id) values (2, 1);
-insert into authorization_clients_scopes(client_id, scope_id) values (2, 2);
-insert into authorization_clients_scopes(client_id, scope_id) values (2, 3);
-insert into authorization_clients_scopes(client_id, scope_id) values (2, 4);
+insert into authorization_clients_scopes (client_id, scope_id) values (1, 1);
+insert into authorization_clients_scopes (client_id, scope_id) values (1, 2);
+insert into authorization_clients_scopes (client_id, scope_id) values (1, 3);
+insert into authorization_clients_scopes (client_id, scope_id) values (1, 4);
+insert into authorization_clients_scopes (client_id, scope_id) values (2, 1);
+insert into authorization_clients_scopes (client_id, scope_id) values (2, 2);
+insert into authorization_clients_scopes (client_id, scope_id) values (2, 3);
+insert into authorization_clients_scopes (client_id, scope_id) values (2, 4);
+insert into authorization_clients_scopes (client_id, scope_id) values (3, 1);
+insert into authorization_clients_scopes (client_id, scope_id) values (3, 2);
+insert into authorization_clients_scopes (client_id, scope_id) values (3, 3);
+insert into authorization_clients_scopes (client_id, scope_id) values (3, 4);
+
 
 
 -- users
