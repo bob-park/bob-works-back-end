@@ -1,10 +1,16 @@
 package org.bobparks.client.configure.security;
 
+import java.time.ZoneId;
+
+import jakarta.servlet.http.Cookie;
+
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -13,6 +19,7 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepo
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class OAuth2ClientConfiguration {
@@ -28,8 +35,10 @@ public class OAuth2ClientConfiguration {
 
         http.oauth2Login(oauth2login ->
             oauth2login
-                .successHandler(successHandler())
-                .defaultSuccessUrl("http://localhost:3000"));
+                .failureHandler((request, response, exception) -> {
+                    log.error("Authorized Exception - {}", exception.getMessage(), exception);
+                })
+                .successHandler(successHandler()));
 
         http.oauth2Client();
 
@@ -62,7 +71,23 @@ public class OAuth2ClientConfiguration {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return (request, response, authentication) -> response.sendRedirect("http://localhost:3000");
+        return (request, response, authentication) -> {
+
+            OAuth2AuthorizedClient client =
+                authorizedClientRepository.loadAuthorizedClient("bob-works", authentication, request);
+
+            Cookie cookie = new Cookie("accessToken", client.getAccessToken().getTokenValue());
+
+            long expired = client.getAccessToken().getIssuedAt().toEpochMilli() - System.currentTimeMillis();
+
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge((int)expired);
+
+            response.addCookie(cookie);
+
+            response.sendRedirect("http://127.0.0.1:3000");
+        };
     }
 
 }
