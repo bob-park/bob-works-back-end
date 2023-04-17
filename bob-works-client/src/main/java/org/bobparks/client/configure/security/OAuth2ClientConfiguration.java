@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @RequiredArgsConstructor
 @Configuration
@@ -25,7 +26,10 @@ public class OAuth2ClientConfiguration {
             requests ->
                 requests.anyRequest().authenticated());
 
-        http.oauth2Login(oauth2login -> oauth2login.defaultSuccessUrl("http://localhost:3000"));
+        http.oauth2Login(oauth2login ->
+            oauth2login
+                .successHandler(successHandler())
+                .defaultSuccessUrl("http://localhost:3000"));
 
         http.oauth2Client();
 
@@ -54,6 +58,11 @@ public class OAuth2ClientConfiguration {
         authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
 
         return authorizedClientManager;
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return (request, response, authentication) -> response.sendRedirect("http://localhost:3000");
     }
 
 }
