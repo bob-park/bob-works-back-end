@@ -1,14 +1,14 @@
-package org.bobparks.client.configure.security;
-
-import jakarta.servlet.http.Cookie;
+package org.bobpark.client.configure.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedCli
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,10 +39,17 @@ public class OAuth2ClientConfiguration {
                 })
                 .successHandler(successHandler()));
 
-        http.oauth2Client();
+        http.exceptionHandling(exception ->
+            exception.authenticationEntryPoint((request, response, authException) ->
+                response.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage())
+            ));
+
+        http.oauth2Client(Customizer.withDefaults());
 
         http.logout(logout ->
             logout
+                .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID"));
@@ -71,21 +79,9 @@ public class OAuth2ClientConfiguration {
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
 
-            OAuth2AuthorizedClient client =
-                authorizedClientRepository.loadAuthorizedClient("bob-works", authentication, request);
+            String referer = request.getHeader(HttpHeaders.REFERER);
 
-            Cookie cookie = new Cookie("accessToken", client.getAccessToken().getTokenValue());
-
-            long expired = client.getAccessToken().getIssuedAt().toEpochMilli() - System.currentTimeMillis();
-
-            cookie.setPath("/");
-            cookie.setHttpOnly(true);
-            cookie.setMaxAge((int)expired);
-
-            response.addCookie(cookie);
-
-            // TODO 추후 환경설정에 가져오도록 하자
-            response.sendRedirect("http://localhost:3000");
+            response.sendRedirect(referer);
         };
     }
 

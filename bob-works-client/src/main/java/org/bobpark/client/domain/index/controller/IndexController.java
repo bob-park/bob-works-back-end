@@ -1,4 +1,4 @@
-package org.bobparks.client.domain.index.controller;
+package org.bobpark.client.domain.index.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

@@ -1,4 +1,4 @@
-package org.bobparks.client.configure;
+package org.bobpark.client.configure;
 
 import java.util.List;
 

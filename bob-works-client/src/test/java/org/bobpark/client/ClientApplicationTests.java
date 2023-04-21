@@ -1,4 +1,4 @@
-package org.bobparks.client;
+package org.bobpark.client;
 
 import org.junit.jupiter.api.Test;
 
