@@ -1,7 +1,5 @@
 package org.bobparks.client.configure.security;
 
-import java.time.ZoneId;
-
 import jakarta.servlet.http.Cookie;
 
 import lombok.RequiredArgsConstructor;
@@ -86,7 +84,8 @@ public class OAuth2ClientConfiguration {
 
             response.addCookie(cookie);
 
-            response.sendRedirect("http://127.0.0.1:3000");
+            // TODO 추후 환경설정에 가져오도록 하자
+            response.sendRedirect("http://localhost:3000");
         };
     }
 

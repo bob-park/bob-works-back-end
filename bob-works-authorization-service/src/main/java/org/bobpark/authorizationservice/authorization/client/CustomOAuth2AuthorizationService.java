@@ -174,15 +174,20 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
         if (oidcToken != null && oidcToken.getToken() != null && !oidcToken.getToken().isEmpty()) {
             AuthorizationToken token = oidcToken.getToken();
 
+            Map<String, Object> profile = Maps.newHashMap();
+            profile.put("name", user.getName());
+            profile.put("position", null);
+
+            // TODO add team info
+            profile.put("team", null);
+
             Map<String, Object> claims = Maps.newHashMap();
             claims.putAll(token.getMetadata());
 
             claims.put("sub", user.getUserId());
             claims.put(OidcScopes.EMAIL, user.getEmail());
             claims.put(OidcScopes.PHONE, user.getPhone());
-
-            // TODO profile 은 추후에 추가 예정
-            // claims.put(OidcScopes.PROFILE, user.getEmail());
+            claims.put(OidcScopes.PROFILE, profile);
 
             OidcIdToken oidcIdToken =
                 new OidcIdToken(token.getValue(), token.getIssuedAtInstant(),
