@@ -79,6 +79,7 @@ public class OAuth2ClientConfiguration {
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
 
+            // TODO 처음 인증 받은 경우라면, REFERER 가 가 인증 서버로 지정되서 이거 안되겠음
             String referer = request.getHeader(HttpHeaders.REFERER);
 
             response.sendRedirect(referer);
