@@ -11,11 +11,9 @@ import org.bobpark.documentservice.domain.user.model.UserResponse;
 import org.bobpark.documentservice.domain.user.utils.UserUtils;
 
 @Builder
-public record DocumentTypeApprovalLineResponse(
-    Long id,
-    UserResponse user,
-    DocumentTypeApprovalLineResponse next
-) {
+public record DocumentTypeApprovalLineResponse(Long id,
+                                               UserResponse user,
+                                               DocumentTypeApprovalLineResponse next) {
     public static DocumentTypeApprovalLineResponse toResponse(DocumentTypeApprovalLine approveLine,
         List<UserResponse> users) {
         return DocumentTypeApprovalLineResponse.builder()

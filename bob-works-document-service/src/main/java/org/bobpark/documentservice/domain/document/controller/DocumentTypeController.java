@@ -58,6 +58,7 @@ public class DocumentTypeController {
         return documentTypeService.deleteDocumentType(Id.of(DocumentType.class, typeId));
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(path = "search")
     public List<DocumentTypeResponse> search(SearchDocumentTypeRequest searchRequest) {
         return documentTypeService.search(searchRequest);
