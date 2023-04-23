@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import org.bobpark.client.domain.document.model.DocumentTypeResponse;
 
-@FeignClient(name = "document-service")
+@FeignClient(name = "document-service", contextId = "document-type-service")
 public interface DocumentTypeClient {
 
     @GetMapping(path = "document/type/search")
