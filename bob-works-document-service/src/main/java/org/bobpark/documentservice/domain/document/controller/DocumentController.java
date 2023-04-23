@@ -23,7 +23,7 @@ public class DocumentController {
 
     @GetMapping(path = "search")
     public Page<DocumentResponse> search(SearchDocumentRequest searchRequest,
-        @PageableDefault(size = 25, sort = "createdDate", direction = Direction.DESC) Pageable pageable) {
+        @PageableDefault(sort = "createdDate", direction = Direction.DESC) Pageable pageable) {
         return documentService.search(searchRequest, pageable);
     }
 
