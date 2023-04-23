@@ -54,6 +54,8 @@ public class OAuth2ClientConfiguration {
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID"));
 
+        http.csrf().disable();
+
         return http.build();
     }
 
