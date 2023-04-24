@@ -27,7 +27,7 @@ public class UserController {
         return userService.getUser(Id.of(User.class, userId));
     }
 
-    @PreAuthorize("hasRole('MANAGER')")
+    // @PreAuthorize("hasRole('MANAGER')")
     @GetMapping(path = "all")
     public List<UserResponse> getUsersAll() {
         return userService.getUsersAll();

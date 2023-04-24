@@ -5,11 +5,15 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
 import static org.springframework.util.StringUtils.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +25,8 @@ import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.approval.ApprovalDocumentRequest;
+import org.bobpark.documentservice.domain.document.model.approval.DocumentApprovalResponse;
+import org.bobpark.documentservice.domain.document.model.approval.SearchDocumentApprovalRequest;
 import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.document.service.approval.DocumentApprovalService;
@@ -64,6 +70,30 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
         List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
 
         return toResponse(approval.getDocument(), users);
+    }
+
+    @Override
+    public Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable) {
+
+        Authentication authentication = AuthenticationUtils.getInstance().getAuthentication();
+        List<UserResponse> users = getUserAll();
+        UserResponse me = findUser(authentication.getName(), users);
+
+        SearchDocumentApprovalRequest searchDto =
+            SearchDocumentApprovalRequest.withoutApprovalLineUserId(searchRequest)
+                .approvalLineUserId(me.id())
+                .build();
+
+        Page<DocumentApproval> result = documentApprovalRepository.search(searchDto, pageable);
+
+        return result.map(item ->
+            DocumentApprovalResponse.builder()
+                .id(item.getId())
+                .document(DocumentResponse.toResponse(item.getDocument(), users))
+                .status(item.getStatus())
+                .approvedDateTime(item.getApprovedDateTime())
+                .reason(item.getReason())
+                .build());
     }
 
     private DocumentApproval getApproval(Id<DocumentApproval, Long> approvalId) {
@@ -113,6 +143,16 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
                 .type(type)
                 .useCount(count)
                 .build());
+    }
+
+    private List<UserResponse> getUserAll() {
+        return userClient.getUserAll();
+    }
+
+    private UserResponse findUser(String userId, List<UserResponse> users) {
+        return users.stream().filter(user -> user.userId().equals(userId))
+            .findAny()
+            .orElseThrow(() -> new NotFoundException(UserResponse.class, userId));
     }
 
 }
