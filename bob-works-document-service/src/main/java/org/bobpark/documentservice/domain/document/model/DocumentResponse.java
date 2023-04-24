@@ -14,7 +14,7 @@ import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Builder
 public record DocumentResponse(Long id,
-                               DocumentTypeName type,
+                               DocumentTypeResponse documentType,
                                UserResponse writer,
                                DocumentStatus status,
                                LocalDateTime createdDate,
@@ -25,7 +25,7 @@ public record DocumentResponse(Long id,
     public static DocumentResponse toResponse(Document document, List<UserResponse> users) {
         return DocumentResponse.builder()
             .id(document.getId())
-            .type(document.getType())
+            .documentType(DocumentTypeResponse.toResponse(document.getDocumentType(), users))
             .writer(findByUser(users, document.getWriterId()))
             .status(document.getStatus())
             .createdDate(document.getCreatedDate())
