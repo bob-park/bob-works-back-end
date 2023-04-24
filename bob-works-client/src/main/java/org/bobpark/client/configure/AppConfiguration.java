@@ -2,6 +2,7 @@ package org.bobpark.client.configure;
 
 import java.util.List;
 
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +10,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+@ConfigurationPropertiesScan("org.bobpark.client.configure.properties")
 @Configuration
 public class AppConfiguration {
 

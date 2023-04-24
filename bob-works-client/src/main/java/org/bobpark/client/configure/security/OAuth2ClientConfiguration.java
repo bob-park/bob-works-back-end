@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,10 +17,14 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import org.bobpark.client.configure.properties.AppProperties;
+
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class OAuth2ClientConfiguration {
+
+    private final AppProperties properties;
 
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final OAuth2AuthorizedClientRepository authorizedClientRepository;
@@ -79,13 +82,7 @@ public class OAuth2ClientConfiguration {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return (request, response, authentication) -> {
-
-            // TODO 처음 인증 받은 경우라면, REFERER 가 가 인증 서버로 지정되서 이거 안되겠음
-            String referer = request.getHeader(HttpHeaders.REFERER);
-
-            response.sendRedirect(referer);
-        };
+        return (request, response, authentication) -> response.sendRedirect(properties.getRedirectUrl());
     }
 
 }

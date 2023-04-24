@@ -39,6 +39,10 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
 
+## app
+app:
+  redirect-url: ${redirect_url}
+
 ## logging
 logging:
   charset:
@@ -57,4 +61,5 @@ logging:
   level:
     root: info
     web: info
-    org.bobpark: info
+    org.bobpark: debug
+
