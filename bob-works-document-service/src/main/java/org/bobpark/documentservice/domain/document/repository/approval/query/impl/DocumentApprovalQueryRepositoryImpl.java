@@ -44,7 +44,10 @@ public class DocumentApprovalQueryRepositoryImpl implements DocumentApprovalQuer
 
         JPAQuery<Long> countQuery =
             query.select(documentApproval.id.count())
-                .from(documentApproval);
+                .from(documentApproval)
+                .join(documentApproval.document, document)
+                .join(documentApproval.approvalLine, documentTypeApprovalLine)
+                .where(mappingCondition(searchRequest));
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
