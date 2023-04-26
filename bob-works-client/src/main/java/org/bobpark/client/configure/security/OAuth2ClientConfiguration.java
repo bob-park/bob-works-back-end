@@ -10,11 +10,13 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProvider;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import org.bobpark.client.configure.properties.AppProperties;
@@ -26,6 +28,7 @@ public class OAuth2ClientConfiguration {
 
     private final AppProperties properties;
 
+    private final OAuth2AuthorizedClientService authorizedClientService;
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final OAuth2AuthorizedClientRepository authorizedClientRepository;
 
@@ -51,6 +54,7 @@ public class OAuth2ClientConfiguration {
 
         http.logout(logout ->
             logout
+                .addLogoutHandler(logoutHandler())
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl(properties.getRedirectUrl())
                 .invalidateHttpSession(true)
@@ -83,6 +87,12 @@ public class OAuth2ClientConfiguration {
     @Bean
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> response.sendRedirect(properties.getRedirectUrl());
+    }
+
+    private LogoutHandler logoutHandler() {
+        return (request, response, authentication) -> {
+            authorizedClientService.removeAuthorizedClient("bob-works", authentication.getName());
+        };
     }
 
 }
