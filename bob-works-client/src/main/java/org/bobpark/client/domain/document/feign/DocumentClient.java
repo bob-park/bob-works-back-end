@@ -3,12 +3,15 @@ package org.bobpark.client.domain.document.feign;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import org.bobpark.client.common.page.Page;
 import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
+import org.bobpark.client.domain.document.model.VacationDocumentResponse;
+import org.bobpark.client.domain.user.model.vacation.VacationResponse;
 
 @FeignClient(name = "document-service", contextId = "document-service")
 public interface DocumentClient {
@@ -18,4 +21,7 @@ public interface DocumentClient {
 
     @PostMapping(path = "document/vacation")
     DocumentResponse addVacation(@RequestBody AddVacationDocumentRequest addRequest);
+
+    @GetMapping(path = "document/vacation/{documentId}")
+    VacationDocumentResponse getVacationDocument(@PathVariable long documentId);
 }

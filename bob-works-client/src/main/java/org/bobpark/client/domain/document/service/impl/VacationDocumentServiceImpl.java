@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.bobpark.client.domain.document.feign.DocumentClient;
 import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
+import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.service.VacationDocumentService;
 
 @Slf4j
@@ -20,5 +21,10 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
     @Override
     public DocumentResponse addVacation(AddVacationDocumentRequest addRequest) {
         return documentClient.addVacation(addRequest);
+    }
+
+    @Override
+    public VacationDocumentResponse getVacationDocument(long documentId) {
+        return documentClient.getVacationDocument(documentId);
     }
 }
