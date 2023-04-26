@@ -23,4 +23,9 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
     public Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable) {
         return documentApprovalClient.search(searchRequest, pageable);
     }
+
+    @Override
+    public DocumentApprovalResponse getApproval(long approvalId) {
+        return documentApprovalClient.getApproval(approvalId);
+    }
 }

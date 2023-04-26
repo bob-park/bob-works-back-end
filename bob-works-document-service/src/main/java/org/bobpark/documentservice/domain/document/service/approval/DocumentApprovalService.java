@@ -14,6 +14,8 @@ public interface DocumentApprovalService {
 
     DocumentResponse approveDocument(Id<DocumentApproval, Long> approvalId, ApprovalDocumentRequest approvalRequest);
 
+    DocumentApprovalResponse getApproval(Id<DocumentApproval, Long> approvalId);
+
 
     Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable);
 

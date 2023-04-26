@@ -5,7 +5,6 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
 import static org.springframework.util.StringUtils.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -56,7 +55,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
         checkArgument(approvalRequest.status() != DocumentStatus.REJECT || hasText(approvalRequest.reason()),
             "reason must be provided.");
 
-        DocumentApproval approval = getApproval(approvalId);
+        DocumentApproval approval = getApprovalById(approvalId);
 
         if (approval.getStatus() != DocumentStatus.WAITING
             && approval.getStatus() != DocumentStatus.PROCEEDING) {
@@ -70,6 +69,22 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
         List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
 
         return toResponse(approval.getDocument(), users);
+    }
+
+    @Override
+    public DocumentApprovalResponse getApproval(Id<DocumentApproval, Long> approvalId) {
+
+        DocumentApproval approval = getApprovalById(approvalId);
+
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+
+        return DocumentApprovalResponse.builder()
+            .id(approval.getId())
+            .document(DocumentResponse.toResponse(approval.getDocument(), users))
+            .status(approval.getStatus())
+            .approvedDateTime(approval.getApprovedDateTime())
+            .reason(approval.getReason())
+            .build();
     }
 
     @Override
@@ -96,7 +111,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
                 .build());
     }
 
-    private DocumentApproval getApproval(Id<DocumentApproval, Long> approvalId) {
+    private DocumentApproval getApprovalById(Id<DocumentApproval, Long> approvalId) {
         return documentApprovalRepository.findById(approvalId.getValue())
             .orElseThrow(() -> new NotFoundException(approvalId));
     }

@@ -9,4 +9,6 @@ import org.bobpark.client.domain.document.model.SearchDocumentApprovalRequest;
 public interface DocumentApprovalService {
 
     Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable);
+
+    DocumentApprovalResponse getApproval(long approvalId);
 }

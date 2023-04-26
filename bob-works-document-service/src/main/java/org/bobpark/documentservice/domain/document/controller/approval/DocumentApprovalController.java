@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,11 @@ public class DocumentApprovalController {
     public DocumentResponse approvalDocument(@PathVariable long approvalId,
         @RequestBody ApprovalDocumentRequest approvalRequest) {
         return documentApprovalService.approveDocument(Id.of(DocumentApproval.class, approvalId), approvalRequest);
+    }
+
+    @GetMapping(path = "{approvalId}")
+    public DocumentApprovalResponse getApproval(@PathVariable long approvalId) {
+        return documentApprovalService.getApproval(Id.of(DocumentApproval.class, approvalId));
     }
 
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +23,10 @@ public class DocumentApprovalController {
     @GetMapping(path = "search")
     public Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable) {
         return documentApprovalService.search(searchRequest, pageable);
+    }
+
+    @GetMapping(path = "{approvalId}")
+    public DocumentApprovalResponse getApproval(@PathVariable long approvalId){
+        return documentApprovalService.getApproval(approvalId);
     }
 }

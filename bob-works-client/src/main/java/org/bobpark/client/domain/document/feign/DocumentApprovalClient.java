@@ -4,6 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import org.bobpark.client.common.page.Page;
 import org.bobpark.client.domain.document.model.DocumentApprovalResponse;
@@ -21,4 +22,7 @@ public interface DocumentApprovalClient {
      */
     @GetMapping(path = "document/approval/search")
     Page<DocumentApprovalResponse> search(@SpringQueryMap SearchDocumentApprovalRequest searchRequest, Pageable pageable);
+
+    @GetMapping(path = "document/approval/{approvalId}")
+    DocumentApprovalResponse getApproval(@PathVariable long approvalId);
 }
