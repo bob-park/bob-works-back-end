@@ -8,5 +8,6 @@ public record DocumentTypeResponse(Long id,
                                    LocalDateTime createdDate,
                                    String createdBy,
                                    LocalDateTime lastModifiedDate,
-                                   String lastModifiedBy) {
+                                   String lastModifiedBy,
+                                   DocumentTypeApprovalLineResponse approvalLine) {
 }

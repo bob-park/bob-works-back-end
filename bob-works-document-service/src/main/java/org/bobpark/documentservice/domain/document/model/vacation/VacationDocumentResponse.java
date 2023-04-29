@@ -23,6 +23,7 @@ import org.bobpark.documentservice.domain.user.utils.UserUtils;
 @Builder
 public record VacationDocumentResponse(Long id,
                                        DocumentTypeName type,
+                                       Long typeId,
                                        UserResponse writer,
                                        DocumentStatus status,
                                        LocalDateTime createdDate,
@@ -41,6 +42,7 @@ public record VacationDocumentResponse(Long id,
         return VacationDocumentResponse.builder()
             .id(vacationDocument.getId())
             .type(vacationDocument.getType())
+            .typeId(vacationDocument.getId())
             .writer(findByUser(users, vacationDocument.getWriterId()))
             .status(vacationDocument.getStatus())
             .createdDate(vacationDocument.getCreatedDate())

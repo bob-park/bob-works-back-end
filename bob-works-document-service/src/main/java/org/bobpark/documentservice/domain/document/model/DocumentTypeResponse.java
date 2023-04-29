@@ -14,17 +14,15 @@ import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Builder
-public record DocumentTypeResponse(
-    Long id,
-    DocumentTypeName type,
-    String name,
-    String description,
-    LocalDateTime createdDate,
-    String createdBy,
-    LocalDateTime lastModifiedDate,
-    String lastModifiedBy,
-    DocumentTypeApprovalLineResponse approvalLine
-) {
+public record DocumentTypeResponse(Long id,
+                                   DocumentTypeName type,
+                                   String name,
+                                   String description,
+                                   LocalDateTime createdDate,
+                                   String createdBy,
+                                   LocalDateTime lastModifiedDate,
+                                   String lastModifiedBy,
+                                   DocumentTypeApprovalLineResponse approvalLine) {
 
     public static DocumentTypeResponse toResponse(DocumentType documentType, List<UserResponse> users) {
 
@@ -87,6 +85,5 @@ public record DocumentTypeResponse(
             .orElse(null);
 
     }
-
 
 }
