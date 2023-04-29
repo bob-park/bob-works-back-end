@@ -8,7 +8,11 @@ import java.util.List;
 
 import lombok.Builder;
 
+import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
+import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
+import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
+import org.bobpark.documentservice.domain.document.model.approval.DocumentApprovalResponse;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.document.type.VacationSubType;
@@ -30,7 +34,8 @@ public record VacationDocumentResponse(Long id,
                                        LocalDate vacationDateFrom,
                                        LocalDate vacationDateTo,
                                        Double daysCount,
-                                       String reason) {
+                                       String reason,
+                                       List<DocumentApprovalResponse> approvals) {
 
     public static VacationDocumentResponse toResponse(VacationDocument vacationDocument, List<UserResponse> users) {
         return VacationDocumentResponse.builder()
@@ -48,6 +53,10 @@ public record VacationDocumentResponse(Long id,
             .vacationDateTo(vacationDocument.getVacationDateTo())
             .daysCount(vacationDocument.getDaysCount())
             .reason(vacationDocument.getReason())
+            .approvals(
+                vacationDocument.getApprovals().stream()
+                    .map(DocumentApprovalResponse::toResponse)
+                    .toList())
             .build();
     }
 }

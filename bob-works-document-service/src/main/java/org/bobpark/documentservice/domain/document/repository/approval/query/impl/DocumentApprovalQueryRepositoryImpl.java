@@ -19,6 +19,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import org.bobpark.core.model.common.Id;
+import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
 import org.bobpark.documentservice.domain.document.model.approval.SearchDocumentApprovalRequest;
 import org.bobpark.documentservice.domain.document.repository.approval.query.DocumentApprovalQueryRepository;
@@ -52,6 +54,13 @@ public class DocumentApprovalQueryRepositoryImpl implements DocumentApprovalQuer
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
     }
 
+    @Override
+    public List<DocumentApproval> getAllApprovals(Id<? extends Document, Long> documentId) {
+        return query.selectFrom(documentApproval)
+            .where(eqDocumentId(documentId.getValue()))
+            .fetch();
+    }
+
     private Predicate mappingCondition(SearchDocumentApprovalRequest searchRequest) {
         BooleanBuilder builder = new BooleanBuilder();
 
@@ -61,6 +70,10 @@ public class DocumentApprovalQueryRepositoryImpl implements DocumentApprovalQuer
             .and(eqApprovalLineUserId(searchRequest.approvalLineUserId()));
 
         return builder;
+    }
+
+    private BooleanExpression eqDocumentId(Long documentId) {
+        return documentId != null ? documentApproval.document.id.eq(documentId) : null;
     }
 
     private BooleanExpression eqType(DocumentTypeName type) {

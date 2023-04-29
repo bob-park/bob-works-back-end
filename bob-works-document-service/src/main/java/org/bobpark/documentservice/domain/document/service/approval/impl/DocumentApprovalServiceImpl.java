@@ -111,6 +111,16 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
                 .build());
     }
 
+    @Override
+    public List<DocumentApprovalResponse> getAllApprovals(Id<? extends Document, Long> documentId) {
+
+        List<DocumentApproval> result = documentApprovalRepository.getAllApprovals(documentId);
+
+        return result.stream()
+            .map(DocumentApprovalResponse::toResponse)
+            .toList();
+    }
+
     private DocumentApproval getApprovalById(Id<DocumentApproval, Long> approvalId) {
         return documentApprovalRepository.findById(approvalId.getValue())
             .orElseThrow(() -> new NotFoundException(approvalId));
