@@ -5,11 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.client.common.page.Page;
+import org.bobpark.client.domain.document.model.ApprovalDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentApprovalResponse;
+import org.bobpark.client.domain.document.model.DocumentResponse;
 import org.bobpark.client.domain.document.model.SearchDocumentApprovalRequest;
 import org.bobpark.client.domain.document.service.DocumentApprovalService;
 
@@ -26,7 +30,13 @@ public class DocumentApprovalController {
     }
 
     @GetMapping(path = "{approvalId}")
-    public DocumentApprovalResponse getApproval(@PathVariable long approvalId){
+    public DocumentApprovalResponse getApproval(@PathVariable long approvalId) {
         return documentApprovalService.getApproval(approvalId);
+    }
+
+    @PutMapping(path = "{approvalId}")
+    public DocumentResponse approve(@PathVariable long approvalId,
+        @RequestBody ApprovalDocumentRequest approvalRequest) {
+        return documentApprovalService.approve(approvalId, approvalRequest);
     }
 }

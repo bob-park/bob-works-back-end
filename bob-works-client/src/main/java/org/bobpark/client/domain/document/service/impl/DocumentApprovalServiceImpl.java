@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import org.bobpark.client.common.page.Page;
 import org.bobpark.client.domain.document.feign.DocumentApprovalClient;
+import org.bobpark.client.domain.document.model.ApprovalDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentApprovalResponse;
+import org.bobpark.client.domain.document.model.DocumentResponse;
 import org.bobpark.client.domain.document.model.SearchDocumentApprovalRequest;
 import org.bobpark.client.domain.document.service.DocumentApprovalService;
 
@@ -28,4 +30,10 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
     public DocumentApprovalResponse getApproval(long approvalId) {
         return documentApprovalClient.getApproval(approvalId);
     }
+
+    @Override
+    public DocumentResponse approve(long approvalId, ApprovalDocumentRequest approvalRequest) {
+        return documentApprovalClient.approve(approvalId, approvalRequest);
+    }
+
 }
