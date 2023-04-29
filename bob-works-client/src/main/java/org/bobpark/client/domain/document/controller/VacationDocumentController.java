@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
-import org.bobpark.client.domain.document.model.VacationDocumentResponse;
+import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
+import org.bobpark.client.domain.document.service.DocumentTypeService;
 import org.bobpark.client.domain.document.service.VacationDocumentService;
 
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class VacationDocumentController {
     }
 
     @GetMapping(path = "{documentId}")
-    public VacationDocumentResponse getVacationDocument(@PathVariable long documentId) {
+    public VacationDocumentDetailResponse getVacationDocument(@PathVariable long documentId) {
         return vacationDocumentService.getVacationDocument(documentId);
     }
 }

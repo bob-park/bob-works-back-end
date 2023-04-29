@@ -8,4 +8,6 @@ public interface DocumentTypeService {
 
     List<DocumentTypeResponse> search();
 
+    DocumentTypeResponse getType(long typeId);
+
 }

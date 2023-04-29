@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record DocumentApprovalResponse(Long id,
+                                       Long lineId,
                                        DocumentResponse document,
                                        String status,
                                        LocalDateTime approvedDateTime,

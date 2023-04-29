@@ -22,4 +22,9 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     public List<DocumentTypeResponse> search() {
         return documentTypeClient.search();
     }
+
+    @Override
+    public DocumentTypeResponse getType(long typeId) {
+        return documentTypeClient.getType(typeId);
+    }
 }

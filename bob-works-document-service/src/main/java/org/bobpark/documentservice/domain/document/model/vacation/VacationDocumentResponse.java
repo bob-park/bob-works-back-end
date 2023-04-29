@@ -42,7 +42,7 @@ public record VacationDocumentResponse(Long id,
         return VacationDocumentResponse.builder()
             .id(vacationDocument.getId())
             .type(vacationDocument.getType())
-            .typeId(vacationDocument.getId())
+            .typeId(vacationDocument.getDocumentType().getId())
             .writer(findByUser(users, vacationDocument.getWriterId()))
             .status(vacationDocument.getStatus())
             .createdDate(vacationDocument.getCreatedDate())
