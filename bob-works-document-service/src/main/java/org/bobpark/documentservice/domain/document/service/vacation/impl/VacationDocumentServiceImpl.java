@@ -6,6 +6,7 @@ import static org.bobpark.documentservice.domain.document.model.vacation.Vacatio
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
+import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
+import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
 import org.bobpark.documentservice.domain.document.model.vacation.CreateVacationDocumentRequest;
@@ -61,5 +64,17 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         log.debug("added vacation document. (id={})", createDocument.getId());
 
         return toResponse(createDocument, Collections.singletonList(writer));
+    }
+
+    @Override
+    public VacationDocumentResponse getDocument(Id<? extends Document, Long> documentId) {
+
+        VacationDocument vacationDocument =
+            vacationDocumentRepository.findById(documentId.getValue())
+                .orElseThrow(() -> new NotFoundException(documentId));
+
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsers();
+
+        return toResponse(vacationDocument, users);
     }
 }

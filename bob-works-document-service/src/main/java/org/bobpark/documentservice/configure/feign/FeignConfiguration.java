@@ -35,7 +35,7 @@ public class FeignConfiguration {
 
     @Bean
     public Level feinLogLevel() {
-        return Level.BASIC;
+        return Level.FULL;
     }
 
     @Bean

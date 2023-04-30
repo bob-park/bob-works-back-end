@@ -11,6 +11,6 @@ public interface UserUtils {
         return users.stream()
             .filter(user -> user.id().equals(id))
             .findAny()
-            .orElseThrow(() -> new NotFoundException(UserResponse.class, id));
+            .orElse(null);
     }
 }
