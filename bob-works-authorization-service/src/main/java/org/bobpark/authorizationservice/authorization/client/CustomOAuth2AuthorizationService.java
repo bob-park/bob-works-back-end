@@ -182,6 +182,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
             AuthorizationToken token = oidcToken.getToken();
 
             Map<String, Object> profile = Maps.newHashMap();
+            profile.put("id", user.getId());
             profile.put("name", user.getName());
             profile.put("position", userResponse.position());
 
