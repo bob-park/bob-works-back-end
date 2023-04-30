@@ -101,11 +101,11 @@ public class AuthorizationServerConfiguration {
         return new CustomRegisteredClientRepository(clientRepository, scopeRepository);
     }
 
-    @Bean
-    public OAuth2AuthorizationService authorizationService() {
-        return new CustomOAuth2AuthorizationService(registeredClientRepository(), clientRepository,
-            clientSessionRepository, userRepository);
-    }
+    // @Bean
+    // public OAuth2AuthorizationService authorizationService() {
+    //     return new CustomOAuth2AuthorizationService(registeredClientRepository(), clientRepository,
+    //         clientSessionRepository, userRepository);
+    // }
 
     @Bean
     public OAuth2AuthorizationConsentService authorizationConsentService() {

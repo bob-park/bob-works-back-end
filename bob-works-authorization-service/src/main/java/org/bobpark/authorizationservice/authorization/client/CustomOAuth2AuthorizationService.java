@@ -27,6 +27,7 @@ import org.springframework.security.oauth2.server.authorization.OAuth2Authorizat
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -45,10 +46,13 @@ import org.bobpark.authorizationservice.domain.authorization.model.SearchAuthori
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientSessionRepository;
 import org.bobpark.authorizationservice.domain.user.entity.User;
+import org.bobpark.authorizationservice.domain.user.feign.client.UserServiceClient;
+import org.bobpark.authorizationservice.domain.user.model.UserResponse;
 import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
 
 @Slf4j
 @RequiredArgsConstructor
+@Component
 @Transactional(readOnly = true)
 public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationService {
 
@@ -56,6 +60,8 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
     private final AuthorizationClientRepository clientRepository;
     private final AuthorizationClientSessionRepository clientSessionRepository;
     private final UserRepository userRepository;
+
+    private final UserServiceClient userServiceClient;
 
     @Transactional
     @Override
@@ -127,6 +133,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
         User user =
             userRepository.findByUserId(clientSession.getPrincipalName())
                 .orElseThrow();
+        UserResponse userResponse = userServiceClient.getUser(clientSession.getPrincipalName());
 
         String grantType = clientSession.getAuthorizationGrantType();
 
@@ -175,11 +182,12 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
             AuthorizationToken token = oidcToken.getToken();
 
             Map<String, Object> profile = Maps.newHashMap();
+            profile.put("id", user.getId());
             profile.put("name", user.getName());
-            profile.put("position", null);
+            profile.put("position", userResponse.position());
 
             // TODO add team info
-            profile.put("team", null);
+            profile.put("team", userResponse.team());
 
             Map<String, Object> claims = Maps.newHashMap();
             claims.putAll(token.getMetadata());

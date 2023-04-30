@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import lombok.Builder;
 
 import org.bobpark.userservice.domain.position.model.PositionResponse;
+import org.bobpark.userservice.domain.team.model.TeamResponse;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserPosition;
 import org.bobpark.userservice.domain.user.model.vacation.UserVacationResponse;
@@ -15,7 +16,8 @@ public record UserResponse(Long id,
                            String email,
                            String name,
                            PositionResponse position,
-                           UserVacationResponse nowVacation) {
+                           UserVacationResponse nowVacation,
+                           TeamResponse team) {
 
     public static UserResponse toResponse(User user) {
 
@@ -44,6 +46,7 @@ public record UserResponse(Long id,
             .name(user.getName())
             .position(positionResponse)
             .nowVacation(userVacation)
+            .team(user.getTeam() != null ? TeamResponse.toResponse(user.getTeam().getTeam()) : null)
             .build();
     }
 

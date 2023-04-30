@@ -22,6 +22,8 @@ import lombok.ToString.Exclude;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.userservice.common.entity.BaseEntity;
+import org.bobpark.userservice.domain.team.entity.Team;
+import org.bobpark.userservice.domain.team.entity.TeamUser;
 import org.bobpark.userservice.domain.user.type.VacationType;
 
 @ToString
@@ -46,6 +48,10 @@ public class User extends BaseEntity {
     @Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<UserVacation> vacations = new ArrayList<>();
+
+    @Exclude
+    @OneToOne(mappedBy = "user")
+    private TeamUser team;
 
     @Builder
     private User(Long id, String userId, String name, String email, UserPosition position) {
@@ -73,6 +79,10 @@ public class User extends BaseEntity {
         Vacation vacation = selectVacation(type);
 
         vacation.useVacation(decreaseCount);
+    }
+
+    public void setTeam(TeamUser teamUser) {
+        this.team = teamUser;
     }
 
     private Vacation selectVacation(VacationType type) {
