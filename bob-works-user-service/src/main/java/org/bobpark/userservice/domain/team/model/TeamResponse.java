@@ -1,4 +1,4 @@
-package org.bobpark.userservice.domain.user.model;
+package org.bobpark.userservice.domain.team.model;
 
 import java.time.LocalDateTime;
 

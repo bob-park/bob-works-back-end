@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import lombok.Builder;
 
 import org.bobpark.userservice.domain.position.model.PositionResponse;
+import org.bobpark.userservice.domain.team.model.TeamResponse;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserPosition;
 import org.bobpark.userservice.domain.user.model.vacation.UserVacationResponse;
