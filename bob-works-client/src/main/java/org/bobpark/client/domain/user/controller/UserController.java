@@ -15,16 +15,24 @@ import org.springframework.web.bind.annotation.RestController;
 import org.bobpark.client.domain.position.model.PositionResponse;
 import org.bobpark.client.domain.team.model.TeamResponse;
 import org.bobpark.client.domain.user.model.UserResponse;
+import org.bobpark.client.domain.user.service.UserService;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("user")
 public class UserController {
 
+    private final UserService userService;
+
     @GetMapping(path = "")
     public UserResponse getUser(@AuthenticationPrincipal OidcUser user) {
         return parseToUserResponse(user);
 
+    }
+
+    @GetMapping(path = "vacation")
+    public UserResponse getVacation(@AuthenticationPrincipal OidcUser user) {
+        return userService.getUser(user.getSubject());
     }
 
     private UserResponse parseToUserResponse(OidcUser user) {
