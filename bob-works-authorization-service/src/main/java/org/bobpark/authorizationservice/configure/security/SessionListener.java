@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpSessionListener;
 
 import org.springframework.stereotype.Component;
 
-// @Component
+@Component
 public class SessionListener implements HttpSessionListener {
 
     private static final int MAX_SESSION_TIMEOUT = 30;

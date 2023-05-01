@@ -100,7 +100,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 
     private DocumentTypeResponse toResponse(DocumentType entity) {
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsers();
 
         return DocumentTypeResponse.toResponse(entity, users);
     }
