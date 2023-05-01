@@ -29,7 +29,7 @@ import org.bobpark.documentservice.domain.document.service.DocumentTypeService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("document/type")
-@PreAuthorize("hasRole('MANAGER')")
+// @PreAuthorize("hasRole('MANAGER')")
 public class DocumentTypeController {
 
     private final DocumentTypeService documentTypeService;
