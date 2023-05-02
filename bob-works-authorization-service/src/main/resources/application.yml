@@ -70,4 +70,4 @@ logging:
   level:
     root: info
     web: info
-    org.bobpark: info
+    org.bobpark: ${logs_level:info}

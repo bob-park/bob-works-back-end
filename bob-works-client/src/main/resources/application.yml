@@ -1,6 +1,6 @@
 ## server
 server:
-  port: 8083
+  port: 8080
   tomcat:
     mbeanregistry:
       enabled: on
@@ -27,6 +27,25 @@ management:
 spring:
   application:
     name: client-service
+  security:
+    oauth2:
+      client:
+        provider:
+          bob-works:
+            issuer-uri: ${bob_works_issuer_uri}
+        registration:
+          bob-works:
+            authorization-grant-type: authorization_code
+            client-id: ${bob_works_client_id}
+            client-name: ${bob_works_client_name}
+            client-secret: ${bob_works_client_secret}
+            redirect-uri: ${bob_works_redirect_uri}
+            scope:
+              - openid
+              - email
+              - document
+              - profile
+              - phone
 
 # eureka
 eureka:

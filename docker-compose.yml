@@ -1,0 +1,102 @@
+version: "3.8"
+
+services:
+  bob-works-discovery-service:
+    container_name: bob-works-discovery-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-discovery-service
+    build: ./bob-works-discovery-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+    ports:
+      - "8761:8761"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-discovery-service:/root/application
+  bob-works-authorization-service:
+    container_name: bob-works-authorization-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-authorization-service
+    build: ./bob-works-authorization-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      eureka_server_url: http://bob-works-discovery-service:8761/eureka
+      database_host: 192.168.10.28
+      database_name: bob_works
+      database_password: 12345
+    ports:
+      - "9000:9000"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-authorization-service:/root/application
+    depends_on:
+      bob-works-discovery-service:
+        condition: service_healthy
+  bob-works-user-service:
+    container_name: bob-works-user-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-user-service
+    build: ./bob-works-user-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      eureka_server_url: http://bob-works-discovery-service:8761/eureka
+      database_host: 192.168.10.28
+      database_name: bob_works
+      database_password: 12345
+    ports:
+      - "8081:8080"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-user-service:/root/application
+    depends_on:
+      bob-works-authorization-service:
+        condition: service_healthy
+  bob-works-document-service:
+    container_name: bob-works-document-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-document-service
+    build: ./bob-works-document-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      eureka_server_url: http://bob-works-discovery-service:8761/eureka
+      database_host: 192.168.10.28
+      database_name: bob_works
+      database_password: 12345
+    ports:
+      - "8082:8080"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-document-service:/root/application
+    depends_on:
+      bob-works-authorization-service:
+        condition: service_healthy
+  bob-works-client:
+    container_name: bob-works-client
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-client
+    build: ./bob-works-client
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      eureka_server_url: http://bob-works-discovery-service:8761/eureka
+      database_host: 192.168.10.28
+      database_name: bob_works
+      database_password: 12345
+      redirect_url: http://192.168.10.28:3000
+    ports:
+      - "8083:8080"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-client:/root/application
+    depends_on:
+      bob-works-authorization-service:
+        condition: service_healthy
+
+networks:
+  bob-works-network:
+    name: bob-works-network
+    driver: bridge

@@ -8,5 +8,5 @@ include 'bob-works-document-service'
 include 'bob-works-user-service'
 
 include 'bob-works-client'
-
+include 'bob-works-config-service'
 
