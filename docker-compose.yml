@@ -119,6 +119,12 @@ services:
     depends_on:
       bob-works-authorization-service:
         condition: service_healthy
+  bob-works-front-end:
+    container_name: bob-works-client-service
+    image: ghcr.io/bob-park/bob-works-front-end
+    platform: linux/amd64
+    ports:
+      - "3000:3000"
 
 
 networks:
