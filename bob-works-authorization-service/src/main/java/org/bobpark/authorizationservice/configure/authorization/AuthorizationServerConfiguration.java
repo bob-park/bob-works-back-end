@@ -5,13 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
@@ -22,13 +23,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import org.bobpark.authorizationservice.authorization.client.CustomOAuth2AuthorizationConsentService;
-import org.bobpark.authorizationservice.authorization.client.CustomOAuth2AuthorizationService;
 import org.bobpark.authorizationservice.authorization.client.CustomRegisteredClientRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientRepository;
-import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationClientSessionRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationConsentRepository;
 import org.bobpark.authorizationservice.domain.authorization.repository.AuthorizationScopeRepository;
-import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -36,13 +34,21 @@ import org.bobpark.authorizationservice.domain.user.repository.UserRepository;
 public class AuthorizationServerConfiguration {
 
     private final AuthorizationClientRepository clientRepository;
-    private final AuthorizationClientSessionRepository clientSessionRepository;
     private final AuthorizationConsentRepository consentRepository;
     private final AuthorizationScopeRepository scopeRepository;
-    private final UserRepository userRepository;
 
     private final CorsConfigurationSource corsConfigurationSource;
 
+    /**
+     * ! 와 이거 @Order() 개 중요하네...
+     * <p>
+     * 배포하고 나서 계속 OAuth 2.0 Authorization Security Filter Chain 이 default security filter chain 보다 항상 우선순위가 뒤로 밀리는 이유가 요것 때문이였다.
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     */
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     @Bean
     public SecurityFilterChain authorizationFilterChain(HttpSecurity http) throws Exception {
 
@@ -93,6 +99,8 @@ public class AuthorizationServerConfiguration {
 
         http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
+        log.debug("build oauth 2.0 authorization server.");
+
         return http.build();
     }
 
@@ -100,12 +108,6 @@ public class AuthorizationServerConfiguration {
     public RegisteredClientRepository registeredClientRepository() {
         return new CustomRegisteredClientRepository(clientRepository, scopeRepository);
     }
-
-    // @Bean
-    // public OAuth2AuthorizationService authorizationService() {
-    //     return new CustomOAuth2AuthorizationService(registeredClientRepository(), clientRepository,
-    //         clientSessionRepository, userRepository);
-    // }
 
     @Bean
     public OAuth2AuthorizationConsentService authorizationConsentService() {

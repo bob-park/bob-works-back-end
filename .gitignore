@@ -40,3 +40,4 @@ bin/
 
 ### project ###
 application-dev.yml
+Dockerfile-Debug

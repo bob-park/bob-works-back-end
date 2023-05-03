@@ -1,6 +1,33 @@
 version: "3.8"
 
 services:
+#  bob-works-db:
+#    container_name: bob-works-db
+#    image: postgres
+#    ports:
+#      - "15432:5432"
+#    environment:
+#      POSTGRES_PASSWORD: 12345
+#      PGDATA: /var/lib/postgresql/data/pgdata
+#    networks:
+#      - bob-works-network
+#    volumes:
+#      - ./postgres/data:/var/lib/postgresql/data/pgdata
+  bob-works-config-service:
+    container_name: bob-works-config-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-config-service
+    build: ./bob-works-config-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      config_path: /root/config
+    ports:
+      - "8888:8888"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-config-service:/root/application
+      - ./config:/root/config
   bob-works-discovery-service:
     container_name: bob-works-discovery-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-discovery-service
@@ -8,12 +35,16 @@ services:
     environment:
       logs_level: debug
       logs_path: /root/application/logs
+      config_server_url: http://bob-works-config-service:8888
     ports:
       - "8761:8761"
     networks:
       - bob-works-network
     volumes:
       - ./bob-works-discovery-service:/root/application
+    depends_on:
+      bob-works-config-service:
+        condition: service_healthy
   bob-works-authorization-service:
     container_name: bob-works-authorization-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-authorization-service
@@ -21,10 +52,7 @@ services:
     environment:
       logs_level: debug
       logs_path: /root/application/logs
-      eureka_server_url: http://bob-works-discovery-service:8761/eureka
-      database_host: 192.168.10.28
-      database_name: bob_works
-      database_password: 12345
+      config_server_url: http://bob-works-config-service:8888
     ports:
       - "9000:9000"
     networks:
@@ -41,10 +69,7 @@ services:
     environment:
       logs_level: debug
       logs_path: /root/application/logs
-      eureka_server_url: http://bob-works-discovery-service:8761/eureka
-      database_host: 192.168.10.28
-      database_name: bob_works
-      database_password: 12345
+      config_server_url: http://bob-works-config-service:8888
     ports:
       - "8081:8080"
     networks:
@@ -61,10 +86,7 @@ services:
     environment:
       logs_level: debug
       logs_path: /root/application/logs
-      eureka_server_url: http://bob-works-discovery-service:8761/eureka
-      database_host: 192.168.10.28
-      database_name: bob_works
-      database_password: 12345
+      config_server_url: http://bob-works-config-service:8888
     ports:
       - "8082:8080"
     networks:
@@ -74,29 +96,25 @@ services:
     depends_on:
       bob-works-authorization-service:
         condition: service_healthy
-  bob-works-client:
-    container_name: bob-works-client
-    image: ghcr.io/bob-park/bob-works-back-end/bob-works-client
-    build: ./bob-works-client
+  bob-works-client-service:
+    container_name: bob-works-client-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-client-service
+    build: ./bob-works-client-service
     environment:
       logs_level: debug
       logs_path: /root/application/logs
-      eureka_server_url: http://bob-works-discovery-service:8761/eureka
-      database_host: 192.168.10.28
-      database_name: bob_works
-      database_password: 12345
-      redirect_url: http://192.168.10.28:3000
+      config_server_url: http://bob-works-config-service:8888
     ports:
       - "8083:8080"
     networks:
       - bob-works-network
     volumes:
-      - ./bob-works-client:/root/application
+      - ./bob-works-client-service:/root/application
     depends_on:
       bob-works-authorization-service:
         condition: service_healthy
 
+
 networks:
   bob-works-network:
     name: bob-works-network
-    driver: bridge

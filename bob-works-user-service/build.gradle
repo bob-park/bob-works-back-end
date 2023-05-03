@@ -7,6 +7,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
+    // spring cloud config
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
     // postgres
     implementation 'org.postgresql:postgresql:42.6.0'
 

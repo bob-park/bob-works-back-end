@@ -1,0 +1,30 @@
+# server
+server:
+  port: 8888
+
+# spring
+spring:
+  application:
+    name: config-service
+  ## Local file system
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: ${config_path}
+
+## management
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+
+## logging
+logging:
+  level:
+    root: info
+    web: info

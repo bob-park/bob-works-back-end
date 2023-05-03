@@ -43,7 +43,7 @@ public class AppConfiguration {
     @Bean
     public AuthorizationServerSettings serverSettings() {
         return AuthorizationServerSettings.builder()
-            .issuer("http://localhost:9000")
+            .issuer("http://192.168.0.210:9000")
             .build();
     }
 

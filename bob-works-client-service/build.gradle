@@ -7,6 +7,11 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+    // spring cloud config
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
     // eureka client
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudNetflixVersion}"
 }
+
+

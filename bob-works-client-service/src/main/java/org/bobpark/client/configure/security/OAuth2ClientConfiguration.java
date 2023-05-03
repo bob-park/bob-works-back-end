@@ -40,6 +40,7 @@ public class OAuth2ClientConfiguration {
             oauth2login
                 .failureHandler((request, response, exception) -> {
                     log.error("Authorized Exception - {}", exception.getMessage(), exception);
+                    response.sendError(HttpStatus.UNAUTHORIZED.value(), exception.getMessage());
                 })
                 .successHandler(successHandler()));
 
