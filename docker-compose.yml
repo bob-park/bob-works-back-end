@@ -1,33 +1,6 @@
 version: "3.8"
 
 services:
-#  bob-works-db:
-#    container_name: bob-works-db
-#    image: postgres
-#    ports:
-#      - "15432:5432"
-#    environment:
-#      POSTGRES_PASSWORD: 12345
-#      PGDATA: /var/lib/postgresql/data/pgdata
-#    networks:
-#      - bob-works-network
-#    volumes:
-#      - ./postgres/data:/var/lib/postgresql/data/pgdata
-  bob-works-config-service:
-    container_name: bob-works-config-service
-    image: ghcr.io/bob-park/bob-works-back-end/bob-works-config-service
-    build: ./bob-works-config-service
-    environment:
-      logs_level: debug
-      logs_path: /root/application/logs
-      config_path: /root/config
-    ports:
-      - "8888:8888"
-    networks:
-      - bob-works-network
-    volumes:
-      - ./bob-works-config-service:/root/application
-      - ./config:/root/config
   bob-works-discovery-service:
     container_name: bob-works-discovery-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-discovery-service
@@ -118,3 +91,4 @@ services:
 networks:
   bob-works-network:
     name: bob-works-network
+    driver: bridge

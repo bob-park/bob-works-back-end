@@ -26,4 +26,5 @@ dependencies {
     testAnnotationProcessor("com.querydsl:querydsl-apt:${queryDslVersion}:jakarta")
 
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudNetflixVersion}"
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
 }

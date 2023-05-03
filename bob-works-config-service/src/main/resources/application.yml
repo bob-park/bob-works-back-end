@@ -5,7 +5,7 @@ server:
 # spring
 spring:
   application:
-    name: config-service
+    name: bob-works-config-service
   ## Local file system
   profiles:
     active: native
@@ -27,4 +27,4 @@ management:
 logging:
   level:
     root: info
-    web: info
+    web: debug
