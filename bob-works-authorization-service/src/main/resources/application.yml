@@ -41,6 +41,10 @@ spring:
       hibernate:
         default_batch_fetch_size: 100
 
+## authorization
+authorization:
+  issuer: ${authorization_issuer}
+
 # eureka
 eureka:
   instance:
@@ -71,3 +75,4 @@ logging:
     root: info
     web: info
     org.bobpark: ${logs_level:info}
+

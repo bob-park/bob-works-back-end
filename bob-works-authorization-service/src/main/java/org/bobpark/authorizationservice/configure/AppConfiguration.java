@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -36,14 +38,20 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import org.bobpark.authorizationservice.configure.properties.AuthorizationProperties;
+
+@RequiredArgsConstructor
+@ConfigurationPropertiesScan("org.bobpark.authorizationservice.configure.properties")
 @EnableTransactionManagement
 @Configuration
 public class AppConfiguration {
 
+    private final AuthorizationProperties properties;
+
     @Bean
     public AuthorizationServerSettings serverSettings() {
         return AuthorizationServerSettings.builder()
-            .issuer("http://192.168.0.210:9000")
+            .issuer(properties.getIssuer())
             .build();
     }
 
