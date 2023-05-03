@@ -1,9 +1,38 @@
 version: "3.8"
 
 services:
+  #  bob-works-db:
+  #    container_name: bob-works-db
+  #    image: postgres
+  #    ports:
+  #      - "15432:5432"
+  #    environment:
+  #      POSTGRES_PASSWORD: 12345
+  #      PGDATA: /var/lib/postgresql/data/pgdata
+  #    networks:
+  #      - bob-works-network
+  #    volumes:
+  #      - ./postgres/data:/var/lib/postgresql/data/pgdata
+  bob-works-config-service:
+    container_name: bob-works-config-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-config-service
+    platform: linux/amd64
+    build: ./bob-works-config-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      config_path: /root/config
+    ports:
+      - "8888:8888"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-config-service:/root/application
+      - ./config:/root/config
   bob-works-discovery-service:
     container_name: bob-works-discovery-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-discovery-service
+    platform: linux/amd64
     build: ./bob-works-discovery-service
     environment:
       logs_level: debug
@@ -21,6 +50,7 @@ services:
   bob-works-authorization-service:
     container_name: bob-works-authorization-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-authorization-service
+    platform: linux/amd64
     build: ./bob-works-authorization-service
     environment:
       logs_level: debug
@@ -38,6 +68,7 @@ services:
   bob-works-user-service:
     container_name: bob-works-user-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-user-service
+    platform: linux/amd64
     build: ./bob-works-user-service
     environment:
       logs_level: debug
@@ -55,6 +86,7 @@ services:
   bob-works-document-service:
     container_name: bob-works-document-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-document-service
+    platform: linux/amd64
     build: ./bob-works-document-service
     environment:
       logs_level: debug
@@ -72,6 +104,7 @@ services:
   bob-works-client-service:
     container_name: bob-works-client-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-client-service
+    platform: linux/amd64
     build: ./bob-works-client-service
     environment:
       logs_level: debug
@@ -91,4 +124,3 @@ services:
 networks:
   bob-works-network:
     name: bob-works-network
-    driver: bridge
