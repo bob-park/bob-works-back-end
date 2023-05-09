@@ -47,6 +47,15 @@ subprojects {
 
     repositories {
         mavenCentral()
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/bob-park/dependency-repository")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
     }
 
     ext {
@@ -97,10 +106,7 @@ subprojects {
         implementation 'io.micrometer:micrometer-registry-prometheus'
 
         // core
-        if (project.name != 'bob-works-core') {
-            implementation project(':bob-works-core')
-            testImplementation project(path: ':bob-works-core', configuration: 'testClasses')
-        }
+        implementation 'org.bobpark:bob-core-spring-boot-starter:0.0.2'
     }
 
     dependencyManagement {
