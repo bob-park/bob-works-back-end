@@ -22,6 +22,8 @@ import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeApproveLineRepository;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.service.DocumentTypeApproveLineService;
+import org.bobpark.documentservice.domain.team.feign.client.TeamClient;
+import org.bobpark.documentservice.domain.team.model.TeamResponse;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Slf4j
@@ -33,12 +35,15 @@ public class DocumentTypeApproveLineServiceImpl implements DocumentTypeApproveLi
     private final DocumentTypeRepository documentTypeRepository;
     private final DocumentTypeApproveLineRepository documentTypeApproveLineRepository;
 
+    private final TeamClient teamClient;
+
     @Transactional
     @Override
     public DocumentTypeResponse addApproveLine(Id<DocumentType, Long> typeId,
         CreateDocumentTypeApprovalLineRequest createRequest) {
 
         checkArgument(isNotEmpty(createRequest.userId()), "userId must be provided.");
+        checkArgument(isNotEmpty(createRequest.teamId()), "teamId must be provided.");
 
         DocumentType documentType =
             documentTypeRepository.findById(typeId.getValue())
@@ -54,7 +59,9 @@ public class DocumentTypeApproveLineServiceImpl implements DocumentTypeApproveLi
                 .orElseThrow(() -> new NotFoundException(DocumentTypeApprovalLine.class, createRequest.parentId()));
         }
 
-        documentType.addApproveLine(parent, createRequest.userId());
+        TeamResponse team = getTeam(createRequest.teamId());
+
+        documentType.addApproveLine(parent, createRequest.userId(), team.id());
 
         log.debug("added document type approve line. (documentType={}, parent={}, userId={})",
             documentType,
@@ -62,5 +69,9 @@ public class DocumentTypeApproveLineServiceImpl implements DocumentTypeApproveLi
             createRequest.userId());
 
         return toResponse(documentType, users);
+    }
+
+    private TeamResponse getTeam(long teamId) {
+        return teamClient.getById(teamId);
     }
 }
