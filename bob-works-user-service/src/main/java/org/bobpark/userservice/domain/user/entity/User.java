@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -53,6 +54,10 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "user")
     private TeamUser team;
 
+    @Exclude
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserAvatar avatar;
+
     @Builder
     private User(Long id, String userId, String name, String email, UserPosition position) {
         this.id = id;
@@ -83,6 +88,16 @@ public class User extends BaseEntity {
 
     public void setTeam(TeamUser teamUser) {
         this.team = teamUser;
+    }
+
+    public void setAvatar(String avatarPath) {
+        if (getAvatar() == null) {
+            this.avatar = new UserAvatar();
+
+            avatar.setUser(this);
+        }
+
+        getAvatar().updateAvatarPath(avatarPath);
     }
 
     private Vacation selectVacation(VacationType type) {
