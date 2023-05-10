@@ -43,10 +43,10 @@ public class VacationDocument extends Document {
     private String reason;
 
     @Builder
-    private VacationDocument(Long id, DocumentType documentType, Long writerId, DocumentStatus status,
+    private VacationDocument(Long id, DocumentType documentType, Long writerId, Long teamId, DocumentStatus status,
         VacationType vacationType, VacationSubType vacationSubType, LocalDate vacationDateFrom,
         LocalDate vacationDateTo, String reason) {
-        super(id, documentType, writerId, status);
+        super(id, documentType, writerId, teamId, status);
 
         checkArgument(isNotEmpty(vacationType), "vacationType must be provided.");
         checkArgument(isNotEmpty(vacationDateFrom), "vacationDateFrom must be provided.");

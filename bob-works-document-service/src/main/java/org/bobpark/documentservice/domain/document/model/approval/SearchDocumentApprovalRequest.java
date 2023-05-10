@@ -9,7 +9,8 @@ import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 public record SearchDocumentApprovalRequest(DocumentTypeName type,
                                             Long writerId,
                                             DocumentStatus status,
-                                            Long approvalLineUserId) {
+                                            Long approvalLineUserId,
+                                            Long approvalLineTeamId) {
 
     public static SearchDocumentApprovalRequestBuilder withoutApprovalLineUserId(SearchDocumentApprovalRequest prev) {
         return SearchDocumentApprovalRequest.builder()

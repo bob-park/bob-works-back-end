@@ -52,6 +52,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
             VacationDocument.builder()
                 .documentType(documentType)
                 .writerId(writer.id())
+                .teamId(writer.team().id())
                 .vacationType(createRequest.vacationType())
                 .vacationSubType(createRequest.vacationSubType())
                 .vacationDateFrom(createRequest.vacationDateFrom())
