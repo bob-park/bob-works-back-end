@@ -42,13 +42,18 @@ public record UserResponse(Long id,
                 .findAny()
                 .orElse(null);
 
+        String userAvatar = null;
+
+        if (user.getAvatar() != null && StringUtils.isNotBlank(user.getAvatar().getAvatarPath())) {
+            userAvatar = prefixAvatar + "/" + user.getAvatar().getId();
+        }
+
         return UserResponse.builder()
             .id(user.getId())
             .userId(user.getUserId())
             .email(user.getEmail())
             .name(user.getName())
-            .avatar(StringUtils.isNotBlank(user.getAvatar().getAvatarPath()) ?
-                prefixAvatar + "/" + user.getAvatar().getId() : null)
+            .avatar(userAvatar)
             .position(positionResponse)
             .nowVacation(userVacation)
             .team(user.getTeam() != null ? TeamResponse.toResponse(user.getTeam().getTeam()) : null)

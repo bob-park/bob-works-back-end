@@ -1,0 +1,27 @@
+package org.bobpark.userservice.domain.user.controller;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import org.bobpark.core.model.common.Id;
+import org.bobpark.userservice.domain.user.entity.User;
+import org.bobpark.userservice.domain.user.model.UpdateUserAvatarRequest;
+import org.bobpark.userservice.domain.user.model.UserResponse;
+import org.bobpark.userservice.domain.user.service.UserAvatarService;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("user/{userId:\\d+}/avatar")
+public class UserAvatarController {
+
+    private final UserAvatarService userAvatarService;
+
+    @PostMapping(path = "")
+    public UserResponse updateAvatar(@PathVariable long userId, UpdateUserAvatarRequest updateRequest) {
+        return userAvatarService.updateAvatar(Id.of(User.class, userId), updateRequest);
+    }
+}
