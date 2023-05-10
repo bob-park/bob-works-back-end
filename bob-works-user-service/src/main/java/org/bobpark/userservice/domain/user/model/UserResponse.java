@@ -4,6 +4,8 @@ import java.time.LocalDate;
 
 import lombok.Builder;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.bobpark.userservice.domain.position.model.PositionResponse;
 import org.bobpark.userservice.domain.team.model.TeamResponse;
 import org.bobpark.userservice.domain.user.entity.User;
@@ -15,11 +17,12 @@ public record UserResponse(Long id,
                            String userId,
                            String email,
                            String name,
+                           String avatar,
                            PositionResponse position,
                            UserVacationResponse nowVacation,
                            TeamResponse team) {
 
-    public static UserResponse toResponse(User user) {
+    public static UserResponse toResponse(User user, String prefixAvatar) {
 
         UserPosition position = user.getPosition();
         PositionResponse positionResponse = null;
@@ -44,6 +47,8 @@ public record UserResponse(Long id,
             .userId(user.getUserId())
             .email(user.getEmail())
             .name(user.getName())
+            .avatar(StringUtils.isNotBlank(user.getAvatar().getAvatarPath()) ?
+                prefixAvatar + "/" + user.getAvatar().getId() : null)
             .position(positionResponse)
             .nowVacation(userVacation)
             .team(user.getTeam() != null ? TeamResponse.toResponse(user.getTeam().getTeam()) : null)

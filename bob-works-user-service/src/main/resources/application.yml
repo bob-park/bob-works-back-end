@@ -56,6 +56,12 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
 
+## user
+user:
+  avatar:
+    prefix: http://localhost:8080/user/avatar
+
+
 ## logging
 logging:
   charset:

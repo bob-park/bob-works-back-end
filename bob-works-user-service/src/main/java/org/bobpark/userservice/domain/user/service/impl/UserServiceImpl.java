@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
+import org.bobpark.userservice.configure.user.properties.UserProperties;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.repository.UserRepository;
@@ -23,6 +24,8 @@ import org.bobpark.userservice.domain.user.service.UserService;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
+    private final UserProperties properties;
+
     private final UserRepository userRepository;
 
     @Override
@@ -31,13 +34,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByUserId(userId)
             .orElseThrow(() -> new NotFoundException(userId));
 
-        return toResponse(user);
+        return toResponse(user, properties.getAvatar().getPrefix());
     }
 
     @Override
     public List<UserResponse> getUsersAll() {
         return userRepository.getUsersAll().stream()
-            .map(UserResponse::toResponse)
+            .map(item -> UserResponse.toResponse(item, properties.getAvatar().getPrefix()))
             .toList();
     }
 }
