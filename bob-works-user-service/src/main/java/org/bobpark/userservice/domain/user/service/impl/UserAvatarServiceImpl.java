@@ -54,37 +54,41 @@ public class UserAvatarServiceImpl implements UserAvatarService {
     @Override
     public UserResponse updateAvatar(Id<User, Long> userId, UpdateUserAvatarRequest updateRequest) {
 
-        checkArgument(isNotEmpty(updateRequest.avatar()), "avatar must be provided.");
+        // checkArgument(isNotEmpty(updateRequest.avatar()), "avatar must be provided.");
 
         User user =
             userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(userId));
 
-        MultipartFile file = updateRequest.avatar();
+        String fileName = null;
 
-        String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (updateRequest.avatar() != null) {
+            MultipartFile file = updateRequest.avatar();
 
-        if (extension == null || !ALLOW_AVATAR_EXTENSION.contains(extension.toLowerCase())) {
-            throw new ServiceRuntimeException("avatar file extension must be 'jpg' or 'png'.");
-        }
+            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
 
-        String fileName = createAvatarFileName(extension);
+            if (extension == null || !ALLOW_AVATAR_EXTENSION.contains(extension.toLowerCase())) {
+                throw new ServiceRuntimeException("avatar file extension must be 'jpg' or 'png'.");
+            }
 
-        try {
+            fileName = createAvatarFileName(extension);
 
-            String filePath =
-                properties.getAvatar().getLocation().getFile().getAbsolutePath() + File.separatorChar
-                    + fileName;
+            try {
 
-            File avatarFile = new File(filePath);
+                String filePath =
+                    properties.getAvatar().getLocation().getFile().getAbsolutePath() + File.separatorChar
+                        + fileName;
 
-            FileUtils.forceMkdirParent(avatarFile);
+                File avatarFile = new File(filePath);
 
-            FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(avatarFile));
+                FileUtils.forceMkdirParent(avatarFile);
 
-            log.debug("completed copy user avatar. (path={})", filePath);
-        } catch (IOException e) {
-            throw new ServiceRuntimeException(e);
+                FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(avatarFile));
+
+                log.debug("completed copy user avatar. (path={})", filePath);
+            } catch (IOException e) {
+                throw new ServiceRuntimeException(e);
+            }
         }
 
         if (isNotEmpty(user.getAvatar())) {
