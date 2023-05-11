@@ -1,8 +1,14 @@
 package org.bobpark.client.configure.security;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import jakarta.servlet.http.Cookie;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -19,16 +25,23 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import org.bobpark.client.configure.properties.AppProperties;
+import org.bobpark.core.exception.ServiceRuntimeException;
 
 @Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class OAuth2ClientConfiguration {
 
+    private static final Pattern ISSUER_DOMAIN_PATTERN = Pattern.compile(
+        "(?<schema>http[s]?):\\/\\/(?<domain>[\\w.\\d]+)([:](?<port>\\d+))?");
+
     private final AppProperties properties;
 
     private final ClientRegistrationRepository clientRegistrationRepository;
     private final OAuth2AuthorizedClientRepository authorizedClientRepository;
+
+    @Value("${spring.security.oauth2.client.provider.bob-works.issuer-uri}")
+    private String issuerUri;
 
     @Bean
     SecurityFilterChain oauth2SecurityFilterChain(HttpSecurity http) throws Exception {
@@ -91,6 +104,17 @@ public class OAuth2ClientConfiguration {
     private LogoutHandler logoutHandler() {
         return (request, response, authentication) ->
             authorizedClientRepository.removeAuthorizedClient("bob-works", authentication, request, response);
+
+    }
+
+    private String extractDomain(String url) {
+        Matcher matcher = ISSUER_DOMAIN_PATTERN.matcher(url);
+
+        if (!matcher.find()) {
+            throw new ServiceRuntimeException("Invalid issuer url.");
+        }
+
+        return matcher.group("domain");
     }
 
 }
