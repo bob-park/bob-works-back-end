@@ -46,9 +46,11 @@ public class DefaultSecurityConfiguration {
             requests ->
                 requests
                     .requestMatchers("/role/**").permitAll()
+                    .requestMatchers("/login").permitAll()
                     .anyRequest().authenticated());
 
-        http.formLogin();
+        http.formLogin()
+            .loginPage("/login");
 
         http.exceptionHandling(
             exceptionHandler ->
