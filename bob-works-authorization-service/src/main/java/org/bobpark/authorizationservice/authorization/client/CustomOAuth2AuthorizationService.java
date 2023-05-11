@@ -185,6 +185,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
             profile.put("id", user.getId());
             profile.put("name", user.getName());
             profile.put("position", userResponse.position());
+            profile.put("avatar", userResponse.avatar());
 
             // TODO add team info
             profile.put("team", userResponse.team());
