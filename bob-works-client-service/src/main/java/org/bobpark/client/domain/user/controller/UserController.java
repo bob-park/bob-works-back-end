@@ -47,17 +47,18 @@ public class UserController {
             .email(user.getUserInfo().getEmail())
             .name((String)profile.get("name"))
             .userId(user.getClaimAsString("sub"))
+            .avatar((String)profile.get("avatar"))
             .position(
                 PositionResponse.builder()
                     .id(toLong(String.valueOf(positionMap.get("id"))))
                     .name(String.valueOf(positionMap.get("name")))
                     .build())
-            .team(
+            .team(teamMap != null ?
                 TeamResponse.builder()
                     .id(toLong(String.valueOf(teamMap.get("id"))))
                     .name(String.valueOf(teamMap.get("name")))
                     .description(String.valueOf(teamMap.get("description")))
-                    .build())
+                    .build() : null)
             .build();
     }
 }

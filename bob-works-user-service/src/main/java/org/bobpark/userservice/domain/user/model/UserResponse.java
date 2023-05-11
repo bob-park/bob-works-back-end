@@ -44,7 +44,7 @@ public record UserResponse(Long id,
 
         String userAvatar = null;
 
-        if (user.getAvatar() != null && StringUtils.isNotBlank(user.getAvatar().getAvatarPath())) {
+        if (user.getAvatar() != null) {
             userAvatar = prefixAvatar + "/" + user.getAvatar().getId();
         }
 
