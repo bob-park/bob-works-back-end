@@ -8,11 +8,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
+//@Configuration
 public class ActuatorSecurityConfiguration {
 
     @Bean
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Order(-100)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher(EndpointRequest.toAnyEndpoint());
 
