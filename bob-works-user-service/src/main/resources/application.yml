@@ -26,6 +26,11 @@ management:
 spring:
   application:
     name: user-service
+  cloud:
+    openfeign:
+      oauth2:
+        enabled: on
+        clientRegistrationId: ${oauth2_client_registration_id}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${database_host}/${database_name}

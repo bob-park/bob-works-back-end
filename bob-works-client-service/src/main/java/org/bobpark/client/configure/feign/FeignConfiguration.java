@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -66,7 +67,11 @@ public class FeignConfiguration {
             OAuth2AuthorizedClient client =
                 authorizedClientService.loadAuthorizedClient(AUTHORIZED_CLIENT_NAME, authentication.getName());
 
-            String authorizationHeader = "Bearer "+ client.getAccessToken().getTokenValue();
+            if (client == null) {
+                throw new OAuth2AuthenticationException("unauthorized");
+            }
+
+            String authorizationHeader = "Bearer " + client.getAccessToken().getTokenValue();
 
             headers.put(X_FORWARDED_FOR, Collections.singletonList(request.getHeader(X_FORWARDED_FOR)));
             headers.put(AUTHORIZATION, Collections.singletonList(authorizationHeader));

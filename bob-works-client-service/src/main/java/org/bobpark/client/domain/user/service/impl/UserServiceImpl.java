@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import org.bobpark.client.domain.user.feign.UserClient;
+import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.service.UserService;
 
@@ -19,5 +20,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUser(String userId) {
         return userClient.getUser(userId);
+    }
+
+    @Override
+    public UserResponse updatePassword(long id, UpdateUserPasswordRequest updateRequest) {
+        return userClient.updatePassword(id, updateRequest);
     }
 }

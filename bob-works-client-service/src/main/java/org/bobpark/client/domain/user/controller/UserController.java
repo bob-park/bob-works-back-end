@@ -9,11 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.client.domain.position.model.PositionResponse;
 import org.bobpark.client.domain.team.model.TeamResponse;
+import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.service.UserService;
 
@@ -33,6 +36,15 @@ public class UserController {
     @GetMapping(path = "vacation")
     public UserResponse getVacation(@AuthenticationPrincipal OidcUser user) {
         return userService.getUser(user.getSubject());
+    }
+
+    @PutMapping(path = "password")
+    public UserResponse updatePassword(@AuthenticationPrincipal OidcUser user,
+        @RequestBody UpdateUserPasswordRequest updateRequest) {
+
+        UserResponse userinfo = parseToUserResponse(user);
+
+        return userService.updatePassword(userinfo.id(), updateRequest);
     }
 
     private UserResponse parseToUserResponse(OidcUser user) {
