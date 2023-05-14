@@ -46,6 +46,11 @@ public class DocumentTypeController {
         return documentTypeService.getDocumentType(Id.of(DocumentType.class, typeId));
     }
 
+    @GetMapping(path = "{typeId:\\d+}/team/{teamId:\\d+}")
+    public DocumentTypeResponse getApprovalLineByTeam(@PathVariable long typeId, @PathVariable long teamId) {
+        return documentTypeService.getApprovalLineByTeam(Id.of(DocumentType.class, typeId), teamId);
+    }
+
     @PutMapping(path = "{typeId:\\d+}")
     public DocumentTypeResponse updateType(@PathVariable long typeId,
         @RequestBody UpdateDocumentTypeRequest updateRequest) {

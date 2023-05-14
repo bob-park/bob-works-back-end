@@ -16,4 +16,7 @@ public interface DocumentTypeClient {
 
     @GetMapping(path = "document/type/{typeId}")
     DocumentTypeResponse getType(@PathVariable long typeId);
+
+    @GetMapping(path = "document/type/{typeId}/team/{teamId}")
+    DocumentTypeResponse getApprovalByTeam(@PathVariable long typeId, @PathVariable long teamId);
 }

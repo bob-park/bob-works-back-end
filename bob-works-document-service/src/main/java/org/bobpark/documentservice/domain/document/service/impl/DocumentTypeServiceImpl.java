@@ -66,6 +66,16 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
         return toResponse(documentType);
     }
 
+    @Override
+    public DocumentTypeResponse getApprovalLineByTeam(Id<DocumentType, Long> documentTypeId, Long teamId) {
+
+        DocumentType documentType =
+            documentTypeRepository.findApprovalByTeam(documentTypeId, teamId)
+                .orElseThrow(() -> new NotFoundException(documentTypeId));
+
+        return toResponse(documentType);
+    }
+
     @Transactional
     @Override
     public DocumentTypeResponse updateDocumentType(Id<DocumentType, Long> documentTypeId,
