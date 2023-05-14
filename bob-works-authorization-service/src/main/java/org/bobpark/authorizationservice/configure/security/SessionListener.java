@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SessionListener implements HttpSessionListener {
 
-    private static final int MAX_SESSION_TIMEOUT = 5;
+    private static final int MAX_SESSION_TIMEOUT = 60;
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
