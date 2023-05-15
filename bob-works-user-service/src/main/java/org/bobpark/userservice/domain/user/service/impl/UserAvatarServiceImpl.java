@@ -52,7 +52,7 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
     @Transactional
     @Override
-    public UserResponse updateAvatar(Id<User, Long> userId, UpdateUserAvatarRequest updateRequest) {
+    public UserResponse updateAvatar(Id<User, Long> userId,  MultipartFile avatar) {
 
         // checkArgument(isNotEmpty(updateRequest.avatar()), "avatar must be provided.");
 
@@ -62,10 +62,9 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
         String fileName = null;
 
-        if (updateRequest.avatar() != null) {
-            MultipartFile file = updateRequest.avatar();
+        if (avatar != null) {
 
-            String extension = FilenameUtils.getExtension(file.getOriginalFilename());
+            String extension = FilenameUtils.getExtension(avatar.getOriginalFilename());
 
             if (extension == null || !ALLOW_AVATAR_EXTENSION.contains(extension.toLowerCase())) {
                 throw new ServiceRuntimeException("avatar file extension must be 'jpg' or 'png'.");
@@ -83,7 +82,7 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
                 FileUtils.forceMkdirParent(avatarFile);
 
-                FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(avatarFile));
+                FileCopyUtils.copy(avatar.getInputStream(), new FileOutputStream(avatarFile));
 
                 log.debug("completed copy user avatar. (path={})", filePath);
             } catch (IOException e) {

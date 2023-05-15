@@ -2,10 +2,13 @@ package org.bobpark.userservice.domain.user.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.domain.user.entity.User;
@@ -21,7 +24,7 @@ public class UserAvatarController {
     private final UserAvatarService userAvatarService;
 
     @PostMapping(path = "")
-    public UserResponse updateAvatar(@PathVariable long userId, UpdateUserAvatarRequest updateRequest) {
-        return userAvatarService.updateAvatar(Id.of(User.class, userId), updateRequest);
+    public UserResponse updateAvatar(@PathVariable long userId, @RequestPart("avatar") MultipartFile avatar) {
+        return userAvatarService.updateAvatar(Id.of(User.class, userId), avatar);
     }
 }

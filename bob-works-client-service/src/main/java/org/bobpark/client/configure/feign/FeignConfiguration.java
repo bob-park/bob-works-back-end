@@ -6,9 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -18,22 +17,23 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.common.collect.Maps;
 
 import feign.Logger.Level;
 import feign.RequestInterceptor;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 public class FeignConfiguration {
 
     private static final String AUTHORIZED_CLIENT_NAME = "bob-works";
 
+    private final ClientRegistrationRepository clientRegistrationRepository;
     private final OAuth2AuthorizedClientService authorizedClientService;
 
     @Bean
@@ -49,7 +49,8 @@ public class FeignConfiguration {
 
     @Bean
     public RequestInterceptor customRequestInterceptor() {
-        return requestTemplate -> requestTemplate.headers(getRequestHeaders());
+        return requestTemplate ->
+            requestTemplate.headers(getRequestHeaders());
     }
 
     private Map<String, Collection<String>> getRequestHeaders() {
@@ -58,11 +59,8 @@ public class FeignConfiguration {
 
         OAuth2AuthenticationToken authentication =
             (OAuth2AuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
-        ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
 
-        if (requestAttributes != null && authentication != null) {
-
-            HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+        if (authentication != null) {
 
             OAuth2AuthorizedClient client =
                 authorizedClientService.loadAuthorizedClient(AUTHORIZED_CLIENT_NAME, authentication.getName());
@@ -73,11 +71,9 @@ public class FeignConfiguration {
 
             String authorizationHeader = "Bearer " + client.getAccessToken().getTokenValue();
 
-            headers.put(X_FORWARDED_FOR, Collections.singletonList(request.getHeader(X_FORWARDED_FOR)));
             headers.put(AUTHORIZATION, Collections.singletonList(authorizationHeader));
         }
 
-        headers.put(CONTENT_TYPE, Collections.singletonList(MediaType.APPLICATION_JSON_VALUE));
         headers.put(ACCEPT, Collections.singletonList(MediaType.APPLICATION_JSON_VALUE));
 
         return headers;
