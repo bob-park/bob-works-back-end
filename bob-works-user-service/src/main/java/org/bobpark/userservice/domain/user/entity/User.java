@@ -2,6 +2,7 @@ package org.bobpark.userservice.domain.user.entity;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,10 @@ public class User extends BaseEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserAvatar avatar;
 
+    @Exclude
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserDocumentSignature signature;
+
     @Builder
     private User(Long id, String userId, String encryptPassword, String name, String email, UserPosition position) {
         this.id = id;
@@ -117,6 +122,18 @@ public class User extends BaseEntity {
         checkArgument(StringUtils.isNotBlank(encryptPassword), "password must be provided.");
 
         this.encryptPassword = encryptPassword;
+    }
+
+    public void updateSignature(InputStream data) {
+
+        UserDocumentSignature updateSignature =
+            UserDocumentSignature.builder()
+                .signature(data)
+                .build();
+
+        updateSignature.setUser(this);
+
+        signature = updateSignature;
     }
 
     private Vacation selectVacation(VacationType type) {
