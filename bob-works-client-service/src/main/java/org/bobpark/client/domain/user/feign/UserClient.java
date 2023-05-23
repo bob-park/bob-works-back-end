@@ -1,6 +1,7 @@
 package org.bobpark.client.domain.user.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,4 +25,7 @@ public interface UserClient {
 
     @PostMapping(path = "{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     UserResponse updateAvatar(@PathVariable long id, @RequestPart("avatar") MultipartFile avatar);
+
+    @GetMapping(path = "{id}/document/signature")
+    Resource getDocumentSignature(@PathVariable long id);
 }

@@ -3,6 +3,7 @@ package org.bobpark.client.domain.user.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import org.bobpark.client.domain.user.feign.UserClient;
@@ -31,5 +32,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateAvatar(long id, UpdateUserAvatarRequest updateRequest) {
         return userClient.updateAvatar(id, updateRequest.avatar());
+    }
+
+    @Override
+    public Resource getDocumentSignature(long id) {
+        return userClient.getDocumentSignature(id);
     }
 }
