@@ -63,6 +63,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         DocumentTypeApprovalLineStatusResponse lineStatus =
             DocumentTypeApprovalLineStatusResponse.builder()
                 .id(line.id())
+                .uniqueUserId(line.user().id())
                 .userId(line.user().userId())
                 .username(line.user().name())
                 .positionId(line.user().position().id())
