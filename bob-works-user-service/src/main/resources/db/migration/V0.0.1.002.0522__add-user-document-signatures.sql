@@ -5,7 +5,7 @@ create table users_document_signatures
 (
     id                 bigserial               not null primary key,
     user_id            bigint                  not null,
-    signature          bytea                   not null,
+    signature_path     varchar(2000)           not null,
     created_date       timestamp default now() not null,
     created_by         varchar(100)            not null,
     last_modified_date timestamp,
