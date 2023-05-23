@@ -16,7 +16,11 @@ public class UserProperties {
     @NestedConfigurationProperty
     private UserAvatarProperties avatar;
 
+    @NestedConfigurationProperty
+    private UserSignatureProperties signature;
+
     public UserProperties() {
         this.avatar = new UserAvatarProperties();
+        this.signature = new UserSignatureProperties();
     }
 }

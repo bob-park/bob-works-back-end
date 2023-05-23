@@ -1,12 +1,8 @@
 package org.bobpark.userservice.domain.user.entity;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static org.springframework.util.StringUtils.hasText;
 
-import java.io.InputStream;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +21,6 @@ import lombok.ToString;
 import lombok.ToString.Exclude;
 
 import org.bobpark.userservice.common.entity.BaseEntity;
-import org.bobpark.userservice.domain.user.entity.converter.ByteArrayToInputStreamConverter;
 
 @ToString
 @Getter
@@ -44,17 +39,15 @@ public class UserDocumentSignature extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "signature")
-    @Convert(converter = ByteArrayToInputStreamConverter.class)
-    private InputStream signature;
+    private String signaturePath;
 
     @Builder
-    private UserDocumentSignature(Long id, InputStream signature) {
+    private UserDocumentSignature(Long id,String signaturePath) {
 
-        checkArgument(isNotEmpty(signature), "signature must be provided.");
+        checkArgument(hasText(signaturePath), "signaturePath must be provided.");
 
         this.id = id;
-        this.signature = signature;
+        this.signaturePath = signaturePath;
     }
 
     public void setUser(User user) {

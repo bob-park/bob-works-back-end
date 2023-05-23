@@ -124,11 +124,11 @@ public class User extends BaseEntity {
         this.encryptPassword = encryptPassword;
     }
 
-    public void updateSignature(InputStream data) {
+    public void updateSignature(String signaturePath) {
 
         UserDocumentSignature updateSignature =
             UserDocumentSignature.builder()
-                .signature(data)
+                .signaturePath(signaturePath)
                 .build();
 
         updateSignature.setUser(this);

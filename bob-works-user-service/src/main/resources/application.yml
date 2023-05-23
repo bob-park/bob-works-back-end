@@ -66,6 +66,8 @@ user:
   avatar:
     prefix: ${user_avatar_prefix}
     location: file://${user_avatar_location}
+  signature:
+    location: file://${user_signature_location}
 
 ## logging
 logging:
