@@ -1,5 +1,8 @@
 package org.bobpark.authorizationservice.configure.authorization;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpSession;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,6 +77,10 @@ public class AuthorizationServerConfiguration {
                             if (StringUtils.hasText(authenticationToken.getState())) {
                                 state = authenticationToken.getState();
                             }
+
+                            HttpSession session = request.getSession();
+                            session.invalidate();
+
                             response.sendRedirect(redirectUri + "?code=" + authorizationCode + "&state=" + state);
                         }))
             .tokenEndpoint(token ->
