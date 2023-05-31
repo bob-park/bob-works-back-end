@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.bobpark.client.domain.position.model.PositionResponse;
 import org.bobpark.client.domain.team.model.TeamResponse;
 import org.bobpark.client.domain.user.model.UpdateUserAvatarRequest;
+import org.bobpark.client.domain.user.model.UpdateUserDocumentSignatureRequest;
 import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.service.UserService;
@@ -62,6 +63,11 @@ public class UserController {
     @GetMapping(path = "{id}/document/signature")
     public Resource getDocumentSignature(@PathVariable long id) {
         return userService.getDocumentSignature(id);
+    }
+
+    @PostMapping(path = "{id}/document/signature")
+    public UserResponse updateSignature(@PathVariable long id, UpdateUserDocumentSignatureRequest updateRequest) {
+        return userService.updateSignature(id, updateRequest);
     }
 
     private UserResponse parseToUserResponse(OidcUser user) {

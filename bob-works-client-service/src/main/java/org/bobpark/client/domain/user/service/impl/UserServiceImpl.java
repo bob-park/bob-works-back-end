@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import org.bobpark.client.domain.user.feign.UserClient;
 import org.bobpark.client.domain.user.model.UpdateUserAvatarRequest;
+import org.bobpark.client.domain.user.model.UpdateUserDocumentSignatureRequest;
 import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.service.UserService;
@@ -37,5 +38,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Resource getDocumentSignature(long id) {
         return userClient.getDocumentSignature(id);
+    }
+
+    @Override
+    public UserResponse updateSignature(long id, UpdateUserDocumentSignatureRequest updateRequest) {
+        return userClient.updateSignature(id, updateRequest.signature());
     }
 }

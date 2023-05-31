@@ -28,4 +28,7 @@ public interface UserClient {
 
     @GetMapping(path = "{id}/document/signature")
     Resource getDocumentSignature(@PathVariable long id);
+
+    @PostMapping(path = "{id}/document/signature", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    UserResponse updateSignature(@PathVariable long id, @RequestPart("signature") MultipartFile signatureFile);
 }
