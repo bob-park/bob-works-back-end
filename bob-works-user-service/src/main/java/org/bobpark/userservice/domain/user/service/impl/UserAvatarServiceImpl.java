@@ -1,13 +1,11 @@
 package org.bobpark.userservice.domain.user.service.impl;
 
-import static com.google.common.base.Preconditions.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.bobpark.userservice.domain.user.model.UserResponse.*;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static org.bobpark.userservice.domain.user.model.UserResponse.toResponse;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,17 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-
-import com.google.common.collect.Lists;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.exception.ServiceRuntimeException;
 import org.bobpark.core.model.common.Id;
+import org.bobpark.userservice.common.utils.CommonUtils;
 import org.bobpark.userservice.configure.user.properties.UserProperties;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserAvatar;
-import org.bobpark.userservice.domain.user.model.UpdateUserAvatarRequest;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.repository.UserAvatarRepository;
 import org.bobpark.userservice.domain.user.repository.UserRepository;
@@ -52,9 +47,7 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
     @Transactional
     @Override
-    public UserResponse updateAvatar(Id<User, Long> userId,  MultipartFile avatar) {
-
-        // checkArgument(isNotEmpty(updateRequest.avatar()), "avatar must be provided.");
+    public UserResponse updateAvatar(Id<User, Long> userId, MultipartFile avatar) {
 
         User user =
             userRepository.findById(userId)
@@ -70,7 +63,9 @@ public class UserAvatarServiceImpl implements UserAvatarService {
                 throw new ServiceRuntimeException("avatar file extension must be 'jpg' or 'png'.");
             }
 
-            fileName = createAvatarFileName(extension);
+            String avatarFileName = UUID.randomUUID() + "." + extension;
+
+            fileName = CommonUtils.generateDateFolderPath() + File.separatorChar + avatarFileName;
 
             try {
 
@@ -102,19 +97,4 @@ public class UserAvatarServiceImpl implements UserAvatarService {
 
         return toResponse(user, properties.getAvatar().getPrefix());
     }
-
-    private String createAvatarFileName(String extension) {
-
-        LocalDate now = LocalDate.now();
-
-        List<String> paths = Lists.newArrayList();
-
-        paths.add(String.format("%04d", now.getYear()));
-        paths.add(String.format("%02d", now.getMonthValue()));
-        paths.add(String.format("%02d", now.getDayOfMonth()));
-        paths.add(UUID.randomUUID() + "." + extension);
-
-        return StringUtils.join(paths, File.separatorChar);
-    }
-
 }
