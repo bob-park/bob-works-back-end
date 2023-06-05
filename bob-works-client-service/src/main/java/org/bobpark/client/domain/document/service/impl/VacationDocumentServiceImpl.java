@@ -37,7 +37,10 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
     @Override
     public VacationDocumentDetailResponse getVacationDocument(long documentId) {
         VacationDocumentResponse document = documentClient.getVacationDocument(documentId);
-        DocumentTypeResponse type = documentTypeClient.getType(document.typeId());
+        DocumentTypeResponse type =
+            documentTypeClient.getApprovalByTeam(
+                document.typeId(),
+                document.writer().team().id());
 
         List<DocumentTypeApprovalLineStatusResponse> lines = Lists.newArrayList();
         extractLines(type.approvalLine(), document.approvals(), lines);
@@ -60,6 +63,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         DocumentTypeApprovalLineStatusResponse lineStatus =
             DocumentTypeApprovalLineStatusResponse.builder()
                 .id(line.id())
+                .uniqueUserId(line.user().id())
                 .userId(line.user().userId())
                 .username(line.user().name())
                 .positionId(line.user().position().id())

@@ -8,4 +8,6 @@ import org.bobpark.client.domain.document.model.DocumentResponse;
 public interface DocumentService {
 
     Page<DocumentResponse> search(Pageable pageable);
+
+    DocumentResponse cancel(long documentId);
 }

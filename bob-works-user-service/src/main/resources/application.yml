@@ -26,6 +26,11 @@ management:
 spring:
   application:
     name: user-service
+  cloud:
+    openfeign:
+      oauth2:
+        enabled: on
+        clientRegistrationId: ${oauth2_client_registration_id}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${database_host}/${database_name}
@@ -55,6 +60,14 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
+
+## user
+user:
+  avatar:
+    prefix: ${user_avatar_prefix}
+    location: file://${user_avatar_location}
+  signature:
+    location: file://${user_signature_location}
 
 ## logging
 logging:

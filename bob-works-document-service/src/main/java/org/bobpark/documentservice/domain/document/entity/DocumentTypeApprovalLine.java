@@ -1,5 +1,8 @@
 package org.bobpark.documentservice.domain.document.entity;
 
+import static com.google.common.base.Preconditions.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -44,12 +47,19 @@ public class DocumentTypeApprovalLine {
     private DocumentType documentType;
 
     private Long userId;
+    private Long teamId;
 
     @Builder
-    private DocumentTypeApprovalLine(Long id, DocumentType documentType, Long userId) {
+    private DocumentTypeApprovalLine(Long id, DocumentType documentType, Long userId, Long teamId) {
+
+        checkArgument(isNotEmpty(documentType), "documentType must be provided.");
+        checkArgument(isNotEmpty(userId), "userId must be provided.");
+        checkArgument(isNotEmpty(teamId), "teamId must be provided.");
+
         this.id = id;
         this.documentType = documentType;
         this.userId = userId;
+        this.teamId = teamId;
     }
 
     public void setParent(DocumentTypeApprovalLine parent) {

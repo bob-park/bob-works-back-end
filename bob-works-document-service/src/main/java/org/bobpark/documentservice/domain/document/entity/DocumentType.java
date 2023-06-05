@@ -68,12 +68,13 @@ public class DocumentType extends BaseEntity {
         this.name = name;
     }
 
-    public void addApproveLine(DocumentTypeApprovalLine parent, Long userId) {
+    public void addApproveLine(DocumentTypeApprovalLine parent, Long userId, Long teamId) {
 
         DocumentTypeApprovalLine createApproveLine =
             DocumentTypeApprovalLine.builder()
                 .userId(userId)
                 .documentType(this)
+                .teamId(teamId)
                 .build();
 
         if (parent != null) {

@@ -43,6 +43,7 @@ public class OAuth2ResourceServerConfiguration {
         http.authorizeHttpRequests(
             requests ->
                 requests
+                    .requestMatchers("/user/*/document/**").authenticated()
                     .requestMatchers("/user/**").permitAll()
                     .anyRequest().authenticated());
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,10 +20,19 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
+import org.bobpark.documentservice.domain.document.listener.DelegatingDocumentListener;
+import org.bobpark.documentservice.domain.document.listener.DocumentListener;
+import org.bobpark.documentservice.domain.document.listener.vacation.VacationDocumentListener;
+import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
+import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 
+@RequiredArgsConstructor
 @EnableTransactionManagement
 @Configuration
 public class AppConfiguration {
+
+    private final UserClient userClient;
+    private final VacationDocumentRepository vacationDocumentRepository;
 
     @Bean
     public Jackson2ObjectMapperBuilder configureObjectMapper() {
@@ -50,5 +60,14 @@ public class AppConfiguration {
     @Bean
     public AuthenticationUtils authenticationUtils() {
         return AuthenticationUtils.getInstance();
+    }
+
+    @Bean
+    public DocumentListener documentListener() {
+        DelegatingDocumentListener documentListener = new DelegatingDocumentListener();
+
+        documentListener.addDocumentListener(new VacationDocumentListener(userClient));
+
+        return documentListener;
     }
 }

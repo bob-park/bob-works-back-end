@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
+import org.bobpark.userservice.configure.user.properties.UserProperties;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.model.vacation.CancelUserVacationRequest;
@@ -24,6 +25,8 @@ import org.bobpark.userservice.domain.user.service.vacation.UserVacationService;
 @Service
 @Transactional(readOnly = true)
 public class UserVacationServiceImpl implements UserVacationService {
+
+    private final UserProperties properties;
 
     private final UserRepository userRepository;
 
@@ -39,7 +42,7 @@ public class UserVacationServiceImpl implements UserVacationService {
 
         user.useVacation(useVacationRequest.type(), useVacationRequest.useCount());
 
-        return toResponse(user);
+        return toResponse(user, properties.getAvatar().getPrefix());
     }
 
     @Transactional
@@ -54,6 +57,6 @@ public class UserVacationServiceImpl implements UserVacationService {
 
         user.cancelVacation(cancelVacationRequest.type(), cancelVacationRequest.cancelCount());
 
-        return toResponse(user);
+        return toResponse(user, properties.getAvatar().getPrefix());
     }
 }

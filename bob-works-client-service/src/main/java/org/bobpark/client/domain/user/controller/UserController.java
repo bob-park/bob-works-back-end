@@ -6,14 +6,22 @@ import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.core.io.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.client.domain.position.model.PositionResponse;
 import org.bobpark.client.domain.team.model.TeamResponse;
+import org.bobpark.client.domain.user.model.UpdateUserAvatarRequest;
+import org.bobpark.client.domain.user.model.UpdateUserDocumentSignatureRequest;
+import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.service.UserService;
 
@@ -35,6 +43,33 @@ public class UserController {
         return userService.getUser(user.getSubject());
     }
 
+    @PutMapping(path = "password")
+    public UserResponse updatePassword(@AuthenticationPrincipal OidcUser user,
+        @RequestBody UpdateUserPasswordRequest updateRequest) {
+
+        UserResponse userinfo = parseToUserResponse(user);
+
+        return userService.updatePassword(userinfo.id(), updateRequest);
+    }
+
+    @PostMapping(path = "avatar")
+    public UserResponse updateAvatar(@AuthenticationPrincipal OidcUser user,
+        UpdateUserAvatarRequest updateRequest) {
+        UserResponse userinfo = parseToUserResponse(user);
+
+        return userService.updateAvatar(userinfo.id(), updateRequest);
+    }
+
+    @GetMapping(path = "{id}/document/signature")
+    public Resource getDocumentSignature(@PathVariable long id) {
+        return userService.getDocumentSignature(id);
+    }
+
+    @PostMapping(path = "{id}/document/signature")
+    public UserResponse updateSignature(@PathVariable long id, UpdateUserDocumentSignatureRequest updateRequest) {
+        return userService.updateSignature(id, updateRequest);
+    }
+
     private UserResponse parseToUserResponse(OidcUser user) {
 
         Map<String, Object> profile = user.getUserInfo().getClaim("profile");
@@ -47,17 +82,18 @@ public class UserController {
             .email(user.getUserInfo().getEmail())
             .name((String)profile.get("name"))
             .userId(user.getClaimAsString("sub"))
+            .avatar((String)profile.get("avatar"))
             .position(
                 PositionResponse.builder()
                     .id(toLong(String.valueOf(positionMap.get("id"))))
                     .name(String.valueOf(positionMap.get("name")))
                     .build())
-            .team(
+            .team(teamMap != null ?
                 TeamResponse.builder()
                     .id(toLong(String.valueOf(teamMap.get("id"))))
                     .name(String.valueOf(teamMap.get("name")))
                     .description(String.valueOf(teamMap.get("description")))
-                    .build())
+                    .build() : null)
             .build();
     }
 }

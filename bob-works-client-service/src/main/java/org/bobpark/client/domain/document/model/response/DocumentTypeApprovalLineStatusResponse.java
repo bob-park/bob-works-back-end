@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record DocumentTypeApprovalLineStatusResponse(Long id,
+                                                     Long uniqueUserId,
                                                      String userId,
                                                      String username,
                                                      Long positionId,

@@ -5,6 +5,7 @@ public enum DocumentStatus {
     WAITING,
     PROCEEDING,
     APPROVE,
-    REJECT
+    REJECT,
+    CANCEL
 
 }

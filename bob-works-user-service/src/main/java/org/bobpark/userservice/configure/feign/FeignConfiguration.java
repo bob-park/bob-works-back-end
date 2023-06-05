@@ -39,7 +39,7 @@ public class FeignConfiguration {
         return Level.BASIC;
     }
 
-    @Bean
+    // @Bean
     public RequestInterceptor customRequestInterceptor() {
         return requestTemplate -> requestTemplate.headers(getRequestHeaders());
     }

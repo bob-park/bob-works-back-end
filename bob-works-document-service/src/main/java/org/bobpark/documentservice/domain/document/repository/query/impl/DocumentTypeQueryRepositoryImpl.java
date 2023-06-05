@@ -1,9 +1,11 @@
 package org.bobpark.documentservice.domain.document.repository.query.impl;
 
 import static org.bobpark.documentservice.domain.document.entity.QDocumentType.*;
+import static org.bobpark.documentservice.domain.document.entity.QDocumentTypeApprovalLine.*;
 import static org.springframework.util.StringUtils.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -12,7 +14,9 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
+import org.bobpark.documentservice.domain.document.entity.QDocumentTypeApprovalLine;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentTypeRequest;
 import org.bobpark.documentservice.domain.document.repository.query.DocumentTypeQueryRepository;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
@@ -28,6 +32,17 @@ public class DocumentTypeQueryRepositoryImpl implements DocumentTypeQueryReposit
             .where(mappingCondition(searchRequest))
             .orderBy(documentType.name.asc())
             .fetch();
+    }
+
+    @Override
+    public Optional<DocumentType> findApprovalByTeam(Id<DocumentType, Long> typeId, long teamId) {
+        return Optional.ofNullable(
+            query.selectFrom(documentType)
+                .join(documentType.approvalLines, documentTypeApprovalLine).fetchJoin()
+                .where(
+                    documentType.id.eq(typeId.getValue()),
+                    documentTypeApprovalLine.teamId.eq(teamId))
+                .fetchOne());
     }
 
     private Predicate mappingCondition(SearchDocumentTypeRequest searchRequest) {

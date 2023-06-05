@@ -16,6 +16,9 @@ eureka:
     register-with-eureka: false
     fetch-registry: false
 
+## bob-core
+bob-core:
+  enabled: off
 
 ## logging
 logging:

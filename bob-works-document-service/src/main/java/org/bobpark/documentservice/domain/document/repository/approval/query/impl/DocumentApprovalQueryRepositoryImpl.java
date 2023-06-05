@@ -67,7 +67,8 @@ public class DocumentApprovalQueryRepositoryImpl implements DocumentApprovalQuer
         builder.and(eqType(searchRequest.type()))
             .and(eqWriterId(searchRequest.writerId()))
             .and(eqStatus(searchRequest.status()))
-            .and(eqApprovalLineUserId(searchRequest.approvalLineUserId()));
+            .and(eqApprovalLineUserId(searchRequest.approvalLineUserId()))
+            .and(eqApprovalLineTeamId(searchRequest.approvalLineTeamId()));
 
         return builder;
     }
@@ -90,5 +91,9 @@ public class DocumentApprovalQueryRepositoryImpl implements DocumentApprovalQuer
 
     private BooleanExpression eqApprovalLineUserId(Long approvalLineUserId) {
         return approvalLineUserId != null ? documentTypeApprovalLine.userId.eq(approvalLineUserId) : null;
+    }
+
+    private BooleanExpression eqApprovalLineTeamId(Long teamId) {
+        return teamId != null ? documentTypeApprovalLine.teamId.eq(teamId) : null;
     }
 }

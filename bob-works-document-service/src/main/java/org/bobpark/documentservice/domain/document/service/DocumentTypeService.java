@@ -17,6 +17,8 @@ public interface DocumentTypeService {
 
     DocumentTypeResponse getDocumentType(Id<DocumentType, Long> documentTypeId);
 
+    DocumentTypeResponse getApprovalLineByTeam(Id<DocumentType, Long> documentTypeId, Long teamId);
+
     DocumentTypeResponse updateDocumentType(Id<DocumentType, Long> documentTypeId, UpdateDocumentTypeRequest updateRequest);
 
     DocumentTypeResponse deleteDocumentType(Id<DocumentType, Long> documentTypeId);

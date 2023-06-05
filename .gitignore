@@ -38,7 +38,8 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### project ###
+### Bob ###
+gradle.properties
 application-dev.yml
 Dockerfile-Debug
 docker-compose-debug.yml

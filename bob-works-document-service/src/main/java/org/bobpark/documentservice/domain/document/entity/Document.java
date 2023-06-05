@@ -64,10 +64,11 @@ public abstract class Document extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DocumentApproval> approvals = new ArrayList<>();
 
-    protected Document(Long id, DocumentType documentType, Long writerId, DocumentStatus status) {
+    protected Document(Long id, DocumentType documentType, Long writerId, Long teamId, DocumentStatus status) {
 
         checkArgument(isNotEmpty(documentType), "documentType must be provided.");
         checkArgument(isNotEmpty(writerId), "writer must be provided.");
+        checkArgument(isNotEmpty(teamId), "teamId must be provided.");
 
         this.id = id;
         this.documentType = documentType;
@@ -81,7 +82,8 @@ public abstract class Document extends BaseEntity {
 
         DocumentTypeApprovalLine approvalLine =
             documentType.getApprovalLines().stream()
-                .findFirst()
+                .filter(item -> item.getTeamId().equals(teamId))
+                .findAny()
                 .orElseThrow(() -> new IllegalArgumentException("approvalLines must not empty"));
 
         approval.setDocument(this);

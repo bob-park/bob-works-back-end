@@ -1,6 +1,6 @@
 package org.bobpark.documentservice.domain.document.entity;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 import java.time.LocalDateTime;
 
