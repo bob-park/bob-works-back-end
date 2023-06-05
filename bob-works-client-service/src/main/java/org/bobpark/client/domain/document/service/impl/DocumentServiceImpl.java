@@ -20,8 +20,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Page<DocumentResponse> search(Pageable pageable) {
+        return documentClient.search(pageable);
+    }
 
-        Page<DocumentResponse> result = documentClient.search(pageable);
-        return result;
+    @Override
+    public DocumentResponse cancel(long documentId) {
+        return documentClient.cancel(documentId);
     }
 }
