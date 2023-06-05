@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.bobpark.core.exception.NotFoundException;
+import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
@@ -46,12 +48,27 @@ public class DocumentServiceImpl implements DocumentService {
 
         Page<Document> result = documentRepository.search(condition, pageable);
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
+        List<UserResponse> users = getUsers();
 
         return result.map(item -> toResponse(item, users));
+    }
+
+    @Override
+    public DocumentResponse cancel(Id<Document, Long> documentId) {
+
+        Document document =
+            documentRepository.findById(documentId.getValue())
+                .orElseThrow(() -> new NotFoundException(documentId));
+
+        return toResponse(document, getUsers());
     }
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
+    public List<UserResponse> getUsers() {
+        return AuthenticationUtils.getInstance().getUsersByPrincipal();
+    }
 }
+
