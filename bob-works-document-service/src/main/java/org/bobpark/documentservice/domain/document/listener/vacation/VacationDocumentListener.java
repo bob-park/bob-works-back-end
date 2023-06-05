@@ -27,18 +27,21 @@ public class VacationDocumentListener implements DocumentListener {
 
         vacationDocument.updateStatus(DocumentStatus.CANCEL);
 
-        // update user vacation
-        CancelUserVacationRequest cancelRequest =
-            CancelUserVacationRequest.builder()
-                .type(vacationDocument.getVacationType())
-                .cancelCount(vacationDocument.getDaysCount())
-                .build();
+        if (vacationDocument.getStatus() == DocumentStatus.APPROVE) {
 
-        userClient.cancelVacation(document.getWriterId(), cancelRequest);
+            // update user vacation
+            CancelUserVacationRequest cancelRequest =
+                CancelUserVacationRequest.builder()
+                    .type(vacationDocument.getVacationType())
+                    .cancelCount(vacationDocument.getDaysCount())
+                    .build();
 
-        log.debug("canceled vacation document. (id={}, daysCount={})",
-            vacationDocument.getId(),
-            vacationDocument.getDaysCount());
+            userClient.cancelVacation(document.getWriterId(), cancelRequest);
+
+            log.debug("canceled vacation document. (id={}, daysCount={})",
+                vacationDocument.getId(),
+                vacationDocument.getDaysCount());
+        }
 
     }
 
