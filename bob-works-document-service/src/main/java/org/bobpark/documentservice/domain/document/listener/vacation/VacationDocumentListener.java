@@ -3,7 +3,6 @@ package org.bobpark.documentservice.domain.document.listener.vacation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.documentservice.domain.document.entity.Document;
@@ -20,13 +19,10 @@ public class VacationDocumentListener implements DocumentListener {
 
     private final UserClient userClient;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public void canceled(Document document) {
 
         VacationDocument vacationDocument = (VacationDocument)document;
-
-        vacationDocument.updateStatus(DocumentStatus.CANCEL);
 
         if (vacationDocument.getStatus() == DocumentStatus.APPROVE) {
 
@@ -43,6 +39,8 @@ public class VacationDocumentListener implements DocumentListener {
                 vacationDocument.getId(),
                 vacationDocument.getDaysCount());
         }
+
+        vacationDocument.updateStatus(DocumentStatus.CANCEL);
 
     }
 

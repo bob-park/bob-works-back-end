@@ -56,6 +56,7 @@ public class DocumentServiceImpl implements DocumentService {
         return result.map(item -> toResponse(item, users));
     }
 
+    @Transactional
     @Override
     public DocumentResponse cancel(Id<Document, Long> documentId) {
 
