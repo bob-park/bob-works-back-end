@@ -23,7 +23,7 @@ import org.bobpark.documentservice.common.utils.authentication.AuthenticationUti
 import org.bobpark.documentservice.domain.document.listener.DelegatingDocumentListener;
 import org.bobpark.documentservice.domain.document.listener.DocumentListener;
 import org.bobpark.documentservice.domain.document.listener.vacation.VacationDocumentListener;
-import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
+import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 
 @RequiredArgsConstructor
@@ -32,7 +32,7 @@ import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 public class AppConfiguration {
 
     private final UserClient userClient;
-    private final VacationDocumentRepository vacationDocumentRepository;
+    private final DocumentApprovalRepository documentApprovalRepository;
 
     @Bean
     public Jackson2ObjectMapperBuilder configureObjectMapper() {
@@ -66,7 +66,7 @@ public class AppConfiguration {
     public DocumentListener documentListener() {
         DelegatingDocumentListener documentListener = new DelegatingDocumentListener();
 
-        documentListener.addDocumentListener(new VacationDocumentListener(userClient));
+        documentListener.addDocumentListener(new VacationDocumentListener(userClient, documentApprovalRepository));
 
         return documentListener;
     }
