@@ -11,18 +11,53 @@ public class DelegatingDocumentListener implements DocumentListener {
     private final List<DocumentListener> listeners = Collections.synchronizedList(new ArrayList<>());
 
     @Override
-    public void canceled(Document d) {
+    public Document approval(long approvalId, Document document) {
+
+        Document result = null;
+
+        for (DocumentListener listener : listeners) {
+            Class<? extends Document> clazz = document.getClass();
+
+            if (listener.isSupport(clazz)) {
+                result = listener.approval(approvalId, document);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Document reject(long approvalId, Document document, String reason) {
+
+        Document result = null;
+
+        for (DocumentListener listener : listeners) {
+            Class<? extends Document> clazz = document.getClass();
+
+            if (listener.isSupport(clazz)) {
+                result = listener.reject(approvalId, document, reason);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Document canceled(Document d) {
+
+        Document result = null;
 
         for (DocumentListener listener : listeners) {
 
             Class<? extends Document> clazz = d.getClass();
 
             if (listener.isSupport(clazz)) {
-                listener.canceled(d);
+                result = listener.canceled(d);
             }
 
         }
 
+        return result;
     }
 
     @Override

@@ -4,7 +4,11 @@ import org.bobpark.documentservice.domain.document.entity.Document;
 
 public interface DocumentListener {
 
-    void canceled(Document d);
+    Document approval(long approvalId, Document document);
+
+    Document reject(long approvalId, Document document, String reason);
+
+    Document canceled(Document document);
 
     boolean isSupport(Class<? extends Document> clazz);
 
