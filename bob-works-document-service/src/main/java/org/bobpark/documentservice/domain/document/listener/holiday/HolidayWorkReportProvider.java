@@ -7,10 +7,12 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
 import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkReport;
+import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkUser;
 import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.user.feign.client.UserClient;
+import org.bobpark.documentservice.domain.user.model.vacation.AddTotalAlternativeVacationRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -32,7 +34,18 @@ public class HolidayWorkReportProvider implements DocumentProvider {
 
         log.debug("approved vacation document. (id={})", holidayWorkReport.getId());
 
-        return null;
+        for (HolidayWorkUser workUser : holidayWorkReport.getUsers()) {
+
+            if (!workUser.isManualInput() && workUser.isVacation()) {
+
+                int addAlternativeVacationCount = (int)workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME;
+
+                addAlternativeVacation(workUser.getWorkUserId(), addAlternativeVacationCount);
+            }
+
+        }
+
+        return holidayWorkReport;
     }
 
     @Override
@@ -53,5 +66,9 @@ public class HolidayWorkReportProvider implements DocumentProvider {
     private DocumentApproval getApprovalById(long approvalId) {
         return documentApprovalRepository.findById(approvalId)
             .orElseThrow(() -> new NotFoundException(DocumentApproval.class, approvalId));
+    }
+
+    private void addAlternativeVacation(long workUserId, double addCount) {
+        userClient.addAlternateiveVacation(workUserId, new AddTotalAlternativeVacationRequest(addCount));
     }
 }

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.listener.DelegatingDocumentProvider;
 import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
+import org.bobpark.documentservice.domain.document.listener.holiday.HolidayWorkReportProvider;
 import org.bobpark.documentservice.domain.document.listener.vacation.VacationDocumentProvider;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.user.feign.client.UserClient;
@@ -67,6 +68,7 @@ public class AppConfiguration {
         DelegatingDocumentProvider documentListener = new DelegatingDocumentProvider();
 
         documentListener.addDocumentListener(new VacationDocumentProvider(userClient, documentApprovalRepository));
+        documentListener.addDocumentListener(new HolidayWorkReportProvider(userClient, documentApprovalRepository));
 
         return documentListener;
     }

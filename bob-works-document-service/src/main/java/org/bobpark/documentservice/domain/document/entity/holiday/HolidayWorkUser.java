@@ -38,7 +38,7 @@ import org.bobpark.documentservice.common.entity.BaseEntity;
 @Table(name = "holiday_work_users")
 public class HolidayWorkUser extends BaseEntity {
 
-    public static final double VACATION_TIME = 8;
+    public static final int VACATION_TIME = 8;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -105,12 +105,19 @@ public class HolidayWorkUser extends BaseEntity {
             this.totalWorkTime += time.getCalculateWorkTime();
         }
 
+        this.paymentTime = getTotalWorkTime();
+
         if (getIsVacation()) {
-            double result = getTotalWorkTime() / VACATION_TIME;
             this.paymentTime = getTotalWorkTime() % VACATION_TIME;
-        } else {
-            this.paymentTime = getTotalWorkTime();
         }
+    }
+
+    public boolean isManualInput() {
+        return Boolean.TRUE.equals(getIsManualInput());
+    }
+
+    public boolean isVacation() {
+        return Boolean.TRUE.equals(getIsVacation());
     }
 
 }
