@@ -47,21 +47,21 @@ public class HolidayWorkUser extends BaseEntity {
     @JoinColumn(name = "holiday_work_id")
     private HolidayWorkReport report;
 
-    private Boolean isManualReport;
+    private Boolean isManualInput;
     private Long workUserId;
     private String workUserName;
     private LocalDate workDate;
-    private Double totalWorkTime;
+    private double totalWorkTime;
     private Boolean isVacation;
-    private Integer paymentTime;
+    private Double paymentTime;
 
     @Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HolidayWorkTime> times = new ArrayList<>();
 
     @Builder
-    private HolidayWorkUser(Long id, Boolean isManualReport, Long workUserId, String workUserName, LocalDate workDate,
-        Boolean isVacation, Integer paymentTime) {
+    private HolidayWorkUser(Long id, Boolean isManualInput, Long workUserId, String workUserName, LocalDate workDate,
+        Boolean isVacation, Double paymentTime) {
 
         checkArgument(StringUtils.isNotBlank(workUserName), "workUserName must be provided.");
         checkArgument(isNotEmpty(workDate), "workDate must be provided.");
@@ -69,7 +69,7 @@ public class HolidayWorkUser extends BaseEntity {
         checkArgument(isNotEmpty(paymentTime), "paymentTime must be provided.");
 
         this.id = id;
-        this.isManualReport = defaultIfNull(isManualReport, false);
+        this.isManualInput = defaultIfNull(isManualInput, false);
         this.workUserId = workUserId;
         this.workUserName = workUserName;
         this.workDate = workDate;

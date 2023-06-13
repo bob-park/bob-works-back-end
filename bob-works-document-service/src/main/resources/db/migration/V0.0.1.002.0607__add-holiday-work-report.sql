@@ -46,3 +46,8 @@ create table holiday_work_times
 
     foreign key (work_users_id) references holiday_work_users (id)
 );
+
+
+-- add data
+insert into document_types (id, type, name, created_by) values (2, 'HOLIDAY_WORK', '휴일 근무 보고서', 'admin');
+insert into document_types_approval_lines (id, p_id, document_type_id, user_id, team_id) values (5, null, 2, 12, 1);
