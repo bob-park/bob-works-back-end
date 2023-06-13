@@ -62,12 +62,13 @@ public class HolidayWorkReportServiceImpl implements HolidayWorkReportService {
                     .workUserName(workUser.workUserName())
                     .workDate(workUser.workDate())
                     .isVacation(workUser.isVacation())
-                    .paymentTime(workUser.paymentTime())
                     .build();
 
             for (AddHolidayWorkTime workTime : workUser.times()) {
                 addWorkUser.addTime(workTime.startTime(), workTime.endTime());
             }
+
+            addWorkUser.calculateWorkTime();
 
             createdHolidayWorkReport.addUser(addWorkUser);
         }

@@ -38,6 +38,8 @@ import org.bobpark.documentservice.common.entity.BaseEntity;
 @Table(name = "holiday_work_users")
 public class HolidayWorkUser extends BaseEntity {
 
+    private static final double VACATION_TIME = 8;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -53,7 +55,7 @@ public class HolidayWorkUser extends BaseEntity {
     private LocalDate workDate;
     private double totalWorkTime;
     private Boolean isVacation;
-    private Double paymentTime;
+    private double paymentTime;
 
     @Exclude
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,7 +63,7 @@ public class HolidayWorkUser extends BaseEntity {
 
     @Builder
     private HolidayWorkUser(Long id, Boolean isManualInput, Long workUserId, String workUserName, LocalDate workDate,
-        Boolean isVacation, Double paymentTime) {
+        Boolean isVacation) {
 
         checkArgument(StringUtils.isNotBlank(workUserName), "workUserName must be provided.");
         checkArgument(isNotEmpty(workDate), "workDate must be provided.");
@@ -74,7 +76,6 @@ public class HolidayWorkUser extends BaseEntity {
         this.workUserName = workUserName;
         this.workDate = workDate;
         this.isVacation = isVacation;
-        this.paymentTime = paymentTime;
     }
 
     public void setReport(HolidayWorkReport report) {
@@ -91,24 +92,25 @@ public class HolidayWorkUser extends BaseEntity {
         workTime.setUser(this);
 
         getTimes().add(workTime);
+    }
 
-        double result = 0;
-        int calculateMinute = endTime.getMinute() - startTime.getMinute();
-        int hour = endTime.getHour() - startTime.getHour();
+    /**
+     * work time 을 계산하는 메서드
+     * <p>
+     * isVacation 이 true 인 경우 totalWorkTime 에서 8 배수로 뺸 나머지를 paymentTime 에 추가한다.
+     */
+    public void calculateWorkTime() {
 
-        if (hour < 0) {
-            hour--;
+        for (HolidayWorkTime time : times) {
+            this.totalWorkTime += time.getCalculateWorkTime();
         }
 
-        double minute = 0;
-
-        if (Math.abs(calculateMinute) != 0) {
-            minute = (double)Math.abs(calculateMinute) / (double)60;
+        if (getIsVacation()) {
+            double result = getTotalWorkTime() / VACATION_TIME;
+            this.paymentTime = getTotalWorkTime() % VACATION_TIME;
+        } else {
+            this.paymentTime = getTotalWorkTime();
         }
-
-        result += (hour + minute);
-
-        this.totalWorkTime += result;
     }
 
 }
