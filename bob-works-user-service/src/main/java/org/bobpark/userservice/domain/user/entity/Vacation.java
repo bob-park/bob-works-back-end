@@ -40,4 +40,8 @@ public class Vacation {
 
         this.usedCount -= count;
     }
+
+    public void addTotalCount(double add) {
+        this.totalCount += add;
+    }
 }
