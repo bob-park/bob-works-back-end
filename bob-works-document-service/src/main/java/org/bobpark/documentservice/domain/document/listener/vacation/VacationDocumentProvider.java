@@ -1,11 +1,7 @@
 package org.bobpark.documentservice.domain.document.listener.vacation;
 
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.documentservice.domain.document.entity.Document;
@@ -20,13 +16,9 @@ import org.bobpark.documentservice.domain.user.model.vacation.UseUserVacationReq
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class VacationDocumentProvider implements DocumentProvider {
 
-    private static final List<DocumentStatus> ALLOW_STATUS = List.of(DocumentStatus.WAITING, DocumentStatus.PROCEEDING);
-
     private final UserClient userClient;
-
     private final DocumentApprovalRepository documentApprovalRepository;
 
     @Override
@@ -35,9 +27,7 @@ public class VacationDocumentProvider implements DocumentProvider {
 
         DocumentApproval approval = getApprovalById(approvalId);
 
-        if (!ALLOW_STATUS.contains(approval.getStatus())) {
-            throw new IllegalStateException("Invalid status. (" + approval.getStatus() + ")");
-        }
+        allowStatus(approval.getStatus());
 
         approval.updateStatus(DocumentStatus.APPROVE, null);
 
