@@ -38,7 +38,7 @@ import org.bobpark.documentservice.common.entity.BaseEntity;
 @Table(name = "holiday_work_users")
 public class HolidayWorkUser extends BaseEntity {
 
-    private static final double VACATION_TIME = 8;
+    public static final double VACATION_TIME = 8;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

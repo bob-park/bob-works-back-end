@@ -21,7 +21,7 @@ import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
-import org.bobpark.documentservice.domain.document.listener.DocumentListener;
+import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.approval.ApprovalDocumentRequest;
 import org.bobpark.documentservice.domain.document.model.approval.DocumentApprovalResponse;
@@ -38,7 +38,7 @@ import org.bobpark.documentservice.domain.user.model.UserResponse;
 @Transactional(readOnly = true)
 public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
-    private final DocumentListener documentListener;
+    private final DocumentProvider documentProvider;
     private final DocumentApprovalRepository documentApprovalRepository;
 
     private final UserClient userClient;
@@ -57,8 +57,8 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
         Document document = approval.getDocument();
 
         switch (approvalRequest.status()) {
-            case APPROVE -> documentListener.approval(approvalId.getValue(), document);
-            case REJECT -> documentListener.reject(approvalId.getValue(), document, approvalRequest.reason());
+            case APPROVE -> documentProvider.approval(approvalId.getValue(), document);
+            case REJECT -> documentProvider.reject(approvalId.getValue(), document, approvalRequest.reason());
             default -> throw new IllegalArgumentException("Bad request document status.");
         }
 

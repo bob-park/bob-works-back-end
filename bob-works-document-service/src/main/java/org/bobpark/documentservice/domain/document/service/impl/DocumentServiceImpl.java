@@ -18,7 +18,7 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
-import org.bobpark.documentservice.domain.document.listener.DocumentListener;
+import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest;
 import org.bobpark.documentservice.domain.document.repository.DocumentRepository;
@@ -33,7 +33,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     private final DocumentRepository documentRepository;
 
-    private final DocumentListener documentListener;
+    private final DocumentProvider documentProvider;
 
     @Override
     public Page<DocumentResponse> search(SearchDocumentRequest searchRequest, Pageable pageable) {
@@ -64,7 +64,7 @@ public class DocumentServiceImpl implements DocumentService {
             documentRepository.findById(documentId.getValue())
                 .orElseThrow(() -> new NotFoundException(documentId));
 
-        documentListener.canceled(document);
+        documentProvider.canceled(document);
 
         return toResponse(document, getUsers());
     }

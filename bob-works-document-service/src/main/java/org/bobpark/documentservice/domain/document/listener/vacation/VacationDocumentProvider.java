@@ -11,7 +11,7 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
-import org.bobpark.documentservice.domain.document.listener.DocumentListener;
+import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.user.feign.client.UserClient;
@@ -21,7 +21,7 @@ import org.bobpark.documentservice.domain.user.model.vacation.UseUserVacationReq
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class VacationDocumentListener implements DocumentListener {
+public class VacationDocumentProvider implements DocumentProvider {
 
     private static final List<DocumentStatus> ALLOW_STATUS = List.of(DocumentStatus.WAITING, DocumentStatus.PROCEEDING);
 

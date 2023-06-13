@@ -6,16 +6,16 @@ import java.util.List;
 
 import org.bobpark.documentservice.domain.document.entity.Document;
 
-public class DelegatingDocumentListener implements DocumentListener {
+public class DelegatingDocumentProvider implements DocumentProvider {
 
-    private final List<DocumentListener> listeners = Collections.synchronizedList(new ArrayList<>());
+    private final List<DocumentProvider> listeners = Collections.synchronizedList(new ArrayList<>());
 
     @Override
     public Document approval(long approvalId, Document document) {
 
         Document result = null;
 
-        for (DocumentListener listener : listeners) {
+        for (DocumentProvider listener : listeners) {
             Class<? extends Document> clazz = document.getClass();
 
             if (listener.isSupport(clazz)) {
@@ -31,7 +31,7 @@ public class DelegatingDocumentListener implements DocumentListener {
 
         Document result = null;
 
-        for (DocumentListener listener : listeners) {
+        for (DocumentProvider listener : listeners) {
             Class<? extends Document> clazz = document.getClass();
 
             if (listener.isSupport(clazz)) {
@@ -47,7 +47,7 @@ public class DelegatingDocumentListener implements DocumentListener {
 
         Document result = null;
 
-        for (DocumentListener listener : listeners) {
+        for (DocumentProvider listener : listeners) {
 
             Class<? extends Document> clazz = d.getClass();
 
@@ -65,7 +65,7 @@ public class DelegatingDocumentListener implements DocumentListener {
         return false;
     }
 
-    public void addDocumentListener(DocumentListener listener) {
+    public void addDocumentListener(DocumentProvider listener) {
         listeners.add(listener);
     }
 

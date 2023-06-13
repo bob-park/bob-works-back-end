@@ -20,9 +20,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
-import org.bobpark.documentservice.domain.document.listener.DelegatingDocumentListener;
-import org.bobpark.documentservice.domain.document.listener.DocumentListener;
-import org.bobpark.documentservice.domain.document.listener.vacation.VacationDocumentListener;
+import org.bobpark.documentservice.domain.document.listener.DelegatingDocumentProvider;
+import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
+import org.bobpark.documentservice.domain.document.listener.vacation.VacationDocumentProvider;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 
@@ -63,10 +63,10 @@ public class AppConfiguration {
     }
 
     @Bean
-    public DocumentListener documentListener() {
-        DelegatingDocumentListener documentListener = new DelegatingDocumentListener();
+    public DocumentProvider documentListener() {
+        DelegatingDocumentProvider documentListener = new DelegatingDocumentProvider();
 
-        documentListener.addDocumentListener(new VacationDocumentListener(userClient, documentApprovalRepository));
+        documentListener.addDocumentListener(new VacationDocumentProvider(userClient, documentApprovalRepository));
 
         return documentListener;
     }
