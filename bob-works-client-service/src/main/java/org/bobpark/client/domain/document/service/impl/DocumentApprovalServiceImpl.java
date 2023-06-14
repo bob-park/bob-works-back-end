@@ -66,7 +66,18 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
     @Override
     public DocumentApprovalResponse getApproval(long approvalId) {
-        return documentApprovalClient.getApproval(approvalId);
+
+        DocumentApprovalResponse result = documentApprovalClient.getApproval(approvalId);
+
+        UserResponse writer = userClient.getUserById(result.document().writerId());
+
+        return result.toBuilder()
+            .document(
+                result.document().toBuilder()
+                    .writer(writer)
+                    .build())
+            .status(result.document().status().equals("CANCEL") ? result.document().status() : result.status())
+            .build();
     }
 
     @Override
