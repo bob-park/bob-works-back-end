@@ -27,6 +27,7 @@ public class VacationDocumentProvider implements DocumentProvider {
 
         DocumentApproval approval = getApprovalById(approvalId);
 
+        allowStatus(document.getStatus());
         allowStatus(approval.getStatus());
 
         approval.updateStatus(DocumentStatus.APPROVE, null);

@@ -19,7 +19,7 @@ public interface DocumentProvider {
 
     default void allowStatus(DocumentStatus status) {
         if (!ALLOW_STATUS.contains(status)) {
-            throw new IllegalStateException("Invalid status. (" + status + ")");
+            throw new IllegalArgumentException("Invalid status. (" + status + ")");
         }
     }
 
