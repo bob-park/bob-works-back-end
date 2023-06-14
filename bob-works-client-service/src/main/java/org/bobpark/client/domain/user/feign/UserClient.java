@@ -20,6 +20,9 @@ public interface UserClient {
     @GetMapping(path = "")
     UserResponse getUser(@RequestParam("userId") String userId);
 
+    @GetMapping(path = "{id}")
+    UserResponse getUserById(@PathVariable long id);
+
     @PutMapping(path = "{id}/password")
     UserResponse updatePassword(@PathVariable long id, UpdateUserPasswordRequest updateRequest);
 

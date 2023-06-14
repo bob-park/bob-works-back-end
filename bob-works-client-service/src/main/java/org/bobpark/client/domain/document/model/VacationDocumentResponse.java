@@ -9,7 +9,7 @@ import org.bobpark.client.domain.user.model.UserResponse;
 public record VacationDocumentResponse(Long id,
                                        String type,
                                        Long typeId,
-                                       UserResponse writer,
+                                       Long writerId,
                                        String status,
                                        LocalDateTime createdDate,
                                        String createdBy,

@@ -6,7 +6,7 @@ import org.bobpark.client.domain.user.model.UserResponse;
 
 public record DocumentResponse(Long id,
                                DocumentTypeResponse documentType,
-                               UserResponse writer,
+                               Long writerId,
                                String status,
                                LocalDateTime createdDate,
                                String createdBy,
