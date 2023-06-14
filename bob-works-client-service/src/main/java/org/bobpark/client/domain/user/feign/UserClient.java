@@ -1,6 +1,9 @@
 package org.bobpark.client.domain.user.feign;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.bobpark.client.domain.user.model.SearchUserRequest;
 import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 
@@ -19,6 +23,9 @@ public interface UserClient {
 
     @GetMapping(path = "")
     UserResponse getUser(@RequestParam("userId") String userId);
+
+    @GetMapping("search")
+    List<UserResponse> searchUsers(@SpringQueryMap SearchUserRequest searchRequest);
 
     @GetMapping(path = "{id}")
     UserResponse getUserById(@PathVariable long id);
