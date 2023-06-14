@@ -17,6 +17,7 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.configure.user.properties.UserProperties;
 import org.bobpark.userservice.domain.user.entity.User;
+import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 import org.bobpark.userservice.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.repository.UserRepository;
@@ -70,6 +71,14 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getUsersAll() {
         return userRepository.getUsersAll().stream()
             .map(item -> UserResponse.toResponse(item, properties.getAvatar().getPrefix()))
+            .toList();
+    }
+
+    @Override
+    public List<UserResponse> searchUsers(SearchUserRequest searchRequest) {
+
+        return userRepository.search(searchRequest)
+            .stream().map(item -> UserResponse.toResponse(item, properties.getAvatar().getPrefix()))
             .toList();
     }
 
