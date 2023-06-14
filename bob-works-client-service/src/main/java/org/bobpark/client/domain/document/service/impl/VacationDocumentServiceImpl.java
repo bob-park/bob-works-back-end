@@ -52,7 +52,10 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         extractLines(type.approvalLine(), document.approvals(), lines);
 
         return VacationDocumentDetailResponse.builder()
-            .document(document)
+            .document(
+                document.toBuilder()
+                    .writer(writer)
+                    .build())
             .lines(lines)
             .build();
     }

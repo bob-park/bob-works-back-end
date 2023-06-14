@@ -4,12 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import lombok.Builder;
+
 import org.bobpark.client.domain.user.model.UserResponse;
 
+@Builder(toBuilder = true)
 public record VacationDocumentResponse(Long id,
                                        String type,
                                        Long typeId,
                                        Long writerId,
+                                       UserResponse writer,
                                        String status,
                                        LocalDateTime createdDate,
                                        String createdBy,
@@ -22,4 +26,5 @@ public record VacationDocumentResponse(Long id,
                                        Double daysCount,
                                        String reason,
                                        List<DocumentApprovalResponse> approvals) {
+
 }
