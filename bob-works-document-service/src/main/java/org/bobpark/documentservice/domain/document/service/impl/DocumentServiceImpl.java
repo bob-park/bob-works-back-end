@@ -1,8 +1,6 @@
 package org.bobpark.documentservice.domain.document.service.impl;
 
-import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
-
-import java.util.List;
+import static org.bobpark.documentservice.domain.document.model.DocumentResponse.toResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +49,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         Page<Document> result = documentRepository.search(condition, pageable);
 
-        List<UserResponse> users = getUsers();
-
-        return result.map(item -> toResponse(item, users));
+        return result.map(DocumentResponse::toResponse);
     }
 
     @Transactional
@@ -66,15 +62,11 @@ public class DocumentServiceImpl implements DocumentService {
 
         documentProvider.canceled(document);
 
-        return toResponse(document, getUsers());
+        return toResponse(document);
     }
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    public List<UserResponse> getUsers() {
-        return AuthenticationUtils.getInstance().getUsersByPrincipal();
     }
 }
 

@@ -8,12 +8,10 @@ import org.bobpark.documentservice.domain.document.type.VacationSubType;
 import org.bobpark.documentservice.domain.document.type.VacationType;
 
 @Builder
-public record CreateVacationDocumentRequest(
-    Long typeId,
-    VacationType vacationType,
-    VacationSubType vacationSubType,
-    LocalDate vacationDateFrom,
-    LocalDate vacationDateTo,
-    String reason
-) {
+public record CreateVacationDocumentRequest(Long typeId,
+                                            VacationType vacationType,
+                                            VacationSubType vacationSubType,
+                                            LocalDate vacationDateFrom,
+                                            LocalDate vacationDateTo,
+                                            String reason) {
 }

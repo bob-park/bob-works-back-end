@@ -29,7 +29,6 @@ import org.bobpark.documentservice.domain.document.model.approval.SearchDocument
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.document.service.approval.DocumentApprovalService;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
-import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Slf4j
@@ -40,8 +39,6 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
     private final DocumentProvider documentProvider;
     private final DocumentApprovalRepository documentApprovalRepository;
-
-    private final UserClient userClient;
 
     @Transactional
     @Override
@@ -62,9 +59,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
             default -> throw new IllegalArgumentException("Bad request document status.");
         }
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
-
-        return toResponse(approval.getDocument(), users);
+        return toResponse(approval.getDocument());
     }
 
     @Override
@@ -72,11 +67,9 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
         DocumentApproval approval = getApprovalById(approvalId);
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
-
         return DocumentApprovalResponse.builder()
             .id(approval.getId())
-            .document(DocumentResponse.toResponse(approval.getDocument(), users))
+            .document(DocumentResponse.toResponse(approval.getDocument()))
             .status(approval.getStatus())
             .approvedDateTime(approval.getApprovedDateTime())
             .reason(approval.getReason())
@@ -87,8 +80,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
     public Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable) {
 
         Authentication authentication = AuthenticationUtils.getInstance().getAuthentication();
-        List<UserResponse> users = getUserAll();
-        UserResponse me = findUser(authentication.getName(), users);
+        UserResponse me = AuthenticationUtils.getInstance().getUser(authentication.getName());
 
         SearchDocumentApprovalRequest searchDto =
             SearchDocumentApprovalRequest.withoutApprovalLineUserId(searchRequest)
@@ -100,7 +92,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
         return result.map(item ->
             DocumentApprovalResponse.builder()
                 .id(item.getId())
-                .document(DocumentResponse.toResponse(item.getDocument(), users))
+                .document(DocumentResponse.toResponse(item.getDocument()))
                 .status(item.getStatus())
                 .approvedDateTime(item.getApprovedDateTime())
                 .reason(item.getReason())
@@ -120,16 +112,6 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
     private DocumentApproval getApprovalById(Id<DocumentApproval, Long> approvalId) {
         return documentApprovalRepository.findById(approvalId)
             .orElseThrow(() -> new NotFoundException(approvalId));
-    }
-
-    private List<UserResponse> getUserAll() {
-        return userClient.getUserAll();
-    }
-
-    private UserResponse findUser(String userId, List<UserResponse> users) {
-        return users.stream().filter(user -> user.userId().equals(userId))
-            .findAny()
-            .orElseThrow(() -> new NotFoundException(UserResponse.class, userId));
     }
 
 }
