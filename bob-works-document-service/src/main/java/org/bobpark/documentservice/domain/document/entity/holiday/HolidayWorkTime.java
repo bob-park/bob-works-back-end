@@ -35,12 +35,12 @@ public class HolidayWorkTime extends BaseEntity {
     private static final LocalTime END_REST_TIME = LocalTime.of(13, 0);
 
     // 근무시간
-    private static final LocalTime START_WORK_TIME = LocalTime.of(9, 0);
-    private static final LocalTime END_WORK_TIME = LocalTime.of(21, 0);
+    private static final LocalTime START_WORK_TIME = LocalTime.of(6, 0);
+    private static final LocalTime END_WORK_TIME = LocalTime.of(22, 0);
 
     // 야간 근무 시간
     private static final LocalTime START_NIGHT_WORK_TIME = LocalTime.of(22, 0);
-    private static final LocalTime END_NIGHT_WORK_TIME = LocalTime.of(9, 0);
+    private static final LocalTime END_NIGHT_WORK_TIME = LocalTime.of(6, 0);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -119,7 +119,7 @@ public class HolidayWorkTime extends BaseEntity {
     }
 
     private boolean isNightWorkTime(LocalTime startTime, LocalTime endTime) {
-        return (START_NIGHT_WORK_TIME.isAfter(startTime)|| END_NIGHT_WORK_TIME.isBefore(startTime))
+        return (START_NIGHT_WORK_TIME.isAfter(startTime) || END_NIGHT_WORK_TIME.isBefore(startTime))
             && (END_NIGHT_WORK_TIME.isAfter(endTime));
     }
 }
