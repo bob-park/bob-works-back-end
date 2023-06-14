@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import lombok.Builder;
 
-@Builder
+@Builder(toBuilder = true)
 public record DocumentApprovalResponse(Long id,
                                        Long lineId,
                                        DocumentResponse document,

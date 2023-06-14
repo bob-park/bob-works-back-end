@@ -46,19 +46,22 @@ public class FeignErrorDecoder implements ErrorDecoder {
         }
 
         switch (response.status()) {
-            case 400:
-                break;
+            case 400 -> {
+                return new IllegalArgumentException(errorMsg);
+            }
 
-            case 401:
+            case 401 -> {
                 return new AuthenticationServiceException(errorMsg);
+            }
 
-            case 404:
+            case 404 -> {
                 return new NotFoundException(errorMsg);
+            }
 
-            default:
-                return new Exception(response.reason());
+            default -> {
+                return new Exception(errorMsg);
+            }
         }
 
-        return null;
     }
 }

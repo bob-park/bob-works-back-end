@@ -4,7 +4,7 @@ import java.util.List;
 
 import lombok.Builder;
 
-@Builder
+@Builder(toBuilder = true)
 public record Page<T>(List<T> content,
                       long total,
                       PageInfo pageable) {
