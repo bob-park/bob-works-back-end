@@ -9,6 +9,8 @@ import org.bobpark.userservice.domain.user.model.UserResponse;
 
 public interface UserService {
 
+    UserResponse getUserById(Id<User, Long> id);
+
     UserResponse getUser(Id<User, String> userId);
 
     UserResponse updatePassword(Id<User, Long> userId, UpdateUserPasswordRequest updateRequest);

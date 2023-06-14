@@ -26,6 +26,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping(path = "{id:\\d+}")
+    public UserResponse getUserById(@PathVariable long id) {
+        return userService.getUserById(Id.of(User.class, id));
+    }
+
     @GetMapping(path = "")
     public UserResponse getUser(@RequestParam("userId") String userId) {
         return userService.getUser(Id.of(User.class, userId));

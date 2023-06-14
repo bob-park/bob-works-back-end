@@ -1,6 +1,6 @@
 package org.bobpark.userservice.domain.user.service.impl;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.List;
 
@@ -28,13 +28,19 @@ import org.bobpark.userservice.domain.user.service.UserService;
 @Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
-    private static final String DEFAULT_PASSWORD_ENCODING_ID = "bcrypt";
-
     private final UserProperties properties;
 
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public UserResponse getUserById(Id<User, Long> id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException(id));
+
+        return toResponse(user);
+    }
 
     @Override
     public UserResponse getUser(Id<User, String> userId) {
@@ -67,7 +73,7 @@ public class UserServiceImpl implements UserService {
             .toList();
     }
 
-    private UserResponse toResponse(User user){
+    private UserResponse toResponse(User user) {
         return UserResponse.toResponse(user, properties.getAvatar().getPrefix());
     }
 
