@@ -101,9 +101,12 @@ public class OAuth2ClientConfiguration {
         return (request, response, authentication) -> response.sendRedirect(properties.getRedirectUrl());
     }
 
-    private LogoutHandler logoutHandler() {
-        return (request, response, authentication) ->
+    @Bean
+    public LogoutHandler logoutHandler() {
+        return (request, response, authentication) -> {
+            request.getSession().invalidate();
             authorizedClientRepository.removeAuthorizedClient("bob-works", authentication, request, response);
+        };
 
     }
 
