@@ -46,9 +46,8 @@ public class VacationDocumentProvider implements DocumentProvider {
 
         DocumentApproval approval = getApprovalById(approvalId);
 
-        if (!ALLOW_STATUS.contains(approval.getStatus())) {
-            throw new IllegalStateException("Invalid status. (" + approval.getStatus() + ")");
-        }
+        allowStatus(document.getStatus());
+        allowStatus(approval.getStatus());
 
         approval.updateStatus(DocumentStatus.REJECT, reason);
 
@@ -57,6 +56,8 @@ public class VacationDocumentProvider implements DocumentProvider {
 
     @Override
     public Document canceled(Document document) {
+
+        allowStatus(document.getStatus());
 
         VacationDocument vacationDocument = (VacationDocument)document;
 

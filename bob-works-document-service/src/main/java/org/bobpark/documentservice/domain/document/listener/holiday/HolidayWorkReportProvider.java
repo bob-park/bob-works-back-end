@@ -51,11 +51,20 @@ public class HolidayWorkReportProvider implements DocumentProvider {
 
     @Override
     public Document reject(long approvalId, Document document, String reason) {
+
+        DocumentApproval approval = getApprovalById(approvalId);
+
+        allowStatus(document.getStatus());
+        allowStatus(approval.getStatus());
+
         return null;
     }
 
     @Override
     public Document canceled(Document document) {
+
+        allowStatus(document.getStatus());
+
         return null;
     }
 
