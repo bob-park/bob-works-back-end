@@ -22,6 +22,10 @@ public record UserResponse(Long id,
                            UserVacationResponse nowVacation,
                            TeamResponse team) {
 
+    public static UserResponse toResponse(User user) {
+        return toResponse(user, null);
+    }
+
     public static UserResponse toResponse(User user, String prefixAvatar) {
 
         UserPosition position = user.getPosition();
@@ -44,7 +48,7 @@ public record UserResponse(Long id,
 
         String userAvatar = null;
 
-        if (user.getAvatar() != null) {
+        if (StringUtils.isNotBlank(prefixAvatar) && user.getAvatar() != null) {
             userAvatar = prefixAvatar + "/" + user.getAvatar().getId();
         }
 

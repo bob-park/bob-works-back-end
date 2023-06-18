@@ -15,6 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -46,7 +47,11 @@ public class UserAlternativeVacation extends BaseEntity {
     private String effectiveReason;
     private Double useCount;
 
-    public UserAlternativeVacation(Long id, LocalDate effectiveDate, Double effectiveCount, String effectiveReason) {
+    private Boolean isExpired;
+
+    @Builder
+    private UserAlternativeVacation(Long id, LocalDate effectiveDate, Double effectiveCount, String effectiveReason,
+        Boolean isExpired) {
 
         checkArgument(isNotEmpty(effectiveDate), "effectiveDate must be provided.");
         checkArgument(isNotEmpty(effectiveCount), "effectiveCount must be provided.");
@@ -57,6 +62,8 @@ public class UserAlternativeVacation extends BaseEntity {
         this.effectiveCount = effectiveCount;
         this.effectiveReason = effectiveReason;
         this.useCount = 0.0;
+
+        this.isExpired = defaultIfNull(isExpired, false);
     }
 
     public void setUser(User user) {
