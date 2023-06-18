@@ -33,6 +33,7 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.userservice.common.entity.BaseEntity;
 import org.bobpark.userservice.domain.team.entity.Team;
 import org.bobpark.userservice.domain.team.entity.TeamUser;
+import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
 import org.bobpark.userservice.domain.user.type.VacationType;
 
 @ToString
@@ -73,6 +74,10 @@ public class User extends BaseEntity {
     @Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserDocumentSignature signature;
+
+    @Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAlternativeVacation> alternativeVacations = new ArrayList<>();
 
     @Builder
     private User(Long id, String userId, String encryptPassword, String name, String email, UserPosition position) {
@@ -134,6 +139,12 @@ public class User extends BaseEntity {
         updateSignature.setUser(this);
 
         signature = updateSignature;
+    }
+
+    public void addAlternativeVacation(UserAlternativeVacation alternativeVacation) {
+        alternativeVacation.setUser(this);
+
+        getAlternativeVacations().add(alternativeVacation);
     }
 
     private Vacation selectVacation(VacationType type) {
