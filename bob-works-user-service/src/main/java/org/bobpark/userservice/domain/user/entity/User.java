@@ -34,6 +34,7 @@ import org.bobpark.userservice.common.entity.BaseEntity;
 import org.bobpark.userservice.domain.team.entity.Team;
 import org.bobpark.userservice.domain.team.entity.TeamUser;
 import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
+import org.bobpark.userservice.domain.user.entity.vacation.UserUsedVacation;
 import org.bobpark.userservice.domain.user.type.VacationType;
 
 @ToString
@@ -78,6 +79,10 @@ public class User extends BaseEntity {
     @Exclude
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserAlternativeVacation> alternativeVacations = new ArrayList<>();
+
+    @Exclude
+    @OneToMany(mappedBy = "user")
+    private List<UserUsedVacation> usedVacations = new ArrayList<>();
 
     @Builder
     private User(Long id, String userId, String encryptPassword, String name, String email, UserPosition position) {

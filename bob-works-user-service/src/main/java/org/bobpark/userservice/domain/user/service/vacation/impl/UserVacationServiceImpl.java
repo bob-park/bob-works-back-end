@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.userservice.domain.user.model.UserResponse.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -22,14 +21,12 @@ import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacati
 import org.bobpark.userservice.domain.user.entity.vacation.UserUsedVacation;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.model.vacation.CancelUserVacationRequest;
-import org.bobpark.userservice.domain.user.model.vacation.UseAlternativeVacationRequest;
 import org.bobpark.userservice.domain.user.model.vacation.UseUserVacationRequest;
 import org.bobpark.userservice.domain.user.repository.UserRepository;
 import org.bobpark.userservice.domain.user.repository.vacation.UserAlternativeVacationRepository;
 import org.bobpark.userservice.domain.user.repository.vacation.UserUsedVacationRepository;
 import org.bobpark.userservice.domain.user.service.vacation.UserVacationService;
 import org.bobpark.userservice.domain.user.type.VacationType;
-import org.bobpark.userservice.exception.user.vacation.OverUsableVacationException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -123,6 +120,24 @@ public class UserVacationServiceImpl implements UserVacationService {
         User user =
             userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(id));
+
+        // ? 근데, 일반 휴가 기록은 어떻게 지우지?
+        if (cancelRequest.type() == VacationType.ALTERNATIVE) {
+            checkArgument(!cancelRequest.cancelAlternativeVacationIds().isEmpty(),
+                "useAlternativeVacations must be provided.");
+
+            List<UserUsedVacation> usedVacations =
+                userUsedVacationRepository.findAllByVacation(
+                    user.getId(),
+                    cancelRequest.type(),
+                    cancelRequest.cancelAlternativeVacationIds());
+
+            for (UserUsedVacation usedVacation : usedVacations) {
+                usedVacation.getAlternativeVacation().cancel(usedVacation.getUsedCount());
+
+                userUsedVacationRepository.delete(usedVacation);
+            }
+        }
 
         user.cancelVacation(cancelRequest.type(), cancelRequest.cancelCount());
 
