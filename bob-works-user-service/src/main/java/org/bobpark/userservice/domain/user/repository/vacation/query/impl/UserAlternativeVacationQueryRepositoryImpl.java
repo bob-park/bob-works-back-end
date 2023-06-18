@@ -7,13 +7,9 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.stereotype.Repository;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
-import org.bobpark.userservice.domain.user.entity.QUser;
-import org.bobpark.userservice.domain.user.entity.vacation.QUserAlternativeVacation;
 import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
 import org.bobpark.userservice.domain.user.repository.vacation.query.UserAlternativeVacationQueryRepository;
 
@@ -39,7 +35,6 @@ public class UserAlternativeVacationQueryRepositoryImpl implements UserAlternati
             .join(userAlternativeVacation.user, user).fetchJoin()
             .where(
                 userAlternativeVacation.isExpired.eq(false),
-                userAlternativeVacation.effectiveCount.gt(userAlternativeVacation.usedCount),
                 eqIds(ids))
             .orderBy(userAlternativeVacation.effectiveDate.asc())
             .fetch();

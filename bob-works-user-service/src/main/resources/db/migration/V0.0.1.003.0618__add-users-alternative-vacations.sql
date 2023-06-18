@@ -25,7 +25,6 @@ create table users_used_vacations
     type                    varchar(100)            not null,
     user_id                 bigint                  not null,
     alternative_vacation_id bigint,
-    used_date               date                    not null,
     used_count              real                    not null,
     created_date            timestamp default now() not null,
     created_by              varchar(100)            not null,

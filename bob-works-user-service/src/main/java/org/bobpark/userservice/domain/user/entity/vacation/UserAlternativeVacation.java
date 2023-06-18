@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -48,6 +51,10 @@ public class UserAlternativeVacation extends BaseEntity {
     private Double usedCount;
 
     private Boolean isExpired;
+
+    @Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "alternativeVacation")
+    private List<UserUsedVacation> usedVacations = new ArrayList<>();
 
     @Builder
     private UserAlternativeVacation(Long id, LocalDate effectiveDate, Double effectiveCount, String effectiveReason,
