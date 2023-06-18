@@ -12,6 +12,4 @@ public interface UserVacationService {
     UserResponse useVacation(Id<User, Long> id, UseUserVacationRequest useVacationRequest);
     UserResponse cancelVacation(Id<User, Long> id, CancelUserVacationRequest cancelVacationRequest);
 
-    UserResponse addTotalAlternativeVacation(Id<User, Long> id, AddTotalAlternativeVacationRequest addRequest);
-
 }
