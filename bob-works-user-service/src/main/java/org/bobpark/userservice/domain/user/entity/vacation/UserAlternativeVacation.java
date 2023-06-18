@@ -45,7 +45,7 @@ public class UserAlternativeVacation extends BaseEntity {
     private LocalDate effectiveDate;
     private Double effectiveCount;
     private String effectiveReason;
-    private Double useCount;
+    private Double usedCount;
 
     private Boolean isExpired;
 
@@ -61,7 +61,7 @@ public class UserAlternativeVacation extends BaseEntity {
         this.effectiveDate = effectiveDate;
         this.effectiveCount = effectiveCount;
         this.effectiveReason = effectiveReason;
-        this.useCount = 0.0;
+        this.usedCount = 0.0;
 
         this.isExpired = defaultIfNull(isExpired, false);
     }
@@ -72,16 +72,16 @@ public class UserAlternativeVacation extends BaseEntity {
 
     public void use(double useCount) {
 
-        checkArgument(getEffectiveCount() > (getUseCount() + useCount), "useCount must be less then effectiveCount.");
+        checkArgument(getEffectiveCount() >= (getUsedCount() + useCount), "useCount must be less then effectiveCount.");
 
-        this.useCount += useCount;
+        this.usedCount += useCount;
     }
 
     public void cancel(double cancelCount) {
 
-        checkArgument(getEffectiveCount() > (getUseCount() + useCount), "cancelCount must be greater then zero.");
+        checkArgument(getUsedCount() >= cancelCount, "cancelCount must be less then effectiveCount.");
 
-        this.useCount += cancelCount;
+        this.usedCount -= cancelCount;
 
     }
 }
