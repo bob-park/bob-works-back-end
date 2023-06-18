@@ -1,7 +1,10 @@
 package org.bobpark.userservice.domain.user.controller.vacation;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +15,7 @@ import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.model.vacation.AddAlternativeVacationRequest;
+import org.bobpark.userservice.domain.user.model.vacation.UserAlternativeVacationResponse;
 import org.bobpark.userservice.domain.user.service.vacation.UserAlternativeVacationService;
 
 @RequiredArgsConstructor
@@ -25,5 +29,10 @@ public class UserAlternativeVacationV1Controller {
     public UserResponse addAlternativeVacation(@PathVariable long id,
         @RequestBody AddAlternativeVacationRequest addRequest) {
         return userAlternativeVacationService.addAlternativeVacation(Id.of(User.class, id), addRequest);
+    }
+
+    @GetMapping(path = "usable")
+    public List<UserAlternativeVacationResponse> getUsableAlternativeVacations(@PathVariable long id) {
+        return userAlternativeVacationService.getUsableAlternativeVacations(Id.of(User.class, id));
     }
 }

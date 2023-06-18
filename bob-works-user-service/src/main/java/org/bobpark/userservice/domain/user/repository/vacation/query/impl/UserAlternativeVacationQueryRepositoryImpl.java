@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import org.bobpark.core.model.common.Id;
+import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
 import org.bobpark.userservice.domain.user.repository.vacation.query.UserAlternativeVacationQueryRepository;
 
@@ -19,10 +21,11 @@ public class UserAlternativeVacationQueryRepositoryImpl implements UserAlternati
     private final JPAQueryFactory query;
 
     @Override
-    public List<UserAlternativeVacation> findUsableAllByIds() {
+    public List<UserAlternativeVacation> findUsableAllByIds(Id<User, Long> userId) {
         return query.selectFrom(userAlternativeVacation)
             .join(userAlternativeVacation.user, user).fetchJoin()
             .where(
+                eqUserId(userId),
                 userAlternativeVacation.isExpired.eq(false),
                 userAlternativeVacation.effectiveCount.gt(userAlternativeVacation.usedCount))
             .orderBy(userAlternativeVacation.effectiveDate.asc())
@@ -38,6 +41,10 @@ public class UserAlternativeVacationQueryRepositoryImpl implements UserAlternati
                 eqIds(ids))
             .orderBy(userAlternativeVacation.effectiveDate.asc())
             .fetch();
+    }
+
+    private BooleanExpression eqUserId(Id<User, Long> userId) {
+        return userId != null ? user.id.eq(userId.getValue()) : null;
     }
 
     private BooleanExpression eqIds(List<Long> ids) {
