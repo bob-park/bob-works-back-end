@@ -145,6 +145,11 @@ public class User extends BaseEntity {
         alternativeVacation.setUser(this);
 
         getAlternativeVacations().add(alternativeVacation);
+
+        // 대체 휴가 생성 갯수 만큼 증가
+        Vacation nowAlternativeVacation = selectVacation(VacationType.ALTERNATIVE);
+
+        nowAlternativeVacation.addTotalCount(alternativeVacation.getEffectiveCount());
     }
 
     private Vacation selectVacation(VacationType type) {
