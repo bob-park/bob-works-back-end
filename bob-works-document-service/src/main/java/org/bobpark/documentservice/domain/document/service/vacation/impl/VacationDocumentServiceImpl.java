@@ -58,6 +58,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                 .vacationDateFrom(createRequest.vacationDateFrom())
                 .vacationDateTo(createRequest.vacationDateTo())
                 .reason(createRequest.reason())
+                .useAlternativeVacationIds(createRequest.useAlternativeVacationIds())
                 .build();
 
         vacationDocumentRepository.save(createDocument);

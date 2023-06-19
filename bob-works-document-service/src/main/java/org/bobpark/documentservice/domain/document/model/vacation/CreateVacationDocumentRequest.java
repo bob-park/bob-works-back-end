@@ -1,6 +1,8 @@
 package org.bobpark.documentservice.domain.document.model.vacation;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
 
 import lombok.Builder;
 
@@ -13,5 +15,13 @@ public record CreateVacationDocumentRequest(Long typeId,
                                             VacationSubType vacationSubType,
                                             LocalDate vacationDateFrom,
                                             LocalDate vacationDateTo,
-                                            String reason) {
+                                            String reason,
+                                            List<Long> useAlternativeVacationIds) {
+
+    public CreateVacationDocumentRequest {
+        if (useAlternativeVacationIds == null) {
+            useAlternativeVacationIds = Collections.emptyList();
+        }
+    }
+
 }
