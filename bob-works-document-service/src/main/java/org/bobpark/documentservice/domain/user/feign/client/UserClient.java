@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.bobpark.documentservice.domain.user.model.UserResponse;
-import org.bobpark.documentservice.domain.user.model.vacation.AddTotalAlternativeVacationRequest;
+import org.bobpark.documentservice.domain.user.model.vacation.AddAlternativeVacationRequest;
 import org.bobpark.documentservice.domain.user.model.vacation.CancelUserVacationRequest;
 import org.bobpark.documentservice.domain.user.model.vacation.UseUserVacationRequest;
 
@@ -30,7 +30,7 @@ public interface UserClient {
     @PutMapping(path = "user/{id:\\d+}/vacation/cancel")
     UserResponse cancelVacation(@PathVariable long id, @RequestBody CancelUserVacationRequest cancelRequest);
 
-    @PostMapping(path = "user/{id:\\d+}/vacation/alternative/increase")
-    UserResponse addAlternateiveVacation(@PathVariable long id,
-        @RequestBody AddTotalAlternativeVacationRequest addRequest);
+    @PostMapping(path = "v1/user/{id:\\d+}/alternative/vacation")
+    UserResponse addAlternativeVacation(@PathVariable long id, @RequestBody AddAlternativeVacationRequest addRequest);
+
 }
