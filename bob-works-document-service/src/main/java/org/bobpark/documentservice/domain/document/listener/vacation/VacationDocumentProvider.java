@@ -70,6 +70,7 @@ public class VacationDocumentProvider implements DocumentProvider {
                 CancelUserVacationRequest.builder()
                     .type(vacationDocument.getVacationType())
                     .cancelCount(vacationDocument.getDaysCount())
+                    .cancelAlternativeVacationIds(vacationDocument.getUseAlternativeVacationIds())
                     .build();
 
             userClient.cancelVacation(document.getWriterId(), cancelRequest);
@@ -100,6 +101,7 @@ public class VacationDocumentProvider implements DocumentProvider {
             UseUserVacationRequest.builder()
                 .type(document.getVacationType())
                 .useCount(document.getDaysCount())
+                .useAlternativeVacationIds(document.getUseAlternativeVacationIds())
                 .build());
     }
 
