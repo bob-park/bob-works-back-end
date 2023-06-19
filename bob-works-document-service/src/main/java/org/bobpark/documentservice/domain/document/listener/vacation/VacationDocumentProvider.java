@@ -34,7 +34,9 @@ public class VacationDocumentProvider implements DocumentProvider {
 
         log.debug("approved vacation document. (id={})", vacationDocument.getId());
 
-        useUserVacation(vacationDocument);
+        if (approval.getApprovalLine().getNext() == null) {
+            useUserVacation(vacationDocument);
+        }
 
         return vacationDocument;
     }

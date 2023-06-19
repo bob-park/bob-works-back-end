@@ -35,22 +35,24 @@ public class HolidayWorkReportProvider implements DocumentProvider {
 
         log.debug("approved vacation document. (id={})", holidayWorkReport.getId());
 
-        for (HolidayWorkUser workUser : holidayWorkReport.getUsers()) {
+        if (approval.getApprovalLine().getNext() == null) {
+            for (HolidayWorkUser workUser : holidayWorkReport.getUsers()) {
 
-            if (!workUser.isManualInput() && workUser.isVacation()) {
+                if (!workUser.isManualInput() && workUser.isVacation()) {
 
-                int addAlternativeVacationCount = (int)workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME;
+                    int addAlternativeVacationCount = (int)workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME;
 
-                AddAlternativeVacationRequest addRequest =
-                    AddAlternativeVacationRequest.builder()
-                        .effectiveDate(workUser.getWorkDate())
-                        .effectiveReason(holidayWorkReport.getWorkPurpose())
-                        .effectiveCount(addAlternativeVacationCount)
-                        .build();
+                    AddAlternativeVacationRequest addRequest =
+                        AddAlternativeVacationRequest.builder()
+                            .effectiveDate(workUser.getWorkDate())
+                            .effectiveReason(holidayWorkReport.getWorkPurpose())
+                            .effectiveCount(addAlternativeVacationCount)
+                            .build();
 
-                userClient.addAlternativeVacation(workUser.getWorkUserId(), addRequest);
+                    userClient.addAlternativeVacation(workUser.getWorkUserId(), addRequest);
+                }
+
             }
-
         }
 
         return holidayWorkReport;
@@ -64,6 +66,8 @@ public class HolidayWorkReportProvider implements DocumentProvider {
         allowStatus(document.getStatus());
         allowStatus(approval.getStatus());
 
+        // TODO reject 처리
+
         return null;
     }
 
@@ -71,6 +75,8 @@ public class HolidayWorkReportProvider implements DocumentProvider {
     public Document canceled(Document document) {
 
         allowStatus(document.getStatus());
+
+        // TODO cancel 처리
 
         return null;
     }
