@@ -189,6 +189,7 @@ public class CustomOAuth2AuthorizationService implements OAuth2AuthorizationServ
 
             // TODO add team info
             profile.put("team", userResponse.team());
+            profile.put("nowVacation", userResponse.nowVacation());
 
             Map<String, Object> claims = Maps.newHashMap();
             claims.putAll(token.getMetadata());

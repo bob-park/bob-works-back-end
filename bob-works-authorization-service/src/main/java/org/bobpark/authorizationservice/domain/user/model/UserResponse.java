@@ -12,6 +12,7 @@ public record UserResponse(Long id,
                            String name,
                            String avatar,
                            PositionResponse position,
-                           TeamResponse team) {
+                           TeamResponse team,
+                           UserVacationResponse nowVacation) {
 
 }
