@@ -18,27 +18,28 @@ import org.bobpark.client.domain.user.model.SearchUserRequest;
 import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 
-@FeignClient(name = "user-service", path = "user")
+@FeignClient(name = "user-service")
 public interface UserClient {
 
-    @GetMapping(path = "")
+    @GetMapping(path = "user")
     UserResponse getUser(@RequestParam("userId") String userId);
 
-    @GetMapping("search")
+    @GetMapping("user/search")
     List<UserResponse> searchUsers(@SpringQueryMap SearchUserRequest searchRequest);
 
-    @GetMapping(path = "{id}")
+    @GetMapping(path = "user/{id}")
     UserResponse getUserById(@PathVariable long id);
 
-    @PutMapping(path = "{id}/password")
+    @PutMapping(path = "user/{id}/password")
     UserResponse updatePassword(@PathVariable long id, UpdateUserPasswordRequest updateRequest);
 
-    @PostMapping(path = "{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "user/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     UserResponse updateAvatar(@PathVariable long id, @RequestPart("avatar") MultipartFile avatar);
 
-    @GetMapping(path = "{id}/document/signature")
+    @GetMapping(path = "user/{id}/document/signature")
     Resource getDocumentSignature(@PathVariable long id);
 
-    @PostMapping(path = "{id}/document/signature", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path = "user/{id}/document/signature", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     UserResponse updateSignature(@PathVariable long id, @RequestPart("signature") MultipartFile signatureFile);
+
 }
