@@ -32,17 +32,19 @@ public class FeignErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         String errorMsg = null;
 
-        try {
-            Body body = response.body();
+        Body body = response.body();
+        ApiResult<?> apiResult = null;
 
-            ApiResult<?> apiResult = objectMapper.readValue(body.asInputStream(), ApiResult.class);
-
-            if (isNotEmpty(apiResult.getError())) {
-                errorMsg = apiResult.getError().toString();
+        if (body != null) {
+            try {
+                apiResult = objectMapper.readValue(body.asInputStream(), ApiResult.class);
+            } catch (IOException e) {
+                log.warn("Response parse error - {}", e.getMessage());
             }
+        }
 
-        } catch (IOException e) {
-            log.warn("Response parse error - {}", e.getMessage());
+        if (apiResult != null && isNotEmpty(apiResult.getError())) {
+            errorMsg = apiResult.getError().toString();
         }
 
         switch (response.status()) {
