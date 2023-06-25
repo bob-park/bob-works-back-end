@@ -25,6 +25,7 @@ public record VacationDocumentResponse(Long id,
                                        LocalDate vacationDateTo,
                                        Double daysCount,
                                        String reason,
-                                       List<DocumentApprovalResponse> approvals) {
+                                       List<DocumentApprovalResponse> approvals,
+                                       List<Long> useAlternativeVacationIds) {
 
 }

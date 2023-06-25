@@ -29,7 +29,8 @@ public record VacationDocumentResponse(Long id,
                                        LocalDate vacationDateTo,
                                        Double daysCount,
                                        String reason,
-                                       List<DocumentApprovalResponse> approvals) {
+                                       List<DocumentApprovalResponse> approvals,
+                                       List<Long> useAlternativeVacationIds) {
 
     public static VacationDocumentResponse toResponse(VacationDocument vacationDocument) {
         return VacationDocumentResponse.builder()
@@ -52,6 +53,7 @@ public record VacationDocumentResponse(Long id,
                 vacationDocument.getApprovals().stream()
                     .map(DocumentApprovalResponse::toResponse)
                     .toList())
+            .useAlternativeVacationIds(vacationDocument.getUseAlternativeVacationIds())
             .build();
     }
 }

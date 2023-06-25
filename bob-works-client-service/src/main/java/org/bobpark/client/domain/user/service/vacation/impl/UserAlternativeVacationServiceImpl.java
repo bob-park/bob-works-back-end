@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import org.bobpark.client.domain.user.feign.UserV1AlternativeVacationClient;
-import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacation;
+import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacationResponse;
 import org.bobpark.client.domain.user.service.vacation.UserAlternativeVacationService;
 
 @Slf4j
@@ -19,7 +19,7 @@ public class UserAlternativeVacationServiceImpl implements UserAlternativeVacati
     private final UserV1AlternativeVacationClient alternativeVacationClient;
 
     @Override
-    public List<UserAlternativeVacation> getUsableList(long id) {
+    public List<UserAlternativeVacationResponse> getUsableList(long id) {
         return alternativeVacationClient.getUsableList(id);
     }
 }

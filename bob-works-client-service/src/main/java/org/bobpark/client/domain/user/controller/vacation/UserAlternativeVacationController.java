@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.client.domain.user.model.UserResponse;
-import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacation;
+import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacationResponse;
 import org.bobpark.client.domain.user.service.vacation.UserAlternativeVacationService;
 
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class UserAlternativeVacationController {
     private final UserAlternativeVacationService userAlternativeVacationService;
 
     @GetMapping(path = "usable")
-    public List<UserAlternativeVacation> getUsable(@AuthenticationPrincipal OidcUser oidcUser) {
+    public List<UserAlternativeVacationResponse> getUsable(@AuthenticationPrincipal OidcUser oidcUser) {
 
         UserResponse userResponse = parseToUserResponse(oidcUser);
 

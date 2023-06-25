@@ -1,5 +1,6 @@
 package org.bobpark.client.domain.document.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,9 @@ import org.bobpark.client.domain.document.model.response.DocumentTypeApprovalLin
 import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
 import org.bobpark.client.domain.document.service.VacationDocumentService;
 import org.bobpark.client.domain.user.feign.UserClient;
+import org.bobpark.client.domain.user.feign.UserV1AlternativeVacationClient;
 import org.bobpark.client.domain.user.model.UserResponse;
+import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacationResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
     private final DocumentClient documentClient;
     private final DocumentTypeClient documentTypeClient;
     private final UserClient userClient;
+    private final UserV1AlternativeVacationClient userAlternativeVacationClient;
 
     @Override
     public DocumentResponse addVacation(AddVacationDocumentRequest addRequest) {
@@ -51,12 +55,20 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         List<DocumentTypeApprovalLineStatusResponse> lines = Lists.newArrayList();
         extractLines(type.approvalLine(), document.approvals(), lines);
 
+        List<UserAlternativeVacationResponse> usedAlternativeVacations = Collections.emptyList();
+
+        if (document.vacationType().equals("ALTERNATIVE")) {
+            usedAlternativeVacations =
+                userAlternativeVacationClient.findAllByIds(writer.id(), document.useAlternativeVacationIds());
+        }
+
         return VacationDocumentDetailResponse.builder()
             .document(
                 document.toBuilder()
                     .writer(writer)
                     .build())
             .lines(lines)
+            .useAlternativeVacations(usedAlternativeVacations)
             .build();
     }
 
