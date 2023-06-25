@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.core.model.common.Id;
@@ -34,5 +35,11 @@ public class UserAlternativeVacationV1Controller {
     @GetMapping(path = "usable")
     public List<UserAlternativeVacationResponse> getUsableAlternativeVacations(@PathVariable long id) {
         return userAlternativeVacationService.getUsableAlternativeVacations(Id.of(User.class, id));
+    }
+
+    @GetMapping(path = "find/ids")
+    public List<UserAlternativeVacationResponse> findAllByIds(@PathVariable long id,
+        @RequestParam List<Long> alternativeVacationIds) {
+        return userAlternativeVacationService.findAllByIds(alternativeVacationIds);
     }
 }

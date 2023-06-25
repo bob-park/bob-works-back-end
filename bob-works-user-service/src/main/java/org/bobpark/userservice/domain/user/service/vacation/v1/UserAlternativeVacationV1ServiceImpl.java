@@ -1,5 +1,6 @@
 package org.bobpark.userservice.domain.user.service.vacation.v1;
 
+import static com.google.common.base.Preconditions.*;
 import static org.bobpark.userservice.domain.user.model.UserResponse.*;
 
 import java.util.List;
@@ -9,6 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import com.google.common.base.Preconditions;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
@@ -57,6 +61,18 @@ public class UserAlternativeVacationV1ServiceImpl implements UserAlternativeVaca
             userAlternativeVacationRepository.findUsableAllByIds(id);
 
         return usableAlternativeVacations.stream()
+            .map(UserAlternativeVacationResponse::toResponse)
+            .toList();
+    }
+
+    @Override
+    public List<UserAlternativeVacationResponse> findAllByIds(List<Long> ids) {
+
+        checkArgument(!CollectionUtils.isEmpty(ids), "ids must be provided.");
+
+        List<UserAlternativeVacation> vacations = userAlternativeVacationRepository.findAllByIds(ids);
+
+        return vacations.stream()
             .map(UserAlternativeVacationResponse::toResponse)
             .toList();
     }

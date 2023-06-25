@@ -14,4 +14,6 @@ public interface UserAlternativeVacationService {
 
     List<UserAlternativeVacationResponse> getUsableAlternativeVacations(Id<User, Long> id);
 
+    List<UserAlternativeVacationResponse> findAllByIds(List<Long> ids);
+
 }
