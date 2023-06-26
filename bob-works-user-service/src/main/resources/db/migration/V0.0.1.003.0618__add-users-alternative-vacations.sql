@@ -7,7 +7,7 @@ create table users_alternative_vacations
     user_id            bigint                  not null,
     effective_date     date                    not null,
     effective_count    real      default 0     not null,
-    use_count          real      default 0     not null,
+    used_count          real      default 0     not null,
     is_expired         bool      default false not null,
     effective_reason   varchar(1000)           not null,
     created_date       timestamp default now() not null,
