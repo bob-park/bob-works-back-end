@@ -1,5 +1,7 @@
 package org.bobpark.client.common.handler;
 
+import java.net.ConnectException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -36,5 +38,12 @@ public class GlobalExceptionHandler {
         logoutHandler.logout(request, response, authentication);
 
         return ApiResult.error(e);
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(ConnectException.class)
+    public <T> ApiResult<T> a(Exception e) {
+        log.warn("service unavailable - {}", e.getMessage());
+        return ApiResult.error("Service Unavailable", e);
     }
 }
