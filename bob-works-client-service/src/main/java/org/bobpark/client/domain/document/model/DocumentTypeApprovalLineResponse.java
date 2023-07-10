@@ -6,6 +6,7 @@ import org.bobpark.client.domain.user.model.UserResponse;
 
 @Builder
 public record DocumentTypeApprovalLineResponse(Long id,
-                                               UserResponse user,
+                                               Long userId,
+                                               Long teamId,
                                                DocumentTypeApprovalLineResponse next) {
 }

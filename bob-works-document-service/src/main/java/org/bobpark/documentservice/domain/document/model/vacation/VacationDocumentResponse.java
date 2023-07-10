@@ -1,30 +1,23 @@
 package org.bobpark.documentservice.domain.document.model.vacation;
 
-import static org.bobpark.documentservice.domain.user.utils.UserUtils.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Builder;
 
-import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
-import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
-import org.bobpark.documentservice.domain.document.model.DocumentTypeResponse;
 import org.bobpark.documentservice.domain.document.model.approval.DocumentApprovalResponse;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.document.type.VacationSubType;
 import org.bobpark.documentservice.domain.document.type.VacationType;
-import org.bobpark.documentservice.domain.user.model.UserResponse;
-import org.bobpark.documentservice.domain.user.utils.UserUtils;
 
 @Builder
 public record VacationDocumentResponse(Long id,
                                        DocumentTypeName type,
                                        Long typeId,
-                                       UserResponse writer,
+                                       Long writerId,
                                        DocumentStatus status,
                                        LocalDateTime createdDate,
                                        String createdBy,
@@ -36,14 +29,15 @@ public record VacationDocumentResponse(Long id,
                                        LocalDate vacationDateTo,
                                        Double daysCount,
                                        String reason,
-                                       List<DocumentApprovalResponse> approvals) {
+                                       List<DocumentApprovalResponse> approvals,
+                                       List<Long> useAlternativeVacationIds) {
 
-    public static VacationDocumentResponse toResponse(VacationDocument vacationDocument, List<UserResponse> users) {
+    public static VacationDocumentResponse toResponse(VacationDocument vacationDocument) {
         return VacationDocumentResponse.builder()
             .id(vacationDocument.getId())
             .type(vacationDocument.getType())
             .typeId(vacationDocument.getDocumentType().getId())
-            .writer(findByUser(users, vacationDocument.getWriterId()))
+            .writerId(vacationDocument.getWriterId())
             .status(vacationDocument.getStatus())
             .createdDate(vacationDocument.getCreatedDate())
             .createdBy(vacationDocument.getCreatedBy())
@@ -59,6 +53,7 @@ public record VacationDocumentResponse(Long id,
                 vacationDocument.getApprovals().stream()
                     .map(DocumentApprovalResponse::toResponse)
                     .toList())
+            .useAlternativeVacationIds(vacationDocument.getUseAlternativeVacationIds())
             .build();
     }
 }

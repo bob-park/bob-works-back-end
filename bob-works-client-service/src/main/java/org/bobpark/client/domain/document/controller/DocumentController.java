@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.client.common.page.Page;
 import org.bobpark.client.domain.document.model.DocumentResponse;
+import org.bobpark.client.domain.document.model.SearchDocumentResponse;
 import org.bobpark.client.domain.document.service.DocumentService;
 
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @GetMapping(path = "search")
-    public Page<DocumentResponse> search(
+    public Page<SearchDocumentResponse> search(
         @PageableDefault(sort = "createdDate", direction = Direction.DESC) Pageable pageable) {
         return documentService.search(pageable);
     }

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.domain.user.entity.User;
+import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 
 public interface UserQueryRepository {
 
@@ -13,5 +14,7 @@ public interface UserQueryRepository {
     Optional<User> findById(Id<User, Long> id);
 
     List<User> getUsersAll();
+
+    List<User> search(SearchUserRequest searchRequest);
 
 }

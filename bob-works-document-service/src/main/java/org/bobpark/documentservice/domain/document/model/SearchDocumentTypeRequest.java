@@ -5,7 +5,6 @@ import lombok.Builder;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 
 @Builder
-public record SearchDocumentTypeRequest(
-    DocumentTypeName type,
-    String name) {
+public record SearchDocumentTypeRequest(DocumentTypeName type,
+                                        String name) {
 }

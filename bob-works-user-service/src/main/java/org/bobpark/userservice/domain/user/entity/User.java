@@ -33,6 +33,8 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.userservice.common.entity.BaseEntity;
 import org.bobpark.userservice.domain.team.entity.Team;
 import org.bobpark.userservice.domain.team.entity.TeamUser;
+import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
+import org.bobpark.userservice.domain.user.entity.vacation.UserUsedVacation;
 import org.bobpark.userservice.domain.user.type.VacationType;
 
 @ToString
@@ -73,6 +75,14 @@ public class User extends BaseEntity {
     @Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserDocumentSignature signature;
+
+    @Exclude
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserAlternativeVacation> alternativeVacations = new ArrayList<>();
+
+    @Exclude
+    @OneToMany(mappedBy = "user")
+    private List<UserUsedVacation> usedVacations = new ArrayList<>();
 
     @Builder
     private User(Long id, String userId, String encryptPassword, String name, String email, UserPosition position) {
@@ -134,6 +144,17 @@ public class User extends BaseEntity {
         updateSignature.setUser(this);
 
         signature = updateSignature;
+    }
+
+    public void addAlternativeVacation(UserAlternativeVacation alternativeVacation) {
+        alternativeVacation.setUser(this);
+
+        getAlternativeVacations().add(alternativeVacation);
+
+        // 대체 휴가 생성 갯수 만큼 증가
+        Vacation nowAlternativeVacation = selectVacation(VacationType.ALTERNATIVE);
+
+        nowAlternativeVacation.addTotalCount(alternativeVacation.getEffectiveCount());
     }
 
     private Vacation selectVacation(VacationType type) {

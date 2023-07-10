@@ -13,14 +13,14 @@ import org.bobpark.documentservice.domain.user.utils.UserUtils;
 
 @Builder
 public record DocumentTypeApprovalLineResponse(Long id,
-                                               UserResponse user,
-                                               TeamResponse team,
+                                               Long userId,
+                                               Long teamId,
                                                DocumentTypeApprovalLineResponse next) {
-    public static DocumentTypeApprovalLineResponse toResponse(DocumentTypeApprovalLine approveLine,
-        List<UserResponse> users) {
+    public static DocumentTypeApprovalLineResponse toResponse(DocumentTypeApprovalLine approveLine) {
         return DocumentTypeApprovalLineResponse.builder()
             .id(approveLine.getId())
-            .user(findByUser(users, approveLine.getUserId()))
+            .userId(approveLine.getUserId())
+            .teamId(approveLine.getTeamId())
             .build();
     }
 

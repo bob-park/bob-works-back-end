@@ -11,12 +11,16 @@ import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.domain.position.entity.QPosition;
 import org.bobpark.userservice.domain.user.entity.QUserPosition;
 import org.bobpark.userservice.domain.user.entity.User;
+import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 import org.bobpark.userservice.domain.user.repository.query.UserQueryRepository;
 
 @RequiredArgsConstructor
@@ -58,5 +62,28 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
             .leftJoin(userPosition.position, position).fetchJoin()
             .where(userVacation.year.eq(LocalDate.now().getYear()))
             .fetch();
+    }
+
+    @Override
+    public List<User> search(SearchUserRequest searchRequest) {
+        return query.selectFrom(user)
+            .leftJoin(user.vacations, userVacation).fetchJoin()
+            .leftJoin(user.position, userPosition).fetchJoin()
+            .leftJoin(userPosition.position, position).fetchJoin()
+            .where(mappingCondition(searchRequest))
+            .fetch();
+    }
+
+    private Predicate mappingCondition(SearchUserRequest searchRequest) {
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(inIds(searchRequest.ids()));
+
+        return builder;
+    }
+
+    private BooleanExpression inIds(List<Long> ids) {
+        return !ids.isEmpty() ? user.id.in(ids) : null;
     }
 }

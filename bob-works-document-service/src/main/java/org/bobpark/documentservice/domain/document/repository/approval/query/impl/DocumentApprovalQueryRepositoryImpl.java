@@ -1,11 +1,11 @@
 package org.bobpark.documentservice.domain.document.repository.approval.query.impl;
 
-import static org.bobpark.documentservice.domain.document.entity.QDocument.*;
-import static org.bobpark.documentservice.domain.document.entity.QDocumentApproval.*;
-import static org.bobpark.documentservice.domain.document.entity.QDocumentType.*;
-import static org.bobpark.documentservice.domain.document.entity.QDocumentTypeApprovalLine.*;
+import static org.bobpark.documentservice.domain.document.entity.QDocument.document;
+import static org.bobpark.documentservice.domain.document.entity.QDocumentApproval.documentApproval;
+import static org.bobpark.documentservice.domain.document.entity.QDocumentTypeApprovalLine.documentTypeApprovalLine;
 
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +31,16 @@ import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 public class DocumentApprovalQueryRepositoryImpl implements DocumentApprovalQueryRepository {
 
     private final JPAQueryFactory query;
+
+    @Override
+    public Optional<DocumentApproval> findById(Id<DocumentApproval, Long> approvalId) {
+        return Optional.ofNullable(
+            query.selectFrom(documentApproval)
+                .join(documentApproval.document, document).fetchJoin()
+                .join(documentApproval.approvalLine, documentTypeApprovalLine).fetchJoin()
+                .where(documentApproval.id.eq(approvalId.getValue()))
+                .fetchOne());
+    }
 
     @Override
     public Page<DocumentApproval> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable) {

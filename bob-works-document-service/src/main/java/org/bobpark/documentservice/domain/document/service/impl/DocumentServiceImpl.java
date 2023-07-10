@@ -1,8 +1,6 @@
 package org.bobpark.documentservice.domain.document.service.impl;
 
-import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
-
-import java.util.List;
+import static org.bobpark.documentservice.domain.document.model.DocumentResponse.toResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +16,7 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
-import org.bobpark.documentservice.domain.document.listener.DocumentListener;
+import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.SearchDocumentRequest;
 import org.bobpark.documentservice.domain.document.repository.DocumentRepository;
@@ -33,7 +31,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     private final DocumentRepository documentRepository;
 
-    private final DocumentListener documentListener;
+    private final DocumentProvider documentProvider;
 
     @Override
     public Page<DocumentResponse> search(SearchDocumentRequest searchRequest, Pageable pageable) {
@@ -51,9 +49,7 @@ public class DocumentServiceImpl implements DocumentService {
 
         Page<Document> result = documentRepository.search(condition, pageable);
 
-        List<UserResponse> users = getUsers();
-
-        return result.map(item -> toResponse(item, users));
+        return result.map(DocumentResponse::toResponse);
     }
 
     @Transactional
@@ -64,17 +60,13 @@ public class DocumentServiceImpl implements DocumentService {
             documentRepository.findById(documentId.getValue())
                 .orElseThrow(() -> new NotFoundException(documentId));
 
-        documentListener.canceled(document);
+        documentProvider.canceled(document);
 
-        return toResponse(document, getUsers());
+        return toResponse(document);
     }
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    public List<UserResponse> getUsers() {
-        return AuthenticationUtils.getInstance().getUsersByPrincipal();
     }
 }
 

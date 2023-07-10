@@ -58,13 +58,14 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                 .vacationDateFrom(createRequest.vacationDateFrom())
                 .vacationDateTo(createRequest.vacationDateTo())
                 .reason(createRequest.reason())
+                .useAlternativeVacationIds(createRequest.useAlternativeVacationIds())
                 .build();
 
         vacationDocumentRepository.save(createDocument);
 
         log.debug("added vacation document. (id={})", createDocument.getId());
 
-        return toResponse(createDocument, Collections.singletonList(writer));
+        return toResponse(createDocument);
     }
 
     @Override
@@ -74,8 +75,6 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
             vacationDocumentRepository.findById(documentId.getValue())
                 .orElseThrow(() -> new NotFoundException(documentId));
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsers();
-
-        return toResponse(vacationDocument, users);
+        return toResponse(vacationDocument);
     }
 }

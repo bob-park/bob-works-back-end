@@ -1,5 +1,7 @@
 package org.bobpark.documentservice.domain.document.service.impl;
 
+import static org.bobpark.documentservice.domain.document.model.DocumentTypeResponse.toResponse;
+
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -51,10 +53,8 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 
         List<DocumentType> result = documentTypeRepository.search(searchRequest);
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
-
         return result.stream()
-            .map(item -> DocumentTypeResponse.toResponse(item, users))
+            .map(DocumentTypeResponse::toResponse)
             .toList();
     }
 
@@ -106,13 +106,6 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     private DocumentType getType(Id<DocumentType, Long> documentTypeId) {
         return documentTypeRepository.findById(documentTypeId.getValue())
             .orElseThrow(() -> new NotFoundException(documentTypeId));
-    }
-
-    private DocumentTypeResponse toResponse(DocumentType entity) {
-
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsers();
-
-        return DocumentTypeResponse.toResponse(entity, users);
     }
 
 }

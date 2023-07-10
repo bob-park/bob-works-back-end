@@ -4,7 +4,11 @@ import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,6 +23,7 @@ import lombok.ToString;
 
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
+import org.bobpark.documentservice.domain.document.entity.converter.ParseNumberArrayConverter;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.VacationSubType;
 import org.bobpark.documentservice.domain.document.type.VacationType;
@@ -42,10 +47,14 @@ public class VacationDocument extends Document {
     private Double daysCount;
     private String reason;
 
+    @Convert(converter = ParseNumberArrayConverter.class)
+    @Column(columnDefinition = "varchar(1000)")
+    private List<Long> useAlternativeVacationIds = new ArrayList<>();
+
     @Builder
     private VacationDocument(Long id, DocumentType documentType, Long writerId, Long teamId, DocumentStatus status,
         VacationType vacationType, VacationSubType vacationSubType, LocalDate vacationDateFrom,
-        LocalDate vacationDateTo, String reason) {
+        LocalDate vacationDateTo, String reason, List<Long> useAlternativeVacationIds) {
         super(id, documentType, writerId, teamId, status);
 
         checkArgument(isNotEmpty(vacationType), "vacationType must be provided.");
@@ -59,12 +68,18 @@ public class VacationDocument extends Document {
         checkArgument(vacationDateFrom.isBefore(vacationDateTo) || vacationDateFrom.isEqual(vacationDateTo),
             "vacationDateTo must be greater than vacationDateFrom");
 
+        if (vacationType == VacationType.ALTERNATIVE) {
+            checkArgument(useAlternativeVacationIds != null && !useAlternativeVacationIds.isEmpty(),
+                "useAlternativeVacationIds must be provided.");
+        }
+
         this.vacationType = vacationType;
         this.vacationSubType = vacationSubType;
         this.vacationDateFrom = vacationDateFrom;
         this.vacationDateTo = vacationDateTo;
         this.daysCount = setDayCount(vacationSubType, vacationDateFrom, vacationDateTo);
         this.reason = reason;
+        this.useAlternativeVacationIds = useAlternativeVacationIds;
     }
 
     private double setDayCount(VacationSubType subType, LocalDate from, LocalDate to) {

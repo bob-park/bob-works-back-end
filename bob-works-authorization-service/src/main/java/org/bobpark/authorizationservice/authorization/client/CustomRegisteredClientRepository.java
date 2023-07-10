@@ -135,6 +135,7 @@ public class CustomRegisteredClientRepository implements RegisteredClientReposit
             .tokenSettings(
                 TokenSettings.builder()
                     .accessTokenTimeToLive(Duration.ofSeconds(authorizationClient.getAccessTokenTimeToLive()))
+                    .refreshTokenTimeToLive(Duration.ofDays(7))
                     .build())
             .build();
     }

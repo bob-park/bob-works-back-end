@@ -1,17 +1,13 @@
 package org.bobpark.documentservice.domain.document.model;
 
-import static org.bobpark.documentservice.domain.user.utils.UserUtils.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Builder;
 
-import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.DocumentTypeApprovalLine;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
-import org.bobpark.documentservice.domain.user.model.UserResponse;
 
 @Builder
 public record DocumentTypeResponse(Long id,
@@ -24,7 +20,7 @@ public record DocumentTypeResponse(Long id,
                                    String lastModifiedBy,
                                    DocumentTypeApprovalLineResponse approvalLine) {
 
-    public static DocumentTypeResponse toResponse(DocumentType documentType, List<UserResponse> users) {
+    public static DocumentTypeResponse toResponse(DocumentType documentType) {
 
         List<DocumentTypeApprovalLine> approveLines = documentType.getApprovalLines();
 
@@ -38,12 +34,13 @@ public record DocumentTypeResponse(Long id,
 
         if (rootApproveLine != null) {
 
-            DocumentTypeApprovalLineResponse next = getNext(rootApproveLine, approveLines, users);
+            DocumentTypeApprovalLineResponse next = getNext(rootApproveLine, approveLines);
 
             rootApprovalLine =
                 DocumentTypeApprovalLineResponse.builder()
                     .id(rootApproveLine.getId())
-                    .user(findByUser(users, rootApproveLine.getUserId()))
+                    .userId(rootApproveLine.getUserId())
+                    .teamId(rootApproveLine.getTeamId())
                     .next(next)
                     .build();
 
@@ -62,8 +59,8 @@ public record DocumentTypeResponse(Long id,
             .build();
     }
 
-    private static DocumentTypeApprovalLineResponse getNext(
-        DocumentTypeApprovalLine parent, List<DocumentTypeApprovalLine> approveLines, List<UserResponse> users) {
+    private static DocumentTypeApprovalLineResponse getNext(DocumentTypeApprovalLine parent,
+        List<DocumentTypeApprovalLine> approveLines) {
 
         List<DocumentTypeApprovalLine> children =
             approveLines.stream()
@@ -73,11 +70,12 @@ public record DocumentTypeResponse(Long id,
         return children.stream()
             .map(item -> {
 
-                DocumentTypeApprovalLineResponse subNext = getNext(item, approveLines, users);
+                DocumentTypeApprovalLineResponse subNext = getNext(item, approveLines);
 
                 return DocumentTypeApprovalLineResponse.builder()
                     .id(item.getId())
-                    .user(findByUser(users, item.getUserId()))
+                    .userId(item.getUserId())
+                    .teamId(item.getTeamId())
                     .next(subNext)
                     .build();
             })

@@ -1,9 +1,9 @@
 package org.bobpark.documentservice.domain.document.service.approval.impl;
 
-import static com.google.common.base.Preconditions.*;
-import static org.apache.commons.lang3.ObjectUtils.*;
-import static org.bobpark.documentservice.domain.document.model.DocumentResponse.*;
-import static org.springframework.util.StringUtils.*;
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static org.bobpark.documentservice.domain.document.model.DocumentResponse.toResponse;
+import static org.springframework.util.StringUtils.hasText;
 
 import java.util.List;
 
@@ -21,19 +21,15 @@ import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
-import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
+import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.model.DocumentResponse;
 import org.bobpark.documentservice.domain.document.model.approval.ApprovalDocumentRequest;
 import org.bobpark.documentservice.domain.document.model.approval.DocumentApprovalResponse;
 import org.bobpark.documentservice.domain.document.model.approval.SearchDocumentApprovalRequest;
-import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
 import org.bobpark.documentservice.domain.document.repository.approval.DocumentApprovalRepository;
 import org.bobpark.documentservice.domain.document.service.approval.DocumentApprovalService;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
-import org.bobpark.documentservice.domain.document.type.VacationType;
-import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
-import org.bobpark.documentservice.domain.user.model.vacation.UseUserVacationRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,10 +37,8 @@ import org.bobpark.documentservice.domain.user.model.vacation.UseUserVacationReq
 @Transactional(readOnly = true)
 public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
+    private final DocumentProvider documentProvider;
     private final DocumentApprovalRepository documentApprovalRepository;
-    private final VacationDocumentRepository vacationDocumentRepository;
-
-    private final UserClient userClient;
 
     @Transactional
     @Override
@@ -57,18 +51,15 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
         DocumentApproval approval = getApprovalById(approvalId);
 
-        if (approval.getStatus() != DocumentStatus.WAITING
-            && approval.getStatus() != DocumentStatus.PROCEEDING) {
-            throw new IllegalStateException("Invalid status. (" + approval.getStatus() + ")");
+        Document document = approval.getDocument();
+
+        switch (approvalRequest.status()) {
+            case APPROVE -> documentProvider.approval(approvalId.getValue(), document);
+            case REJECT -> documentProvider.reject(approvalId.getValue(), document, approvalRequest.reason());
+            default -> throw new IllegalArgumentException("Bad request document status.");
         }
 
-        approval.updateStatus(approvalRequest.status(), approvalRequest.reason());
-
-        proceedLinkedUserProcess(approval.getDocument());
-
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
-
-        return toResponse(approval.getDocument(), users);
+        return toResponse(approval.getDocument());
     }
 
     @Override
@@ -76,11 +67,9 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
 
         DocumentApproval approval = getApprovalById(approvalId);
 
-        List<UserResponse> users = AuthenticationUtils.getInstance().getUsersByPrincipal();
-
         return DocumentApprovalResponse.builder()
             .id(approval.getId())
-            .document(DocumentResponse.toResponse(approval.getDocument(), users))
+            .document(DocumentResponse.toResponse(approval.getDocument()))
             .status(approval.getStatus())
             .approvedDateTime(approval.getApprovedDateTime())
             .reason(approval.getReason())
@@ -91,8 +80,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
     public Page<DocumentApprovalResponse> search(SearchDocumentApprovalRequest searchRequest, Pageable pageable) {
 
         Authentication authentication = AuthenticationUtils.getInstance().getAuthentication();
-        List<UserResponse> users = getUserAll();
-        UserResponse me = findUser(authentication.getName(), users);
+        UserResponse me = AuthenticationUtils.getInstance().getUser(authentication.getName());
 
         SearchDocumentApprovalRequest searchDto =
             SearchDocumentApprovalRequest.withoutApprovalLineUserId(searchRequest)
@@ -104,7 +92,7 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
         return result.map(item ->
             DocumentApprovalResponse.builder()
                 .id(item.getId())
-                .document(DocumentResponse.toResponse(item.getDocument(), users))
+                .document(DocumentResponse.toResponse(item.getDocument()))
                 .status(item.getStatus())
                 .approvedDateTime(item.getApprovedDateTime())
                 .reason(item.getReason())
@@ -122,62 +110,8 @@ public class DocumentApprovalServiceImpl implements DocumentApprovalService {
     }
 
     private DocumentApproval getApprovalById(Id<DocumentApproval, Long> approvalId) {
-        return documentApprovalRepository.findById(approvalId.getValue())
+        return documentApprovalRepository.findById(approvalId)
             .orElseThrow(() -> new NotFoundException(approvalId));
-    }
-
-    private void proceedLinkedUserProcess(Document document) {
-
-        if (document.getStatus() == DocumentStatus.WAITING
-            || document.getStatus() == DocumentStatus.PROCEEDING) {
-            return;
-        }
-
-        switch (document.getType()) {
-
-            case VACATION:
-                // 휴가 결제 문서가 승인인 경우 사용자 휴가 처리
-                proceedUserVacation(document.getId());
-                break;
-
-            default:
-                break;
-        }
-
-    }
-
-    private void proceedUserVacation(long documentId) {
-
-        VacationDocument vacationDocument =
-            vacationDocumentRepository.findById(documentId)
-                .orElseThrow(() -> new NotFoundException(VacationDocument.class, documentId));
-
-        if (vacationDocument.getStatus() == DocumentStatus.APPROVE) {
-            useVacation(
-                vacationDocument.getVacationType(),
-                vacationDocument.getWriterId(),
-                vacationDocument.getDaysCount());
-        }
-
-    }
-
-    private void useVacation(VacationType type, long userId, double count) {
-        userClient.useVacation(
-            userId,
-            UseUserVacationRequest.builder()
-                .type(type)
-                .useCount(count)
-                .build());
-    }
-
-    private List<UserResponse> getUserAll() {
-        return userClient.getUserAll();
-    }
-
-    private UserResponse findUser(String userId, List<UserResponse> users) {
-        return users.stream().filter(user -> user.userId().equals(userId))
-            .findAny()
-            .orElseThrow(() -> new NotFoundException(UserResponse.class, userId));
     }
 
 }

@@ -1,5 +1,6 @@
 package org.bobpark.client.domain.document.service.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,10 @@ import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.model.response.DocumentTypeApprovalLineStatusResponse;
 import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
 import org.bobpark.client.domain.document.service.VacationDocumentService;
+import org.bobpark.client.domain.user.feign.UserClient;
+import org.bobpark.client.domain.user.feign.UserV1AlternativeVacationClient;
+import org.bobpark.client.domain.user.model.UserResponse;
+import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacationResponse;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,6 +33,8 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
 
     private final DocumentClient documentClient;
     private final DocumentTypeClient documentTypeClient;
+    private final UserClient userClient;
+    private final UserV1AlternativeVacationClient userAlternativeVacationClient;
 
     @Override
     public DocumentResponse addVacation(AddVacationDocumentRequest addRequest) {
@@ -37,17 +44,31 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
     @Override
     public VacationDocumentDetailResponse getVacationDocument(long documentId) {
         VacationDocumentResponse document = documentClient.getVacationDocument(documentId);
+
+        UserResponse writer = getUser(document.writerId());
+
         DocumentTypeResponse type =
             documentTypeClient.getApprovalByTeam(
                 document.typeId(),
-                document.writer().team().id());
+                writer.team().id());
 
         List<DocumentTypeApprovalLineStatusResponse> lines = Lists.newArrayList();
         extractLines(type.approvalLine(), document.approvals(), lines);
 
+        List<UserAlternativeVacationResponse> usedAlternativeVacations = Collections.emptyList();
+
+        if (document.vacationType().equals("ALTERNATIVE")) {
+            usedAlternativeVacations =
+                userAlternativeVacationClient.findAllByIds(writer.id(), document.useAlternativeVacationIds());
+        }
+
         return VacationDocumentDetailResponse.builder()
-            .document(document)
+            .document(
+                document.toBuilder()
+                    .writer(writer)
+                    .build())
             .lines(lines)
+            .useAlternativeVacations(usedAlternativeVacations)
             .build();
     }
 
@@ -60,14 +81,16 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                 .findAny()
                 .orElse(null);
 
+        UserResponse user = getUser(line.userId());
+
         DocumentTypeApprovalLineStatusResponse lineStatus =
             DocumentTypeApprovalLineStatusResponse.builder()
                 .id(line.id())
-                .uniqueUserId(line.user().id())
-                .userId(line.user().userId())
-                .username(line.user().name())
-                .positionId(line.user().position().id())
-                .positionName(line.user().position().name())
+                .uniqueUserId(user.id())
+                .userId(user.userId())
+                .username(user.name())
+                .positionId(user.position().id())
+                .positionName(user.position().name())
                 .status(approval != null ? approval.status() : "WAITING")
                 .approvedDateTime(approval != null ? approval.approvedDateTime() : null)
                 .reason(approval != null ? approval.reason() : null)
@@ -78,6 +101,10 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         if (line.next() != null) {
             extractLines(line.next(), approvals, list);
         }
+    }
+
+    private UserResponse getUser(long userId) {
+        return userClient.getUserById(userId);
     }
 
 }

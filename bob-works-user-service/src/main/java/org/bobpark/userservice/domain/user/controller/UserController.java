@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.domain.user.entity.User;
+import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 import org.bobpark.userservice.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.service.UserService;
@@ -25,6 +26,16 @@ import org.bobpark.userservice.domain.user.service.UserService;
 public class UserController {
 
     private final UserService userService;
+
+    @GetMapping(path = "{id:\\d+}")
+    public UserResponse getUserById(@PathVariable long id) {
+        return userService.getUserById(Id.of(User.class, id));
+    }
+
+    @GetMapping(path = "search")
+    public List<UserResponse> search(SearchUserRequest searchRequest) {
+        return userService.searchUsers(searchRequest);
+    }
 
     @GetMapping(path = "")
     public UserResponse getUser(@RequestParam("userId") String userId) {
