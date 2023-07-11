@@ -43,6 +43,19 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     }
 
     @Override
+    public List<Long> getReadIds(long userId, List<Long> checkIds) {
+
+        return query.select(notice.id)
+            .from(notice)
+            .where(
+                notice.id.in(
+                    JPAExpressions.select(noticeReadUser.notice.id)
+                        .from(noticeReadUser)
+                        .where(noticeReadUser.userId.eq(userId))))
+            .fetch();
+    }
+
+    @Override
     public long countByUnread(long userId) {
 
         Long result =
