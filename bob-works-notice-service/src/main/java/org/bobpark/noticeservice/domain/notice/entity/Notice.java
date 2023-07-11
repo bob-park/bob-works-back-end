@@ -2,11 +2,17 @@ package org.bobpark.noticeservice.domain.notice.entity;
 
 import static com.google.common.base.Preconditions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -14,6 +20,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.ToString.Exclude;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,6 +42,10 @@ public class Notice extends BaseEntity {
     @Lob
     private String description;
 
+    @Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<NoticeReadUser> readUsers = new ArrayList<>();
+
     @Builder
     private Notice(Long id, String title, String description) {
 
@@ -43,5 +54,17 @@ public class Notice extends BaseEntity {
         this.id = id;
         this.title = title;
         this.description = description;
+    }
+
+    public void addReadUser(long readUserId) {
+
+        NoticeReadUser readUser =
+            NoticeReadUser.builder()
+                .userId(readUserId)
+                .build();
+
+        readUser.setNotice(this);
+
+        getReadUsers().add(readUser);
     }
 }
