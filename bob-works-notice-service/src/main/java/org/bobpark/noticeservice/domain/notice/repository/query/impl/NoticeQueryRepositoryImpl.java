@@ -17,8 +17,6 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.bobpark.noticeservice.domain.notice.entity.Notice;
-import org.bobpark.noticeservice.domain.notice.entity.QNotice;
-import org.bobpark.noticeservice.domain.notice.entity.QNoticeReadUser;
 import org.bobpark.noticeservice.domain.notice.model.SearchNoticeRequest;
 import org.bobpark.noticeservice.domain.notice.repository.query.NoticeQueryRepository;
 
