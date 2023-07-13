@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.noticeservice.domain.notice.aggregate.NoticeAggregate;
 import org.bobpark.noticeservice.domain.notice.command.v1.CreateNoticeV1Command;
+import org.bobpark.noticeservice.domain.notice.model.v1.CreateNoticeV1Request;
 import org.bobpark.noticeservice.domain.notice.model.v1.NoticeV1Response;
 
 @Slf4j
@@ -18,8 +19,9 @@ public class NoticeCommandV1Service {
 
     private final NoticeAggregate noticeAggregate;
 
-    public NoticeV1Response createNotice(CreateNoticeV1Command createCommand) {
-        return noticeAggregate.handleV1CreateNotice(createCommand);
+    public NoticeV1Response createNotice(CreateNoticeV1Request createRequest) {
+        return noticeAggregate.handleV1CreateNotice(
+            new CreateNoticeV1Command(createRequest.title(), createRequest.description()));
     }
 
 }

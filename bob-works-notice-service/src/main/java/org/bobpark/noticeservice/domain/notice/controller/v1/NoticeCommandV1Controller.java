@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.bobpark.noticeservice.domain.notice.command.v1.CreateNoticeV1Command;
+import org.bobpark.noticeservice.domain.notice.model.v1.CreateNoticeV1Request;
 import org.bobpark.noticeservice.domain.notice.model.v1.NoticeV1Response;
 import org.bobpark.noticeservice.domain.notice.service.v1.NoticeCommandV1Service;
 
@@ -22,7 +22,7 @@ public class NoticeCommandV1Controller {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "")
-    public NoticeV1Response createNotice(@RequestBody CreateNoticeV1Command createCommand) {
-        return noticeCommandService.createNotice(createCommand);
+    public NoticeV1Response createNotice(@RequestBody CreateNoticeV1Request createRequest) {
+        return noticeCommandService.createNotice(createRequest);
     }
 }
