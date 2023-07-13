@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.bobpark.noticeservice.domain.notice.entity.NoticeId;
 import org.bobpark.noticeservice.domain.notice.model.v1.NoticeV1Response;
 import org.bobpark.noticeservice.domain.notice.model.v1.SearchNoticeV1Request;
 import org.bobpark.noticeservice.domain.notice.service.v1.NoticeQueryV1Service;
@@ -23,5 +25,10 @@ public class NoticeQueryV1Controller {
     @GetMapping(path = "search")
     public Page<NoticeV1Response> search(SearchNoticeV1Request searchRequest, @PageableDefault Pageable pageable) {
         return noticeQueryService.search(searchRequest, pageable);
+    }
+
+    @GetMapping(path = "{noticeId}")
+    public NoticeV1Response getNotice(@PathVariable String noticeId) {
+        return noticeQueryService.getNotice(new NoticeId(noticeId));
     }
 }

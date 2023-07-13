@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.noticeservice.common.utils.UserProvider;
 import org.bobpark.noticeservice.domain.notice.entity.Notice;
 import org.bobpark.noticeservice.domain.notice.entity.NoticeId;
@@ -50,6 +51,22 @@ public class NoticeQueryV1Service {
                 .lastModifiedBy(item.getLastModifiedBy())
                 .isRead(!unreadIds.contains(item.getId()))
                 .build());
+    }
+
+    public NoticeV1Response getNotice(NoticeId id) {
+        Notice notice =
+            noticeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Notice.class, id.getId()));
+
+        return NoticeV1Response.builder()
+            .id(notice.getId().getId())
+            .title(notice.getTitle())
+            .description(notice.getDescription())
+            .createdDate(notice.getCreatedDate())
+            .createdBy(notice.getCreatedBy())
+            .lastModifiedDate(notice.getLastModifiedDate())
+            .lastModifiedBy(notice.getLastModifiedBy())
+            .build();
     }
 
 }
