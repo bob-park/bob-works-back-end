@@ -3,7 +3,9 @@ package org.bobpark.noticeservice.domain.notice.controller.v1;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,4 +27,10 @@ public class NoticeCommandV1Controller {
     public NoticeV1Response createNotice(@RequestBody CreateNoticeV1Request createRequest) {
         return noticeCommandService.createNotice(createRequest);
     }
+
+    @PutMapping(path = "{noticeId}/read")
+    public NoticeV1Response readNotice(@PathVariable String noticeId) {
+        return noticeCommandService.readNotice(noticeId);
+    }
+
 }

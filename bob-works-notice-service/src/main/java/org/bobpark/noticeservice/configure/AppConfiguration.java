@@ -18,6 +18,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
+import org.bobpark.noticeservice.common.utils.UserProvider;
+
 @EnableTransactionManagement
 @Configuration
 public class AppConfiguration {
@@ -43,5 +45,10 @@ public class AppConfiguration {
         builder.modulesToInstall(jtm);
 
         return builder;
+    }
+
+    @Bean
+    public UserProvider userProvider(){
+        return UserProvider.getInstance();
     }
 }
