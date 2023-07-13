@@ -1,4 +1,4 @@
-package org.bobpark.noticeservice.domain.notice.aggregate;
+package org.bobpark.noticeservice.domain.notice.aggregate.v1;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +14,11 @@ import org.bobpark.noticeservice.domain.notice.model.v1.NoticeV1Response;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class NoticeAggregate {
+public class NoticeV1Aggregate {
 
     private final ApplicationEventPublisher eventPublisher;
 
-    public NoticeV1Response handleV1CreateNotice(CreateNoticeV1Command createCommand) {
+    public NoticeV1Response handleCreateNotice(CreateNoticeV1Command createCommand) {
 
         NoticeId noticeId = new NoticeId();
 
