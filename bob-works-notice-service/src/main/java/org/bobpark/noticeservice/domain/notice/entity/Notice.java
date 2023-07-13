@@ -57,6 +57,11 @@ public class Notice extends BaseEntity<NoticeId> {
 
     public void addReadUser(long readUserId) {
 
+        // TODO 여기서 사용자가 많은 경우 처리가 힘들듯 한데... 나중에 cache 로 처리 해야할 듯
+        if (getReadUsers().stream().anyMatch(item -> item.getUserId() == readUserId)) {
+            return;
+        }
+
         NoticeReadUser readUser =
             NoticeReadUser.builder()
                 .userId(readUserId)

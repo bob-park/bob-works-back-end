@@ -4,6 +4,7 @@ import static org.bobpark.noticeservice.domain.notice.entity.QNotice.*;
 import static org.bobpark.noticeservice.domain.notice.entity.QNoticeReadUser.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -42,6 +44,26 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
                 .from(notice);
 
         return PageableExecutionUtils.getPage(content, pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Optional<Notice> findIncludeReadUser(NoticeId id, long userId) {
+
+        QNoticeReadUser subNru = new QNoticeReadUser("sub_nru");
+
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(notice.id.eq(id));
+        builder.and(
+            JPAExpressions.select(subNru.id.count())
+                .from(subNru)
+                .where(subNru.notice.id.eq(id), subNru.userId.eq(userId)).goe(0L));
+
+        return Optional.ofNullable(
+            query.selectFrom(notice)
+                .leftJoin(notice.readUsers, noticeReadUser).fetchJoin()
+                .where(builder)
+                .fetchOne());
     }
 
     @Override

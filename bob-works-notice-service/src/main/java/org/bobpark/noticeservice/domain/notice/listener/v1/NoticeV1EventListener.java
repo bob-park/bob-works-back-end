@@ -35,8 +35,9 @@ public class NoticeV1EventListener {
 
     @EventListener
     public void readNotice(ReadNoticeV1Event readEvent) {
+
         Notice notice =
-            noticeRepository.findById(readEvent.id())
+            noticeRepository.findIncludeReadUser(readEvent.id(), readEvent.userId())
                 .orElseThrow(() -> new NotFoundException(Notice.class, readEvent.id()));
 
         notice.addReadUser(readEvent.userId());
