@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.bobpark.noticeservice.domain.notice.entity.NoticeId;
 import org.bobpark.noticeservice.domain.notice.model.v1.NoticeV1Response;
 import org.bobpark.noticeservice.domain.notice.model.v1.SearchNoticeV1Request;
+import org.bobpark.noticeservice.domain.notice.model.v1.UnReadNoticeCountV1Response;
 import org.bobpark.noticeservice.domain.notice.service.v1.NoticeQueryV1Service;
 
 @RequiredArgsConstructor
@@ -30,5 +31,10 @@ public class NoticeQueryV1Controller {
     @GetMapping(path = "{noticeId}")
     public NoticeV1Response getNotice(@PathVariable String noticeId) {
         return noticeQueryService.getNotice(new NoticeId(noticeId));
+    }
+
+    @GetMapping(path = "count/unread")
+    public UnReadNoticeCountV1Response countUnread() {
+        return noticeQueryService.countUnread();
     }
 }

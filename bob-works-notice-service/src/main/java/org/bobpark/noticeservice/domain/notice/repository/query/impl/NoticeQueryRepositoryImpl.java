@@ -1,5 +1,6 @@
 package org.bobpark.noticeservice.domain.notice.repository.query.impl;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.noticeservice.domain.notice.entity.QNotice.*;
 import static org.bobpark.noticeservice.domain.notice.entity.QNoticeReadUser.*;
 
@@ -72,6 +73,24 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
             .from(notice)
             .where(eqIds(ids), unreadUserId(userId))
             .fetch();
+    }
+
+    @Override
+    public long countOfUnread(long userId) {
+
+        QNoticeReadUser subNru = new QNoticeReadUser("subNru");
+
+        Long count = query.select(notice.id.count())
+            .from(notice)
+            .leftJoin(notice.readUsers, noticeReadUser)
+            .where(
+                JPAExpressions.select(subNru.id.count())
+                    .from(subNru)
+                    .where(subNru.userId.eq(userId), subNru.notice.id.eq(notice.id))
+                    .eq(0L))
+            .fetchOne();
+
+        return defaultIfNull(count, 0L);
     }
 
     private BooleanExpression unreadUserId(Long userId) {

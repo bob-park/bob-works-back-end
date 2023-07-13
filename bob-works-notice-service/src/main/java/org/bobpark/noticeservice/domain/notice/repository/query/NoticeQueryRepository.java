@@ -18,5 +18,6 @@ public interface NoticeQueryRepository {
 
     List<NoticeId> getUnreadIds(long userId, List<NoticeId> ids);
 
+    long countOfUnread(long userId);
 
 }

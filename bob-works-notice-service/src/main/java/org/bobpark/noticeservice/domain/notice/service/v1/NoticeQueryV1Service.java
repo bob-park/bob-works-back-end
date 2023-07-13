@@ -16,6 +16,7 @@ import org.bobpark.noticeservice.domain.notice.entity.Notice;
 import org.bobpark.noticeservice.domain.notice.entity.NoticeId;
 import org.bobpark.noticeservice.domain.notice.model.v1.NoticeV1Response;
 import org.bobpark.noticeservice.domain.notice.model.v1.SearchNoticeV1Request;
+import org.bobpark.noticeservice.domain.notice.model.v1.UnReadNoticeCountV1Response;
 import org.bobpark.noticeservice.domain.notice.query.v1.SearchNoticeV1Query;
 import org.bobpark.noticeservice.domain.notice.repository.NoticeRepository;
 
@@ -67,6 +68,13 @@ public class NoticeQueryV1Service {
             .lastModifiedDate(notice.getLastModifiedDate())
             .lastModifiedBy(notice.getLastModifiedBy())
             .build();
+    }
+
+    public UnReadNoticeCountV1Response countUnread() {
+        long userId = UserProvider.getInstance().getUserId();
+        long count = noticeRepository.countOfUnread(userId);
+
+        return new UnReadNoticeCountV1Response(count);
     }
 
 }
