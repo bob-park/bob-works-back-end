@@ -6,9 +6,12 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import org.bobpark.client.common.utils.AuthenticationUtils;
 
 @ConfigurationPropertiesScan("org.bobpark.client.configure.properties")
 @Configuration
@@ -44,6 +47,11 @@ public class AppConfiguration {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    @Bean
+    public AuthenticationUtils authenticationUtils(OAuth2AuthorizedClientService authorizedClientService) {
+        return AuthenticationUtils.getInstance();
     }
 
 }
