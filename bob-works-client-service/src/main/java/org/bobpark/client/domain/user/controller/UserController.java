@@ -64,7 +64,7 @@ public class UserController {
         return userService.getDocumentSignature(id);
     }
 
-    @PostMapping(path = "{id}/document/signature")
+    @PostMapping(path = "{id:\\d+}/document/signature")
     public UserResponse updateSignature(@PathVariable long id, UpdateUserDocumentSignatureRequest updateRequest) {
         return userService.updateSignature(id, updateRequest);
     }
