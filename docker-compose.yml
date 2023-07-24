@@ -119,11 +119,29 @@ services:
     depends_on:
       bob-works-authorization-service:
         condition: service_healthy
-  bob-works-front-end:
-    container_name: bob-works-client-service
-    image: ghcr.io/bob-park/bob-works-front-end
+  bob-works-notice-service:
+    container_name: bob-works-notice-service
+    image: ghcr.io/bob-park/bob-works-back-end/bob-works-notice-service
+    platform: linux/amd64
+    build: ./bob-works-notice-service
+    environment:
+      logs_level: debug
+      logs_path: /root/application/logs
+      config_server_url: http://bob-works-config-service:8888
     ports:
-      - "3000:3000"
+      - "8083:8080"
+    networks:
+      - bob-works-network
+    volumes:
+      - ./bob-works-client-service:/root/application
+    depends_on:
+      bob-works-authorization-service:
+        condition: service_healthy
+#  bob-works-front-end:
+#    container_name: bob-works-client-service
+#    image: ghcr.io/bob-park/bob-works-front-end
+#    ports:
+#      - "3000:3000"
 
 
 
