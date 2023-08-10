@@ -5,6 +5,7 @@ import java.util.List;
 
 import lombok.Builder;
 
+import org.bobpark.client.domain.document.model.DocumentApprovalResponse;
 import org.bobpark.client.domain.user.model.UserResponse;
 
 @Builder
@@ -17,6 +18,7 @@ public record HolidayWorkReportResponse(Long id,
                                         String createdBy,
                                         LocalDateTime lastModifiedDate,
                                         String lastModifiedBy,
+                                        List<DocumentApprovalResponse> approvals,
                                         String workPurpose,
                                         List<HolidayWorkUserResponse> users) {
 }

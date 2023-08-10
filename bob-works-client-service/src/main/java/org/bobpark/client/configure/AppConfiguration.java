@@ -12,6 +12,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import org.bobpark.client.common.utils.AuthenticationUtils;
+import org.bobpark.client.common.utils.DocumentUtils;
 
 @ConfigurationPropertiesScan("org.bobpark.client.configure.properties")
 @Configuration
@@ -52,6 +53,11 @@ public class AppConfiguration {
     @Bean
     public AuthenticationUtils authenticationUtils(OAuth2AuthorizedClientService authorizedClientService) {
         return AuthenticationUtils.getInstance();
+    }
+
+    @Bean
+    public DocumentUtils documentUtils(){
+        return DocumentUtils.getInstance();
     }
 
 }
