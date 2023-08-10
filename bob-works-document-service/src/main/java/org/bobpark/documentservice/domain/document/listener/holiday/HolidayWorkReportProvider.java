@@ -67,6 +67,7 @@ public class HolidayWorkReportProvider implements DocumentProvider {
         allowStatus(approval.getStatus());
 
         // TODO reject 처리
+        document.updateStatus(DocumentStatus.REJECT);
 
         return null;
     }
@@ -77,8 +78,9 @@ public class HolidayWorkReportProvider implements DocumentProvider {
         allowStatus(document.getStatus());
 
         // TODO cancel 처리
+        document.updateStatus(DocumentStatus.CANCEL);
 
-        return null;
+        return document;
     }
 
     @Override
