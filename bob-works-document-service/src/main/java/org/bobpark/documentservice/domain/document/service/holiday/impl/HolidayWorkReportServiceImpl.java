@@ -4,6 +4,7 @@ import static org.bobpark.documentservice.domain.document.model.holiday.HolidayW
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
+import org.bobpark.core.model.common.Id;
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
+import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkReport;
 import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkTime;
@@ -78,5 +81,17 @@ public class HolidayWorkReportServiceImpl implements HolidayWorkReportService {
         log.debug("created holiday work report. (id={})", createdHolidayWorkReport.getId());
 
         return toResponse(createdHolidayWorkReport, Collections.singletonList(writer));
+    }
+
+    @Override
+    public HolidayWorkReportResponse getReport(Id<Document, Long> documentId) {
+
+        HolidayWorkReport holidayWorkReport =
+            holidayWorkReportRepository.findById(documentId.getValue())
+                .orElseThrow(() -> new NotFoundException(documentId));
+
+        List<UserResponse> users = AuthenticationUtils.getInstance().getUsers();
+
+        return toResponse(holidayWorkReport, users);
     }
 }
