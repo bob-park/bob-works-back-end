@@ -18,6 +18,8 @@ import org.bobpark.documentservice.domain.user.model.vacation.AddAlternativeVaca
 @RequiredArgsConstructor
 public class HolidayWorkReportProvider implements DocumentProvider {
 
+    private static final double VACATION_HALF_TIME = 0.5;
+
     private final UserClient userClient;
     private final DocumentApprovalRepository documentApprovalRepository;
 
@@ -40,16 +42,22 @@ public class HolidayWorkReportProvider implements DocumentProvider {
 
                 if (!workUser.isManualInput() && workUser.isVacation()) {
 
+                    // double addAlternativeVacationCount =
+                    //     calculateVacationCount(workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME);
+
                     int addAlternativeVacationCount = (int)workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME;
 
-                    AddAlternativeVacationRequest addRequest =
-                        AddAlternativeVacationRequest.builder()
-                            .effectiveDate(workUser.getWorkDate())
-                            .effectiveReason(holidayWorkReport.getWorkPurpose())
-                            .effectiveCount(addAlternativeVacationCount)
-                            .build();
+                    if (addAlternativeVacationCount > 0) {
+                        AddAlternativeVacationRequest addRequest =
+                            AddAlternativeVacationRequest.builder()
+                                .effectiveDate(workUser.getWorkDate())
+                                .effectiveReason(holidayWorkReport.getWorkPurpose())
+                                .effectiveCount(addAlternativeVacationCount)
+                                .build();
 
-                    userClient.addAlternativeVacation(workUser.getWorkUserId(), addRequest);
+                        userClient.addAlternativeVacation(workUser.getWorkUserId(), addRequest);
+                    }
+
                 }
 
             }
@@ -67,6 +75,7 @@ public class HolidayWorkReportProvider implements DocumentProvider {
         allowStatus(approval.getStatus());
 
         // TODO reject 처리
+        document.updateStatus(DocumentStatus.REJECT);
 
         return null;
     }
@@ -77,8 +86,9 @@ public class HolidayWorkReportProvider implements DocumentProvider {
         allowStatus(document.getStatus());
 
         // TODO cancel 처리
+        document.updateStatus(DocumentStatus.CANCEL);
 
-        return null;
+        return document;
     }
 
     @Override
@@ -89,6 +99,23 @@ public class HolidayWorkReportProvider implements DocumentProvider {
     private DocumentApproval getApprovalById(long approvalId) {
         return documentApprovalRepository.findById(approvalId)
             .orElseThrow(() -> new NotFoundException(DocumentApproval.class, approvalId));
+    }
+
+    private double calculateVacationCount(double count) {
+        double result = 0;
+
+        double calculateCount = count - VACATION_HALF_TIME;
+
+        if (calculateCount > 0) {
+            result += VACATION_HALF_TIME;
+        }
+
+        if (calculateCount >= VACATION_HALF_TIME) {
+
+            result += calculateVacationCount(calculateCount);
+        }
+
+        return result;
     }
 
 }

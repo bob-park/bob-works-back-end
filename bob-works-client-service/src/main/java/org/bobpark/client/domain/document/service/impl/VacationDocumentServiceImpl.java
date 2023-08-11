@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
+import org.bobpark.client.common.utils.DocumentUtils;
 import org.bobpark.client.domain.document.feign.DocumentClient;
 import org.bobpark.client.domain.document.feign.DocumentTypeClient;
 import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
-import org.bobpark.client.domain.document.model.DocumentApprovalResponse;
 import org.bobpark.client.domain.document.model.DocumentResponse;
-import org.bobpark.client.domain.document.model.DocumentTypeApprovalLineResponse;
 import org.bobpark.client.domain.document.model.DocumentTypeResponse;
 import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.model.response.DocumentTypeApprovalLineStatusResponse;
@@ -33,7 +32,6 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
 
     private final DocumentClient documentClient;
     private final DocumentTypeClient documentTypeClient;
-    private final UserClient userClient;
     private final UserV1AlternativeVacationClient userAlternativeVacationClient;
 
     @Override
@@ -45,7 +43,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
     public VacationDocumentDetailResponse getVacationDocument(long documentId) {
         VacationDocumentResponse document = documentClient.getVacationDocument(documentId);
 
-        UserResponse writer = getUser(document.writerId());
+        UserResponse writer = DocumentUtils.getInstance().getUser(document.writerId());
 
         DocumentTypeResponse type =
             documentTypeClient.getApprovalByTeam(
@@ -53,7 +51,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                 writer.team().id());
 
         List<DocumentTypeApprovalLineStatusResponse> lines = Lists.newArrayList();
-        extractLines(type.approvalLine(), document.approvals(), lines);
+        DocumentUtils.getInstance().extractLines(type.approvalLine(), document.approvals(), lines);
 
         List<UserAlternativeVacationResponse> usedAlternativeVacations = Collections.emptyList();
 
@@ -70,41 +68,6 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
             .lines(lines)
             .useAlternativeVacations(usedAlternativeVacations)
             .build();
-    }
-
-    private void extractLines(DocumentTypeApprovalLineResponse line, List<DocumentApprovalResponse> approvals,
-        List<DocumentTypeApprovalLineStatusResponse> list) {
-
-        DocumentApprovalResponse approval =
-            approvals.stream()
-                .filter(item -> item.lineId().equals(line.id()))
-                .findAny()
-                .orElse(null);
-
-        UserResponse user = getUser(line.userId());
-
-        DocumentTypeApprovalLineStatusResponse lineStatus =
-            DocumentTypeApprovalLineStatusResponse.builder()
-                .id(line.id())
-                .uniqueUserId(user.id())
-                .userId(user.userId())
-                .username(user.name())
-                .positionId(user.position().id())
-                .positionName(user.position().name())
-                .status(approval != null ? approval.status() : "WAITING")
-                .approvedDateTime(approval != null ? approval.approvedDateTime() : null)
-                .reason(approval != null ? approval.reason() : null)
-                .build();
-
-        list.add(lineStatus);
-
-        if (line.next() != null) {
-            extractLines(line.next(), approvals, list);
-        }
-    }
-
-    private UserResponse getUser(long userId) {
-        return userClient.getUserById(userId);
     }
 
 }

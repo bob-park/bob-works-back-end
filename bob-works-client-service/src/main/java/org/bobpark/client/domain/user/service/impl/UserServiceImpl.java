@@ -1,5 +1,7 @@
 package org.bobpark.client.domain.user.service.impl;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,6 +25,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getUser(String userId) {
         return userClient.getUser(userId);
+    }
+
+    @Override
+    public List<UserResponse> getAllUser() {
+        return userClient.getAllUser();
     }
 
     @Override

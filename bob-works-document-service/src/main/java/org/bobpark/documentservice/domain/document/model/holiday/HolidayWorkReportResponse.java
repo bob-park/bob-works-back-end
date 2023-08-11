@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.Builder;
 
 import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkReport;
+import org.bobpark.documentservice.domain.document.model.approval.DocumentApprovalResponse;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
@@ -22,6 +23,7 @@ public record HolidayWorkReportResponse(Long id,
                                         String createdBy,
                                         LocalDateTime lastModifiedDate,
                                         String lastModifiedBy,
+                                        List<DocumentApprovalResponse> approvals,
                                         String workPurpose,
                                         List<HolidayWorkUserResponse> users) {
 
@@ -36,6 +38,10 @@ public record HolidayWorkReportResponse(Long id,
             .createdBy(entity.getCreatedBy())
             .lastModifiedDate(entity.getLastModifiedDate())
             .lastModifiedBy(entity.getLastModifiedBy())
+            .approvals(
+                entity.getApprovals().stream()
+                    .map(DocumentApprovalResponse::toResponse)
+                    .toList())
             .workPurpose(entity.getWorkPurpose())
             .users(entity.getUsers().stream().map(HolidayWorkUserResponse::toResponse).toList())
             .build();

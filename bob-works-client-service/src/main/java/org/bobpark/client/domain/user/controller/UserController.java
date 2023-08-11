@@ -2,6 +2,8 @@ package org.bobpark.client.domain.user.controller;
 
 import static org.bobpark.client.common.utils.CommonUtils.*;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.core.io.Resource;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.bobpark.client.domain.user.model.UpdateUserAvatarRequest;
 import org.bobpark.client.domain.user.model.UpdateUserDocumentSignatureRequest;
 import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
@@ -28,13 +28,17 @@ import org.bobpark.client.domain.user.service.UserService;
 @RequestMapping("user")
 public class UserController {
 
-    private final ObjectMapper mapper;
     private final UserService userService;
 
     @GetMapping(path = "")
     public UserResponse getUser(@AuthenticationPrincipal OidcUser user) {
         return parseToUserResponse(user);
 
+    }
+
+    @GetMapping(path = "all")
+    public List<UserResponse> getAllUser() {
+        return userService.getAllUser();
     }
 
     @GetMapping(path = "vacation")

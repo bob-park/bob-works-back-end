@@ -59,7 +59,11 @@ public class VacationDocumentProvider implements DocumentProvider {
     @Override
     public Document canceled(Document document) {
 
-        allowStatus(document.getStatus());
+        // allowStatus(document.getStatus());
+        // * 휴가계는 결재 상태가 "취소" 를 제외하고 취소할 수 있다.
+        if (document.getStatus() == DocumentStatus.CANCEL) {
+            throw new IllegalArgumentException("Invalid status. (" + document.getStatus() + ")");
+        }
 
         VacationDocument vacationDocument = (VacationDocument)document;
 

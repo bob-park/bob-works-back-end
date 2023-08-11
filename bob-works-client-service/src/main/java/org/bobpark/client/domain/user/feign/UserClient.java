@@ -24,6 +24,9 @@ public interface UserClient {
     @GetMapping(path = "user")
     UserResponse getUser(@RequestParam("userId") String userId);
 
+    @GetMapping(path = "user/all")
+    List<UserResponse> getAllUser();
+
     @GetMapping("user/search")
     List<UserResponse> searchUsers(@SpringQueryMap SearchUserRequest searchRequest);
 

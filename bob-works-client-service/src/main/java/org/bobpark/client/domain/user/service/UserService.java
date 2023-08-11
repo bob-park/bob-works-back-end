@@ -1,5 +1,7 @@
 package org.bobpark.client.domain.user.service;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 
 import org.bobpark.client.domain.user.model.UpdateUserAvatarRequest;
@@ -10,6 +12,8 @@ import org.bobpark.client.domain.user.model.UserResponse;
 public interface UserService {
 
     UserResponse getUser(String userId);
+
+    List<UserResponse> getAllUser();
 
     UserResponse updatePassword(long id, UpdateUserPasswordRequest updateRequest);
 
