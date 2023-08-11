@@ -110,6 +110,10 @@ public class HolidayWorkUser extends BaseEntity {
         if (getIsVacation()) {
             this.paymentTime = getTotalWorkTime() % VACATION_TIME;
         }
+
+        if (paymentTime == getTotalWorkTime()) {
+            this.isVacation = false;
+        }
     }
 
     public boolean isManualInput() {
