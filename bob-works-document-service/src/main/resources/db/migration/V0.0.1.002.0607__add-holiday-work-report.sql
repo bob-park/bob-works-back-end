@@ -37,6 +37,7 @@ create table holiday_work_times
 (
     id                 bigserial               not null primary key,
     work_users_id      bigint                  not null,
+    exist_break_time   bool      default false not null,
     start_time         time                    not null,
     end_time           time                    not null,
     created_date       timestamp default now() not null,
@@ -49,5 +50,7 @@ create table holiday_work_times
 
 
 -- add data
-insert into document_types (id, type, name, created_by) values (2, 'HOLIDAY_WORK', '휴일 근무 보고서', 'admin');
-insert into document_types_approval_lines (id, p_id, document_type_id, user_id, team_id) values (5, null, 2, 12, 1);
+insert into document_types (id, type, name, created_by)
+values (2, 'HOLIDAY_WORK', '휴일 근무 보고서', 'admin');
+insert into document_types_approval_lines (id, p_id, document_type_id, user_id, team_id)
+values (5, null, 2, 12, 1);

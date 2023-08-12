@@ -8,12 +8,14 @@ import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkTim
 
 @Builder
 public record HolidayWorkTimeResponse(LocalTime startTime,
-                                      LocalTime endTime) {
+                                      LocalTime endTime,
+                                      boolean existBreakTime) {
 
     public static HolidayWorkTimeResponse toResponse(HolidayWorkTime entity) {
         return HolidayWorkTimeResponse.builder()
             .startTime(entity.getStartTime())
             .endTime(entity.getEndTime())
+            .existBreakTime(entity.getExistBreakTime())
             .build();
     }
 }

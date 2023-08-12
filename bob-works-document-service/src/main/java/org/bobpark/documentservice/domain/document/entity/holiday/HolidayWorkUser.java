@@ -82,11 +82,12 @@ public class HolidayWorkUser extends BaseEntity {
         this.report = report;
     }
 
-    public void addTime(LocalTime startTime, LocalTime endTime) {
+    public void addTime(LocalTime startTime, LocalTime endTime, boolean existBreakTime) {
         HolidayWorkTime workTime =
             HolidayWorkTime.builder()
                 .startTime(startTime)
                 .endTime(endTime)
+                .existBreakTime(existBreakTime)
                 .build();
 
         workTime.setUser(this);

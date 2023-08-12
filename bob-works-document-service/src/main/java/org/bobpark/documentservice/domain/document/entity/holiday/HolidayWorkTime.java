@@ -1,7 +1,7 @@
 package org.bobpark.documentservice.domain.document.entity.holiday;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.apache.commons.lang3.ObjectUtils.isNotEmpty;
+import static org.apache.commons.lang3.ObjectUtils.*;
 
 import java.time.LocalTime;
 
@@ -51,11 +51,13 @@ public class HolidayWorkTime extends BaseEntity {
     @JoinColumn(name = "work_users_id")
     private HolidayWorkUser user;
 
+    private Boolean existBreakTime;
+
     private LocalTime startTime;
     private LocalTime endTime;
 
     @Builder
-    private HolidayWorkTime(Long id, LocalTime startTime, LocalTime endTime) {
+    private HolidayWorkTime(Long id, Boolean existBreakTime, LocalTime startTime, LocalTime endTime) {
 
         checkArgument(isNotEmpty(startTime), "startTime must be provided.");
         checkArgument(isNotEmpty(endTime), "endTime must be provided.");
@@ -64,6 +66,7 @@ public class HolidayWorkTime extends BaseEntity {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.existBreakTime = defaultIfNull(existBreakTime, false);
     }
 
     public void setUser(HolidayWorkUser workUser) {
@@ -111,6 +114,11 @@ public class HolidayWorkTime extends BaseEntity {
     }
 
     private boolean isRestTime(LocalTime startTime, LocalTime endTime) {
+
+        if (!getExistBreakTime()) {
+            return false;
+        }
+
         return START_REST_TIME.isAfter(startTime) && END_REST_TIME.isBefore(endTime);
     }
 
