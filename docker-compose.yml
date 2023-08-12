@@ -129,7 +129,7 @@ services:
       logs_path: /root/application/logs
       config_server_url: http://bob-works-config-service:8888
     ports:
-      - "8083:8080"
+      - "8084:8080"
     networks:
       - bob-works-network
     volumes:
