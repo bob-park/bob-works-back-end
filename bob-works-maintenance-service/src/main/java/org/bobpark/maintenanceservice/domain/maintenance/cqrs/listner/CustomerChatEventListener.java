@@ -26,7 +26,7 @@ public class CustomerChatEventListener {
     private final CustomerChatRoomRepository chatRoomRepository;
     private final CustomerChatRepository chatRepository;
 
-    @Async
+    // @Async
     @Transactional
     @EventListener
     public void createdChatRoom(CreatedChatRoomEvent createdEvent) {
@@ -44,7 +44,7 @@ public class CustomerChatEventListener {
         log.debug("created customer chat room. (id={})", createdChatRoom.getId());
     }
 
-    @Async
+    // @Async
     @Transactional
     @EventListener
     public void createdChat(CreatedChatEvent createdEvent) {
