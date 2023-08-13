@@ -7,6 +7,7 @@ create table maintenance_customer_chat_rooms
     customer_id        bigint                  not null,
     manager_id         bigint,
     title              varchar(100)            not null,
+    description        text,
     created_date       timestamp default now() not null,
     created_by         varchar(100)            not null,
     last_modified_date timestamp,
