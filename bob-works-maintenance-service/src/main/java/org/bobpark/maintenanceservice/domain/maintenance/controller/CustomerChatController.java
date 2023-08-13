@@ -3,6 +3,7 @@ package org.bobpark.maintenanceservice.domain.maintenance.controller;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,14 +18,22 @@ import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatRespo
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatRoomResponse;
 import org.bobpark.maintenanceservice.domain.maintenance.service.CustomerChatCommandService;
 import org.bobpark.maintenanceservice.domain.maintenance.service.CustomerChatRoomCommandService;
+import org.bobpark.maintenanceservice.domain.maintenance.service.CustomerChatRoomQueryService;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("maintenance/customer/chat")
 public class CustomerChatController {
 
+    private final CustomerChatRoomQueryService chatRoomQueryService;
     private final CustomerChatRoomCommandService chatRoomCommandService;
     private final CustomerChatCommandService chatCommandService;
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(path = "{roomId}")
+    public CustomerChatResponse createChat(@PathVariable String roomId, @RequestBody CreateChatRequest createRequest) {
+        return chatCommandService.createChat(new CustomerChatRoomId(roomId), createRequest);
+    }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(path = "room")
@@ -32,10 +41,9 @@ public class CustomerChatController {
         return chatRoomCommandService.createRoom(createRequest);
     }
 
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(path = "{roomId}")
-    public CustomerChatResponse createChat(@PathVariable String roomId, @RequestBody CreateChatRequest createRequest) {
-        return chatCommandService.createChat(new CustomerChatRoomId(roomId), createRequest);
+    @GetMapping(path = "room/latest")
+    public CustomerChatRoomResponse getLatestChatRoom() {
+        return chatRoomQueryService.getLatestChatRoom();
     }
 
 }
