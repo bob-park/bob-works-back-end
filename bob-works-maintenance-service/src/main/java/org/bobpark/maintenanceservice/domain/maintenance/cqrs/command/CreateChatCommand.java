@@ -2,8 +2,10 @@ package org.bobpark.maintenanceservice.domain.maintenance.cqrs.command;
 
 import lombok.Builder;
 
+import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
+
 @Builder
-public record CreateChatCommand(String roomId,
+public record CreateChatCommand(CustomerChatRoomId roomId,
                                 Long writerId,
                                 String contents) {
 }

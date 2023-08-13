@@ -44,12 +44,11 @@ public class CustomerChatAggregate {
     public CustomerChatResponse handleCreateChat(CreateChatCommand createCommand) {
 
         CustomerChatId id = new CustomerChatId();
-        CustomerChatRoomId roomId = new CustomerChatRoomId(createCommand.roomId());
 
         eventPublisher.publishEvent(
             CreatedChatEvent.builder()
                 .id(id)
-                .roomId(roomId)
+                .roomId(createCommand.roomId())
                 .writerId(createCommand.writerId())
                 .contents(createCommand.contents())
                 .build());
