@@ -3,6 +3,9 @@ package org.bobpark.maintenanceservice.domain.notification.provider.slack;
 import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,9 @@ import org.bobpark.maintenanceservice.domain.notification.provider.slack.message
 
 @Slf4j
 public class SlackNotificationProvider implements NotificationProvider {
+
+    private static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final NotificationProperties properties;
     private final String webHookUrl;
@@ -97,16 +103,30 @@ public class SlackNotificationProvider implements NotificationProvider {
                 .type("divider")
                 .build();
 
-        SlackMessageBlock section =
+        SlackMessageBlock textContext =
             SlackMessageBlock.builder()
                 .type("section")
                 .text(SlackMessageBlockText.builder()
-                    .type("mrkdwn")
+                    .type("plain_text")
                     .text(contents)
+                    .emoji(true)
                     .build())
                 .build();
 
-        List<SlackMessageBlock> blocks = Lists.newArrayList(header, divider, section);
+        SlackMessageBlock dateContext =
+            SlackMessageBlock.builder()
+                .type("context")
+                .elements(Collections.singletonList(
+                    SlackMessageBlockText.builder()
+                        .type("plain_text")
+                        .text(
+                            String.format("Created Date: %s", LocalDateTime.now().format(DEFAULT_DATE_TIME_FORMATTER)))
+                        .emoji(true)
+                        .build()))
+                .build();
+
+        List<SlackMessageBlock> blocks =
+            Lists.newArrayList(header, divider, textContext, dateContext);
 
         return new SlackMessage(blocks);
     }
