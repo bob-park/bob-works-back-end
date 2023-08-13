@@ -5,5 +5,5 @@ import lombok.Builder;
 @Builder
 public record SlackMessageBlockText(String type,
                                     String text,
-                                    boolean emoji) {
+                                    Boolean emoji) {
 }

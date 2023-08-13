@@ -7,30 +7,35 @@ import java.util.List;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 import org.bobpark.core.exception.ServiceRuntimeException;
 import org.bobpark.maintenanceservice.configure.notification.properties.NotificationProperties;
 import org.bobpark.maintenanceservice.domain.notification.provider.NotificationProvider;
-import org.bobpark.maintenanceservice.domain.notification.provider.slack.command.SlackSendCommand;
+import org.bobpark.maintenanceservice.domain.notification.provider.NotificationSendMessage;
 import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessage;
 import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessageBlock;
 import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessageBlockText;
 
 @Slf4j
-public class SlackNotificationProvider implements NotificationProvider<SlackSendCommand> {
+public class SlackNotificationProvider implements NotificationProvider {
 
     private final NotificationProperties properties;
     private final String webHookUrl;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
-    public SlackNotificationProvider(NotificationProperties properties, String webHookUrl, RestTemplate restTemplate) {
+    public SlackNotificationProvider(NotificationProperties properties, String webHookUrl, RestTemplate restTemplate,
+        ObjectMapper objectMapper) {
 
         checkArgument(isNotEmpty(properties), "properties must be provided.");
         checkArgument(StringUtils.isNotBlank(webHookUrl), "webHookUrl must be provided.");
@@ -39,21 +44,32 @@ public class SlackNotificationProvider implements NotificationProvider<SlackSend
         this.properties = properties;
         this.webHookUrl = webHookUrl;
         this.restTemplate = restTemplate;
+        this.objectMapper = defaultIfNull(objectMapper, new ObjectMapper());
 
         log.debug("created SlackNotificationProvider.");
     }
 
     @Override
-    public void sendMessage(SlackSendCommand sendCommand) {
+    public void sendMessage(NotificationSendMessage sendMessage) {
 
         if (!properties.isEnabled()) {
             log.warn("disabled notification.");
             return;
         }
 
-        RequestEntity<SlackMessage> requestEntity =
+        SlackMessage message = getDefaultMessage(sendMessage.writerId(), sendMessage.contents());
+        String body = "";
+
+        try {
+            body = objectMapper.writeValueAsString(message);
+        } catch (JsonProcessingException e) {
+            throw new ServiceRuntimeException(e);
+        }
+
+        RequestEntity<String> requestEntity =
             RequestEntity.post(webHookUrl)
-                .body(getDefaultMessage(sendCommand.userId(), sendCommand.contents()));
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(body);
 
         ResponseEntity<String> response = restTemplate.exchange(requestEntity, String.class);
 

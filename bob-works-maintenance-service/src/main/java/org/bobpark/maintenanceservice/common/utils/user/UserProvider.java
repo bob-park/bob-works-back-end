@@ -32,6 +32,18 @@ public class UserProvider {
         return user.id();
     }
 
+    public UserResponse getUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        return userClient.getUser(auth.getName());
+    }
+
+    public String getName() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        return auth.getName();
+    }
+
     @Autowired
     public void setUserClient(UserClient userClient) {
         this.userClient = userClient;

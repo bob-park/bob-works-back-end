@@ -6,6 +6,6 @@ import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoom
 
 @Builder
 public record CreateChatCommand(CustomerChatRoomId roomId,
-                                Long writerId,
+                                String writer,
                                 String contents) {
 }

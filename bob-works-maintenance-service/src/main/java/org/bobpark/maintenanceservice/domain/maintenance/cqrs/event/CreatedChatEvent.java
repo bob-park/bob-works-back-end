@@ -8,6 +8,6 @@ import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoom
 @Builder
 public record CreatedChatEvent(CustomerChatId id,
                                CustomerChatRoomId roomId,
-                               Long writerId,
+                               String writer,
                                String contents) {
 }

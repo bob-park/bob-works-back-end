@@ -49,14 +49,12 @@ public class CustomerChatAggregate {
             CreatedChatEvent.builder()
                 .id(id)
                 .roomId(createCommand.roomId())
-                .writerId(createCommand.writerId())
+                .writer(createCommand.writer())
                 .contents(createCommand.contents())
                 .build());
 
         return CustomerChatResponse.builder()
             .id(id.getId())
-            .writerId(createCommand.writerId())
-            .contents(createCommand.contents())
             .build();
     }
 

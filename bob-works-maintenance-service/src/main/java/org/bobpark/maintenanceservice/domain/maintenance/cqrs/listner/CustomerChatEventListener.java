@@ -4,24 +4,28 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.event.EventListener;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.core.exception.NotFoundException;
-import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatCommand;
+import org.bobpark.maintenanceservice.common.utils.user.UserProvider;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatRoomEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChat;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoom;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRepository;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRoomRepository;
+import org.bobpark.maintenanceservice.domain.notification.provider.NotificationProvider;
+import org.bobpark.maintenanceservice.domain.notification.provider.NotificationSendMessage;
+import org.bobpark.maintenanceservice.domain.user.model.UserResponse;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 @Transactional(readOnly = true)
 public class CustomerChatEventListener {
+
+    private final NotificationProvider notificationProvider;
 
     private final CustomerChatRoomRepository chatRoomRepository;
     private final CustomerChatRepository chatRepository;
@@ -53,10 +57,12 @@ public class CustomerChatEventListener {
             chatRoomRepository.findById(createdEvent.roomId())
                 .orElseThrow(() -> new NotFoundException(CustomerChatRoom.class, createdEvent.roomId()));
 
+        UserResponse user = UserProvider.getInstance().getUser();
+
         CustomerChat createdChat =
             CustomerChat.builder()
                 .id(createdEvent.id())
-                .writerId(createdEvent.writerId())
+                .writerId(user.id())
                 .contents(createdEvent.contents())
                 .build();
 
@@ -66,5 +72,8 @@ public class CustomerChatEventListener {
 
         log.debug("created customer chat. (id={}, contents={})", createdChat.getId(), createdChat.getContents());
 
+        notificationProvider.sendMessage(
+            new NotificationSendMessage(String.format("%s (%s)", user.userId(), user.name()),
+                createdChat.getContents()));
     }
 }

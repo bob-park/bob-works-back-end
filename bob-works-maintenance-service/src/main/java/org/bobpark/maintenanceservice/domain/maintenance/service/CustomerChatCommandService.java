@@ -29,12 +29,12 @@ public class CustomerChatCommandService {
 
         checkArgument(StringUtils.isNotBlank(createRequest.contents()), "contents must be provided");
 
-        long writerId = UserProvider.getInstance().getUserId();
+        String writer = UserProvider.getInstance().getName();
 
         return chatAggregate.handleCreateChat(
             CreateChatCommand.builder()
                 .roomId(roomId)
-                .writerId(writerId)
+                .writer(writer)
                 .contents(createRequest.contents())
                 .build());
     }
