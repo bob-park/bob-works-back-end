@@ -27,4 +27,7 @@ dependencies {
     // eureka client
     implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:${springCloudNetflixVersion}"
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
+
+    // slack
+    implementation 'com.slack.api:slack-api-client:1.30.0'
 }
