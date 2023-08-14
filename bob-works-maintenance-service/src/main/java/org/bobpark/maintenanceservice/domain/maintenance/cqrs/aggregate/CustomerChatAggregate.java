@@ -55,6 +55,7 @@ public class CustomerChatAggregate {
 
         return CustomerChatResponse.builder()
             .id(id.getId())
+            .contents(createCommand.contents())
             .build();
     }
 

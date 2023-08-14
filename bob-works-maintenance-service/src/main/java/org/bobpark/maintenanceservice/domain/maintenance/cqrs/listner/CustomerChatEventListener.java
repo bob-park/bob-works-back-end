@@ -12,6 +12,7 @@ import org.bobpark.maintenanceservice.common.utils.user.UserProvider;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatRoomEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChat;
+import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatId;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoom;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRepository;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRoomRepository;
@@ -24,6 +25,9 @@ import org.bobpark.maintenanceservice.domain.user.model.UserResponse;
 @Component
 @Transactional(readOnly = true)
 public class CustomerChatEventListener {
+
+    // TODO 관리자 이거 나중에 바꿔야할 듯
+    private static final long ADMIN_ID = 11;
 
     private final NotificationProvider notificationProvider;
 
@@ -71,6 +75,18 @@ public class CustomerChatEventListener {
         chatRepository.save(createdChat);
 
         log.debug("created customer chat. (id={}, contents={})", createdChat.getId(), createdChat.getContents());
+
+        // admin
+        CustomerChat createdMaintenanceChat =
+            CustomerChat.builder()
+                .id(new CustomerChatId())
+                .writerId(ADMIN_ID)
+                .contents("접수되었습니다.")
+                .build();
+
+        chatRoom.addChat(createdMaintenanceChat);
+
+        chatRepository.save(createdMaintenanceChat);
 
         notificationProvider.sendMessage(
             new NotificationSendMessage(String.format("%s (%s)", user.userId(), user.name()),
