@@ -23,7 +23,7 @@ import org.bobpark.noticeservice.common.entity.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "notices_read_users")
-public class NoticeReadUser extends BaseEntity {
+public class NoticeReadUser extends BaseEntity<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

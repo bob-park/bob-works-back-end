@@ -21,6 +21,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.bobpark.noticeservice.domain.notice.entity.Notice;
 import org.bobpark.noticeservice.domain.notice.entity.NoticeId;
+import org.bobpark.noticeservice.domain.notice.entity.QNotice;
 import org.bobpark.noticeservice.domain.notice.entity.QNoticeReadUser;
 import org.bobpark.noticeservice.domain.notice.query.v1.SearchNoticeV1Query;
 import org.bobpark.noticeservice.domain.notice.repository.query.NoticeQueryRepository;
@@ -94,11 +95,16 @@ public class NoticeQueryRepositoryImpl implements NoticeQueryRepository {
     }
 
     private BooleanExpression unreadUserId(Long userId) {
+
+        QNotice subNotice = new QNotice("sub_notice");
+        QNoticeReadUser subNru = new QNoticeReadUser("sub_nru");
+
         return userId != null ?
             notice.id.notIn(
-                JPAExpressions.select(noticeReadUser.notice.id)
-                    .from(noticeReadUser)
-                    .where(noticeReadUser.userId.eq(userId)))
+                JPAExpressions.select(subNotice.id)
+                    .from(subNotice)
+                    .join(subNotice.readUsers, subNru)
+                    .where(subNru.userId.eq(userId)))
             : null;
     }
 

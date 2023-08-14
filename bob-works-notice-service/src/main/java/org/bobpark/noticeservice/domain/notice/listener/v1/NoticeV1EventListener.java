@@ -43,6 +43,7 @@ public class NoticeV1EventListener {
         notice.addReadUser(readEvent.userId());
 
         log.debug("read notice. (noticeId={}, userId={})", notice.getId(), readEvent.userId());
+
     }
 
 }
