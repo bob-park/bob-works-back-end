@@ -77,16 +77,16 @@ public class CustomerChatEventListener {
         log.debug("created customer chat. (id={}, contents={})", createdChat.getId(), createdChat.getContents());
 
         // admin
-        CustomerChat createdMaintenanceChat =
-            CustomerChat.builder()
-                .id(new CustomerChatId())
-                .writerId(ADMIN_ID)
-                .contents("접수되었습니다.")
-                .build();
-
-        chatRoom.addChat(createdMaintenanceChat);
-
-        chatRepository.save(createdMaintenanceChat);
+        // CustomerChat createdMaintenanceChat =
+        //     CustomerChat.builder()
+        //         .id(new CustomerChatId())
+        //         .writerId(ADMIN_ID)
+        //         .contents("접수되었습니다.")
+        //         .build();
+        //
+        // chatRoom.addChat(createdMaintenanceChat);
+        //
+        // chatRepository.save(createdMaintenanceChat);
 
         notificationProvider.sendMessage(
             new NotificationSendMessage(String.format("%s (%s)", user.userId(), user.name()),
