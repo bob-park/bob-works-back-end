@@ -31,6 +31,7 @@ public class UserAggregate {
                 .email(createCommand.email())
                 .phone(createCommand.phone())
                 .description(createCommand.description())
+                .employmentDate(createCommand.employmentDate())
                 .vacation(
                     CreatedUserVacationEvent.builder()
                         .generalTotalCount(createCommand.vacation().generalTotalCount())

@@ -48,7 +48,7 @@ public class UserEventListener {
 
         User createUser =
             User.builder()
-                .userId(createdEvent.description())
+                .userId(createdEvent.userId())
                 .encryptPassword(createdEvent.encryptPassword())
                 .name(createdEvent.name())
                 .email(createdEvent.email())

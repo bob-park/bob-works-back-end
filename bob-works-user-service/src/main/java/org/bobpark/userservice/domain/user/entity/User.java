@@ -65,7 +65,7 @@ public class User extends BaseEntity {
     private UserPosition position;
 
     @Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserVacation> vacations = new ArrayList<>();
 
     @Exclude

@@ -27,7 +27,7 @@ import lombok.ToString.Exclude;
 public class UserRole {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Exclude
