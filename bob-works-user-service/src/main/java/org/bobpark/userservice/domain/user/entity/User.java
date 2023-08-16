@@ -57,6 +57,10 @@ public class User extends BaseEntity {
     private LocalDate employmentDate;
 
     @Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserRole> roles = new ArrayList<>();
+
+    @Exclude
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserPosition position;
 
@@ -87,7 +91,6 @@ public class User extends BaseEntity {
     @Builder
     private User(Long id, String userId, String encryptPassword, String name, String email, Long roleId,
         UserPosition position, LocalDate employmentDate) {
-
 
         checkArgument(StringUtils.isNotBlank(userId), "userId must be provided.");
         checkArgument(StringUtils.isNotBlank(encryptPassword), "encryptPassword must be provided.");
@@ -174,6 +177,18 @@ public class User extends BaseEntity {
         userPosition.setPosition(position);
 
         this.position = userPosition;
+    }
+
+    public void addRole(long roleId) {
+
+        UserRole createUserRole =
+            UserRole.builder()
+                .roleId(roleId)
+                .build();
+
+        createUserRole.setUser(this);
+
+        getRoles().add(createUserRole);
     }
 
     private Vacation selectVacation(VacationType type) {
