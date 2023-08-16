@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.domain.user.entity.User;
+import org.bobpark.userservice.domain.user.model.CheckExistUserResponse;
 import org.bobpark.userservice.domain.user.model.CreateUserRequest;
 import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 import org.bobpark.userservice.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.userservice.domain.user.model.UserResponse;
 import org.bobpark.userservice.domain.user.service.UserCommandService;
+import org.bobpark.userservice.domain.user.service.UserQueryService;
 import org.bobpark.userservice.domain.user.service.UserService;
 
 @RequiredArgsConstructor
@@ -31,6 +33,7 @@ public class UserController {
     private final UserService userService;
 
     private final UserCommandService userCommandService;
+    private final UserQueryService userQueryService;
 
     @GetMapping(path = "{id:\\d+}")
     public UserResponse getUserById(@PathVariable long id) {
@@ -45,6 +48,11 @@ public class UserController {
     @GetMapping(path = "")
     public UserResponse getUser(@RequestParam("userId") String userId) {
         return userService.getUser(Id.of(User.class, userId));
+    }
+
+    @GetMapping(path = "check")
+    public CheckExistUserResponse checkUserId(@RequestParam("userId") String userId) {
+        return userQueryService.existUserId(userId);
     }
 
     @PreAuthorize("hasRole('MANAGER')")

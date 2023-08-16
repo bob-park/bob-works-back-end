@@ -1,5 +1,6 @@
 package org.bobpark.userservice.domain.user.repository.query.impl;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
 import static org.bobpark.userservice.domain.position.entity.QPosition.*;
 import static org.bobpark.userservice.domain.user.entity.QUser.*;
 import static org.bobpark.userservice.domain.user.entity.QUserPosition.*;
@@ -17,8 +18,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import org.bobpark.core.model.common.Id;
-import org.bobpark.userservice.domain.position.entity.QPosition;
-import org.bobpark.userservice.domain.user.entity.QUserPosition;
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 import org.bobpark.userservice.domain.user.repository.query.UserQueryRepository;
@@ -72,6 +71,18 @@ public class UserQueryRepositoryImpl implements UserQueryRepository {
             .leftJoin(userPosition.position, position).fetchJoin()
             .where(mappingCondition(searchRequest))
             .fetch();
+    }
+
+    @Override
+    public boolean existUserId(String userId) {
+
+        Long count =
+            query.select(user.id.count())
+                .from(user)
+                .where(user.userId.eq(userId))
+                .fetchOne();
+
+        return defaultIfNull(count, 0L) > 0;
     }
 
     private Predicate mappingCondition(SearchUserRequest searchRequest) {
