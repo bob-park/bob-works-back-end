@@ -1,5 +1,7 @@
 package org.bobpark.userservice.domain.user.cqrs.command;
 
+import java.time.LocalDate;
+
 import lombok.Builder;
 
 @Builder
@@ -11,5 +13,7 @@ public record CreateUserCommand(Long teamId,
                                 String name,
                                 String email,
                                 String phone,
-                                String description) {
+                                String description,
+                                LocalDate employmentDate,
+                                CreateUserVacationCommand vacation) {
 }

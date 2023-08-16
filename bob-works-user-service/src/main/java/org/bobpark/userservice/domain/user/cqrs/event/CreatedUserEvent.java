@@ -1,5 +1,7 @@
 package org.bobpark.userservice.domain.user.cqrs.event;
 
+import java.time.LocalDate;
+
 import lombok.Builder;
 
 @Builder
@@ -11,5 +13,13 @@ public record CreatedUserEvent(Long teamId,
                                String name,
                                String email,
                                String phone,
-                               String description) {
+                               String description,
+                               LocalDate employmentDate,
+                               CreatedUserVacationEvent vacation) {
+
+    public CreatedUserEvent {
+        if (vacation == null) {
+            vacation = new CreatedUserVacationEvent(0.0, 0.0, 0.0, 0.0);
+        }
+    }
 }

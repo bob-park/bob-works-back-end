@@ -191,6 +191,27 @@ public class User extends BaseEntity {
         getRoles().add(createUserRole);
     }
 
+    public void createVacations(int year, double generalTotalCount, double alternativeTotalCount) {
+
+        UserVacation createVacation =
+            UserVacation.builder()
+                .year(year)
+                .generalVacations(
+                    Vacation.builder()
+                        .totalCount(generalTotalCount)
+                        .build())
+                .alternativeVacations(
+                    Vacation.builder()
+                        .totalCount(alternativeTotalCount)
+                        .build())
+                .build();
+
+        createVacation.setUser(this);
+
+        getVacations().add(createVacation);
+
+    }
+
     private Vacation selectVacation(VacationType type) {
 
         int nowYear = LocalDate.now().getYear();
