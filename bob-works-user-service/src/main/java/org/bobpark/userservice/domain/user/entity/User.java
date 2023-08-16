@@ -1,8 +1,8 @@
 package org.bobpark.userservice.domain.user.entity;
 
 import static com.google.common.base.Preconditions.*;
+import static org.apache.commons.lang3.ObjectUtils.*;
 
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +27,9 @@ import lombok.ToString.Exclude;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.google.common.base.Preconditions;
-
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.userservice.common.entity.BaseEntity;
-import org.bobpark.userservice.domain.team.entity.Team;
+import org.bobpark.userservice.domain.position.entity.Position;
 import org.bobpark.userservice.domain.team.entity.TeamUser;
 import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
 import org.bobpark.userservice.domain.user.entity.vacation.UserUsedVacation;
@@ -56,8 +54,10 @@ public class User extends BaseEntity {
     private String name;
     private String email;
 
+    private LocalDate employmentDate;
+
     @Exclude
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private UserPosition position;
 
     @Exclude
@@ -85,13 +85,22 @@ public class User extends BaseEntity {
     private List<UserUsedVacation> usedVacations = new ArrayList<>();
 
     @Builder
-    private User(Long id, String userId, String encryptPassword, String name, String email, UserPosition position) {
+    private User(Long id, String userId, String encryptPassword, String name, String email, Long roleId,
+        UserPosition position, LocalDate employmentDate) {
+
+
+        checkArgument(StringUtils.isNotBlank(userId), "userId must be provided.");
+        checkArgument(StringUtils.isNotBlank(encryptPassword), "encryptPassword must be provided.");
+        checkArgument(StringUtils.isNotBlank(name), "name must be provided.");
+        checkArgument(StringUtils.isNotBlank(email), "email must be provided.");
+        checkArgument(isNotEmpty(employmentDate), "employmentDate must be provided.");
+
         this.id = id;
         this.userId = userId;
         this.encryptPassword = encryptPassword;
         this.name = name;
         this.email = email;
-        this.position = position;
+        this.employmentDate = employmentDate;
     }
 
     public void addVacations(UserVacation vacation) {
@@ -155,6 +164,16 @@ public class User extends BaseEntity {
         Vacation nowAlternativeVacation = selectVacation(VacationType.ALTERNATIVE);
 
         nowAlternativeVacation.addTotalCount(alternativeVacation.getEffectiveCount());
+    }
+
+    public void setPosition(Position position) {
+
+        UserPosition userPosition = new UserPosition();
+
+        userPosition.setUser(this);
+        userPosition.setPosition(position);
+
+        this.position = userPosition;
     }
 
     private Vacation selectVacation(VacationType type) {

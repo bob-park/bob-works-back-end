@@ -34,4 +34,12 @@ public class UserPosition {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "position_id")
     private Position position;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
 }
