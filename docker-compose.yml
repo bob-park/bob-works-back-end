@@ -138,7 +138,7 @@ services:
       bob-works-authorization-service:
         condition: service_healthy
   bob-works-maintenance-service:
-    container_name: bob-works-notice-service
+    container_name: bob-works-maintenance-service
     image: ghcr.io/bob-park/bob-works-back-end/bob-works-maintenance-service
     platform: linux/amd64
     build: ./bob-works-maintenance-service
