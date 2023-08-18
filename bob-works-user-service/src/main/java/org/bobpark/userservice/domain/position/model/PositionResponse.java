@@ -6,8 +6,7 @@ import org.bobpark.userservice.domain.position.entity.Position;
 
 @Builder
 public record PositionResponse(Long id,
-                               String name
-) {
+                               String name) {
 
     public static PositionResponse toResponse(Position position) {
         return PositionResponse.builder()
