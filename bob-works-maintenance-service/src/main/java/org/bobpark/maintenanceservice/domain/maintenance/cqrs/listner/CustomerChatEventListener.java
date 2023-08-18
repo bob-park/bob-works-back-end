@@ -1,11 +1,15 @@
 package org.bobpark.maintenanceservice.domain.maintenance.cqrs.listner;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.maintenanceservice.common.utils.user.UserProvider;
@@ -63,6 +67,10 @@ public class CustomerChatEventListener {
 
         UserResponse user = UserProvider.getInstance().getUser();
 
+        String userName = user.name();
+        String userTeamName = isNotEmpty(user.team()) ? user.team().name() : "";
+        String userPositionName = isNotEmpty(user.position()) ? user.position().name() : "";
+
         CustomerChat createdChat =
             CustomerChat.builder()
                 .id(createdEvent.id())
@@ -76,20 +84,8 @@ public class CustomerChatEventListener {
 
         log.debug("created customer chat. (id={}, contents={})", createdChat.getId(), createdChat.getContents());
 
-        // admin
-        // CustomerChat createdMaintenanceChat =
-        //     CustomerChat.builder()
-        //         .id(new CustomerChatId())
-        //         .writerId(ADMIN_ID)
-        //         .contents("접수되었습니다.")
-        //         .build();
-        //
-        // chatRoom.addChat(createdMaintenanceChat);
-        //
-        // chatRepository.save(createdMaintenanceChat);
-
         notificationProvider.sendMessage(
-            new NotificationSendMessage(String.format("%s (%s)", user.userId(), user.name()),
+            new NotificationSendMessage(String.format("%s (%s - %s)", userName, userTeamName, userPositionName),
                 createdChat.getContents()));
     }
 }

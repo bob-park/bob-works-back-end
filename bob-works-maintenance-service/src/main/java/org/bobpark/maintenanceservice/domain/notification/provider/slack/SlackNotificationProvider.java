@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.ObjectUtils.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.bobpark.maintenanceservice.configure.notification.properties.Notifica
 import org.bobpark.maintenanceservice.domain.notification.provider.NotificationProvider;
 import org.bobpark.maintenanceservice.domain.notification.provider.NotificationSendMessage;
 import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessage;
+import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessageAttachment;
 import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessageBlock;
 import org.bobpark.maintenanceservice.domain.notification.provider.slack.message.SlackMessageBlockText;
 
@@ -63,7 +65,7 @@ public class SlackNotificationProvider implements NotificationProvider {
             return;
         }
 
-        SlackMessage message = getDefaultMessage(sendMessage.writerId(), sendMessage.contents());
+        SlackMessage message = generateMessage(sendMessage.writerId(), sendMessage.contents());
         String body = "";
 
         try {
@@ -85,49 +87,66 @@ public class SlackNotificationProvider implements NotificationProvider {
 
     }
 
-    private SlackMessage getDefaultMessage(String userId, String contents) {
+    private SlackMessage generateMessage(String writerId, String contents) {
 
-        SlackMessageBlock header =
+        SlackMessage slackMessage = new SlackMessage();
+        List<SlackMessageBlock> blocks = new ArrayList<>();
+        SlackMessageAttachment attachment = new SlackMessageAttachment("#0099FF", blocks);
+        List<SlackMessageBlockText> fields = new ArrayList<>();
+
+        slackMessage.addBlock(
             SlackMessageBlock.builder()
-                .type("header")
+                .type("section")
                 .text(
                     SlackMessageBlockText.builder()
                         .type("plain_text")
-                        .text(userId)
+                        .text(String.format("%s 의 불편한 메세지가 도착하였습니다.", writerId))
                         .emoji(true)
                         .build())
-                .build();
+                .build());
 
-        SlackMessageBlock divider =
-            SlackMessageBlock.builder()
-                .type("divider")
-                .build();
+        slackMessage.addAttachment(attachment);
 
-        SlackMessageBlock textContext =
+        blocks.add(
             SlackMessageBlock.builder()
                 .type("section")
-                .text(SlackMessageBlockText.builder()
-                    .type("plain_text")
-                    .text(contents)
-                    .emoji(true)
-                    .build())
-                .build();
+                .fields(fields)
+                .build());
 
-        SlackMessageBlock dateContext =
+        fields.add(
+            SlackMessageBlockText.builder()
+                .type("mrkdwn")
+                .text("*Writer*")
+                .build());
+        fields.add(
+            SlackMessageBlockText.builder()
+                .type("mrkdwn")
+                .text("*Create At*")
+                .build());
+        fields.add(
+            SlackMessageBlockText.builder()
+                .type("plain_text")
+                .text(writerId)
+                .build());
+
+        fields.add(
+            SlackMessageBlockText.builder()
+                .type("plain_text")
+                .text(LocalDateTime.now().format(DEFAULT_DATE_TIME_FORMATTER))
+                .build());
+
+        blocks.add(
             SlackMessageBlock.builder()
-                .type("context")
-                .elements(Collections.singletonList(
-                    SlackMessageBlockText.builder()
-                        .type("plain_text")
-                        .text(
-                            String.format("Created Date: %s", LocalDateTime.now().format(DEFAULT_DATE_TIME_FORMATTER)))
-                        .emoji(true)
-                        .build()))
-                .build();
+                .type("section")
+                .fields(
+                    Collections.singletonList(
+                        SlackMessageBlockText.builder()
+                            .type("plain_text")
+                            .text(contents)
+                            .emoji(true)
+                            .build()))
+                .build());
 
-        List<SlackMessageBlock> blocks =
-            Lists.newArrayList(header, divider, textContext, dateContext);
-
-        return new SlackMessage(blocks);
+        return slackMessage;
     }
 }

@@ -1,8 +1,6 @@
 package org.bobpark.maintenanceservice.domain.notification.provider.slack.message;
 
-import static org.apache.commons.lang3.ObjectUtils.*;
-
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
@@ -12,9 +10,22 @@ import lombok.ToString;
 @Getter
 public class SlackMessage {
 
-    private final List<SlackMessageBlock> blocks;
+    private List<SlackMessageBlock> blocks;
+    private List<SlackMessageAttachment> attachments;
 
-    public SlackMessage(List<SlackMessageBlock> blocks) {
-        this.blocks = defaultIfNull(blocks, Collections.emptyList());
+    public void addBlock(SlackMessageBlock block) {
+        if (blocks == null) {
+            blocks = new ArrayList<>();
+        }
+
+        blocks.add(block);
+    }
+
+    public void addAttachment(SlackMessageAttachment attachment) {
+        if (attachments == null) {
+            attachments = new ArrayList<>();
+        }
+
+        attachments.add(attachment);
     }
 }
