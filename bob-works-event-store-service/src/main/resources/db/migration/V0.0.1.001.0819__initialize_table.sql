@@ -11,6 +11,7 @@ create table event_store_events
     created_ip_address   varchar(100)            not null,
     executed_module_name varchar(100),
     executed_ip_address  varchar(100),
+    message              text,
     version              bigint    default 0     not null,
     created_date         timestamp default now() not null,
     last_modified_date   timestamp
