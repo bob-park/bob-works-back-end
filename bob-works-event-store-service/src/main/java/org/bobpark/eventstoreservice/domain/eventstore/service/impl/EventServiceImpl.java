@@ -60,7 +60,7 @@ public class EventServiceImpl implements EventService {
         Optional<Event> eventOpt = eventRepository.fetchEvent(eventName, currentIpAddress);
 
         if (eventOpt.isEmpty()) {
-            return null;
+            return EventResponse.empty();
         }
 
         Event event = eventOpt.get();

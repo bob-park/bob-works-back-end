@@ -16,4 +16,8 @@ public record EventResponse(String id,
                             String executedModuleName,
                             String executedIpAddress,
                             String message) {
+
+    public static EventResponse empty() {
+        return EventResponse.builder().build();
+    }
 }

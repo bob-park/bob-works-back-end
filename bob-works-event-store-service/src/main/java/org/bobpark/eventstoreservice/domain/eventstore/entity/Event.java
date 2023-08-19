@@ -27,6 +27,8 @@ import io.micrometer.common.util.StringUtils;
 import org.bobpark.eventstoreservice.common.entity.BaseTimeEntity;
 import org.bobpark.eventstoreservice.common.type.EventStatus;
 import org.bobpark.eventstoreservice.domain.eventstore.entity.converter.EventDataConverter;
+import org.bobpark.eventstoreservice.exception.AlreadyExecutedEventException;
+import org.bobpark.eventstoreservice.exception.InvalidEventStatusException;
 
 @ToString
 @Getter
@@ -81,17 +83,32 @@ public class Event extends BaseTimeEntity<EventId> {
     }
 
     public void fetch(String executedModuleName, String executedIpAddress) {
+
+        if (getStatus() != EventStatus.WAITING && getStatus() != EventStatus.PROCEEDING) {
+            throw new AlreadyExecutedEventException(getId());
+        }
+
         this.executedModuleName = executedModuleName;
         this.executedIpAddress = executedIpAddress;
         this.status = EventStatus.PROCEEDING;
     }
 
     public void complete(boolean isSuccess, String message) {
+
+        if (getStatus() != EventStatus.PROCEEDING) {
+            throw new InvalidEventStatusException(getId(), getStatus());
+        }
+
         this.status = isSuccess ? EventStatus.SUCCESS : EventStatus.FAILURE;
         this.message = message;
     }
 
     public void retry() {
+
+        if (getStatus() != EventStatus.FAILURE) {
+            throw new InvalidEventStatusException(getId(), getStatus());
+        }
+
         this.status = EventStatus.WAITING;
         this.executedModuleName = null;
         this.executedIpAddress = null;
