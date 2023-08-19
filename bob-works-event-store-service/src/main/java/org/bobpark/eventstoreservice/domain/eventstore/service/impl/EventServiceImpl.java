@@ -9,11 +9,13 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.eventstoreservice.common.type.EventStatus;
 import org.bobpark.eventstoreservice.common.utils.IpAddressUtils;
 import org.bobpark.eventstoreservice.domain.eventstore.cqrs.event.CreatedEvent;
 import org.bobpark.eventstoreservice.domain.eventstore.entity.Event;
 import org.bobpark.eventstoreservice.domain.eventstore.entity.EventId;
+import org.bobpark.eventstoreservice.domain.eventstore.model.CompleteEventRequest;
 import org.bobpark.eventstoreservice.domain.eventstore.model.CreateEventRequest;
 import org.bobpark.eventstoreservice.domain.eventstore.model.EventResponse;
 import org.bobpark.eventstoreservice.domain.eventstore.repository.EventRepository;
@@ -65,6 +67,23 @@ public class EventServiceImpl implements EventService {
 
         event.fetch(eventName, currentIpAddress);
 
+        return toResponse(event);
+    }
+
+    @Transactional
+    @Override
+    public EventResponse complete(EventId id, CompleteEventRequest completeRequest) {
+
+        Event event =
+            eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(Event.class, id));
+
+        event.complete(completeRequest.isSuccess(), completeRequest.message());
+
+        return toResponse(event);
+    }
+
+    private EventResponse toResponse(Event event) {
         return EventResponse.builder()
             .id(event.getId().getId())
             .eventName(event.getEventName())
