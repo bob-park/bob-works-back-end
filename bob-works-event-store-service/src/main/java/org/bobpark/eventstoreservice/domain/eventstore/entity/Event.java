@@ -55,9 +55,12 @@ public class Event extends BaseTimeEntity<EventId> {
     @Version
     private long version;
 
+    private String message;
+
     @Builder
     private Event(EventId id, String eventName, Map<String, Object> eventData, EventStatus status,
-        String createdModuleName, String createdIpAddress, String executedModuleName, String executedIpAddress) {
+        String createdModuleName, String createdIpAddress, String executedModuleName, String executedIpAddress,
+        String message) {
 
         checkArgument(isNotEmpty(id), "id must be provided.");
         checkArgument(StringUtils.isNotBlank(eventName), "eventName must be provided.");
@@ -74,5 +77,24 @@ public class Event extends BaseTimeEntity<EventId> {
         this.executedModuleName = executedModuleName;
         this.executedIpAddress = executedIpAddress;
         this.version = 0;
+        this.message = message;
+    }
+
+    public void fetch(String executedModuleName, String executedIpAddress) {
+        this.executedModuleName = executedModuleName;
+        this.executedIpAddress = executedIpAddress;
+        this.status = EventStatus.PROCEEDING;
+    }
+
+    public void complete(boolean isSuccess, String message) {
+        this.status = isSuccess ? EventStatus.SUCCESS : EventStatus.FAILURE;
+        this.message = message;
+    }
+
+    public void retry() {
+        this.status = EventStatus.WAITING;
+        this.executedModuleName = null;
+        this.executedIpAddress = null;
+        this.message = null;
     }
 }

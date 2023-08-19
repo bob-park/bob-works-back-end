@@ -1,4 +1,4 @@
-package org.bobpark.eventstoreservice.domain.eventstore.service;
+package org.bobpark.eventstoreservice.domain.eventstore.model;
 
 import java.util.Map;
 
