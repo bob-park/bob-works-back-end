@@ -1,7 +1,5 @@
 rootProject.name = "bob-works-back-end"
 
-include 'bob-works-event-store-service'
-
 include 'bob-works-config-service'
 include 'bob-works-discovery-service'
 include 'bob-works-authorization-service'
