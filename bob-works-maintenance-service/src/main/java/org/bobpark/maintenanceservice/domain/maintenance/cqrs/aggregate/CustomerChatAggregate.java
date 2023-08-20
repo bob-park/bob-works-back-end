@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import org.bobpark.bobsonclient.event.annotation.Aggregate;
 import org.bobpark.bobsonclient.event.annotation.CommandHandler;
 import org.bobpark.bobsonclient.event.annotation.EventSourcingHandler;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatCommand;
@@ -18,7 +19,7 @@ import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatRoomR
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Aggregate
 public class CustomerChatAggregate {
 
     private final ApplicationEventPublisher eventPublisher;
@@ -42,7 +43,7 @@ public class CustomerChatAggregate {
             .build();
     }
 
-    @CommandHandler("CreatedChatEvent")
+    @CommandHandler(pushEvent = CreatedChatEvent.class)
     public CustomerChatResponse handleCreateChat(CreateChatCommand createCommand) {
 
         return CustomerChatResponse.builder()
