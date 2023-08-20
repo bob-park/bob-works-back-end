@@ -7,8 +7,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import org.bobpark.bobsonclient.event.annotation.CommandHandler;
+import org.bobpark.bobsonclient.event.annotation.EventSourcingHandler;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatCommand;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatRoomCommand;
+import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatRoomEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatResponse;
@@ -40,13 +42,18 @@ public class CustomerChatAggregate {
             .build();
     }
 
-    @CommandHandler
+    @CommandHandler("CreatedChatEvent")
     public CustomerChatResponse handleCreateChat(CreateChatCommand createCommand) {
 
         return CustomerChatResponse.builder()
             .id(createCommand.id())
             .contents(createCommand.contents())
             .build();
+    }
+
+    @EventSourcingHandler
+    public void createdChatEvent(CreatedChatEvent createEvent){
+        log.debug("created chat event. ({})", createEvent);
     }
 
 }

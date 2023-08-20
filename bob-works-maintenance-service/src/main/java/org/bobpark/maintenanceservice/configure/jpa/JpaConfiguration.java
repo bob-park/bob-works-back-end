@@ -28,11 +28,11 @@ public class JpaConfiguration {
     public AuditorAware<String> auditorAware() {
         return () -> {
 
-            JwtAuthenticationToken authentication = (JwtAuthenticationToken)SecurityContextHolder.getContext()
-                .getAuthentication();
+            JwtAuthenticationToken authentication =
+                (JwtAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
 
-            if (!authentication.isAuthenticated()) {
-                throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return Optional.empty();
             }
 
             return Optional.of(authentication.getName());

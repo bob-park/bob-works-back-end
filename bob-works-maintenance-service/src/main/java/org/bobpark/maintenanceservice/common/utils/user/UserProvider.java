@@ -32,6 +32,10 @@ public class UserProvider {
         return user.id();
     }
 
+    public UserResponse getUserByUniqueId(long uniqueId) {
+        return userClient.getUserByUniqueId(uniqueId);
+    }
+
     public UserResponse getUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

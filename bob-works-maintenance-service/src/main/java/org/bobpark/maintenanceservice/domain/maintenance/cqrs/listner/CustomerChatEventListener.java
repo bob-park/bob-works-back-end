@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatR
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChat;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatId;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoom;
+import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRepository;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRoomRepository;
 import org.bobpark.maintenanceservice.domain.notification.provider.NotificationProvider;
@@ -62,10 +64,10 @@ public class CustomerChatEventListener {
     public void createdChat(CreatedChatEvent createdEvent) {
 
         CustomerChatRoom chatRoom =
-            chatRoomRepository.findById(createdEvent.roomId())
-                .orElseThrow(() -> new NotFoundException(CustomerChatRoom.class, createdEvent.roomId()));
+            chatRoomRepository.findById(new CustomerChatRoomId(createdEvent.getRoomId()))
+                .orElseThrow(() -> new NotFoundException(CustomerChatRoom.class, createdEvent.getRoomId()));
 
-        UserResponse user = UserProvider.getInstance().getUser();
+        UserResponse user = UserProvider.getInstance().getUserByUniqueId(createdEvent.getWriterId());
 
         String userName = user.name();
         String userTeamName = isNotEmpty(user.team()) ? user.team().name() : "";
@@ -73,9 +75,9 @@ public class CustomerChatEventListener {
 
         CustomerChat createdChat =
             CustomerChat.builder()
-                .id(createdEvent.id())
-                .writerId(user.id())
-                .contents(createdEvent.contents())
+                .id(new CustomerChatId(createdEvent.getId()))
+                .writerId(createdEvent.getWriterId())
+                .contents(createdEvent.getContents())
                 .build();
 
         chatRoom.addChat(createdChat);
