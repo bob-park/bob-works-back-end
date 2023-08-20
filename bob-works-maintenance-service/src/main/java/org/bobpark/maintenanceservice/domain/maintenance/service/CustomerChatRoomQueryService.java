@@ -31,9 +31,7 @@ public class CustomerChatRoomQueryService {
             .title(chatRoom.getTitle())
             .description(chatRoom.getDescription())
             .createdDate(chatRoom.getCreatedDate())
-            .createdBy(chatRoom.getCreatedBy())
             .lastModifiedDate(chatRoom.getLastModifiedDate())
-            .lastModifiedBy(chatRoom.getLastModifiedBy())
             .build();
     }
 

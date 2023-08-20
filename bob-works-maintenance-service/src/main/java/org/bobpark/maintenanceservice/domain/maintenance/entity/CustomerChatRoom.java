@@ -21,14 +21,14 @@ import lombok.ToString.Exclude;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.bobpark.maintenanceservice.common.entity.BaseEntity;
+import org.bobpark.maintenanceservice.common.entity.BaseTimeEntity;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "maintenance_customer_chat_rooms")
-public class CustomerChatRoom extends BaseEntity<CustomerChatRoomId> {
+public class CustomerChatRoom extends BaseTimeEntity<CustomerChatRoomId> {
 
     @EmbeddedId
     private CustomerChatRoomId id;

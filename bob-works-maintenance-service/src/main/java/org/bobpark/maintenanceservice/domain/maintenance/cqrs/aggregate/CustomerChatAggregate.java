@@ -6,11 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import org.bobpark.bobsonclient.event.annotation.CommandHandler;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatCommand;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatRoomCommand;
-import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatRoomEvent;
-import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatId;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatResponse;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatRoomResponse;
@@ -41,20 +40,11 @@ public class CustomerChatAggregate {
             .build();
     }
 
+    @CommandHandler
     public CustomerChatResponse handleCreateChat(CreateChatCommand createCommand) {
 
-        CustomerChatId id = new CustomerChatId();
-
-        eventPublisher.publishEvent(
-            CreatedChatEvent.builder()
-                .id(id)
-                .roomId(createCommand.roomId())
-                .writer(createCommand.writer())
-                .contents(createCommand.contents())
-                .build());
-
         return CustomerChatResponse.builder()
-            .id(id.getId())
+            .id(createCommand.id())
             .contents(createCommand.contents())
             .build();
     }

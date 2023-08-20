@@ -14,6 +14,7 @@ import com.google.common.base.Preconditions;
 import org.bobpark.maintenanceservice.common.utils.user.UserProvider;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.aggregate.CustomerChatAggregate;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatCommand;
+import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatId;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CreateChatRequest;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatResponse;
@@ -29,12 +30,13 @@ public class CustomerChatCommandService {
 
         checkArgument(StringUtils.isNotBlank(createRequest.contents()), "contents must be provided");
 
-        String writer = UserProvider.getInstance().getName();
+        long writerId = UserProvider.getInstance().getUserId();
 
         return chatAggregate.handleCreateChat(
             CreateChatCommand.builder()
-                .roomId(roomId)
-                .writer(writer)
+                .id(new CustomerChatId().getId())
+                .roomId(roomId.getId())
+                .writerId(writerId)
                 .contents(createRequest.contents())
                 .build());
     }

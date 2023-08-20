@@ -19,14 +19,14 @@ import lombok.ToString.Exclude;
 
 import org.apache.commons.lang.StringUtils;
 
-import org.bobpark.maintenanceservice.common.entity.BaseEntity;
+import org.bobpark.maintenanceservice.common.entity.BaseTimeEntity;
 
 @ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "maintenance_customer_chats")
-public class CustomerChat extends BaseEntity<CustomerChatId> {
+public class CustomerChat extends BaseTimeEntity<CustomerChatId> {
 
     @EmbeddedId
     private CustomerChatId id;
