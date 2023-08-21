@@ -31,6 +31,10 @@ public class JpaConfiguration {
             JwtAuthenticationToken authentication = (JwtAuthenticationToken)SecurityContextHolder.getContext()
                 .getAuthentication();
 
+            if (authentication == null) {
+                return Optional.of("system");
+            }
+
             if (!authentication.isAuthenticated()) {
                 throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
             }
