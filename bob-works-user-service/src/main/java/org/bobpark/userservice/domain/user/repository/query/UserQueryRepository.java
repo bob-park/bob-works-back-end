@@ -17,4 +17,6 @@ public interface UserQueryRepository {
 
     List<User> search(SearchUserRequest searchRequest);
 
+    boolean existUserId(String userId);
+
 }

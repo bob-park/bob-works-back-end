@@ -12,12 +12,15 @@ public class SlackMessageBlock {
 
     private final String type;
     private final SlackMessageBlockText text;
+    private final List<SlackMessageBlockText> fields;
     private final List<SlackMessageBlockText> elements;
 
     @Builder
-    private SlackMessageBlock(String type, SlackMessageBlockText text, List<SlackMessageBlockText> elements) {
+    private SlackMessageBlock(String type, SlackMessageBlockText text, List<SlackMessageBlockText> fields,
+        List<SlackMessageBlockText> elements) {
         this.type = type;
         this.text = text;
+        this.fields = fields;
         this.elements = elements;
     }
 }

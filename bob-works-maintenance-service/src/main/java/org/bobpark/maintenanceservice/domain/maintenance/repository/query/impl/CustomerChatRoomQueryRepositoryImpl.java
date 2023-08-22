@@ -25,7 +25,7 @@ public class CustomerChatRoomQueryRepositoryImpl implements CustomerChatRoomQuer
                 .where(customerChatRoom.customerId.eq(customerId))
                 .offset(0)
                 .limit(1)
-                .orderBy(customerChatRoom.createdBy.desc())
+                .orderBy(customerChatRoom.createdDate.desc())
                 .fetchOne());
     }
 }

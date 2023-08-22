@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -39,7 +40,7 @@ public class Team extends BaseEntity {
     private String description;
 
     @Exclude
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "team")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamUser> users = new ArrayList<>();
 
     @Builder

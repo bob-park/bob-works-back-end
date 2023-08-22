@@ -68,6 +68,9 @@ user:
     location: file://${user_avatar_location}
   signature:
     location: file://${user_signature_location}
+  scheduler:
+    cron:
+      create-user-vacation: ${cron_create_user_vacation:0 5 0 * * *}
 
 ## logging
 logging:

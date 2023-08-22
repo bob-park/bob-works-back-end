@@ -6,18 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import org.bobpark.bobsonclient.event.annotation.Aggregate;
+import org.bobpark.bobsonclient.event.annotation.CommandHandler;
+import org.bobpark.bobsonclient.event.annotation.EventSourcingHandler;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatCommand;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.command.CreateChatRoomCommand;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatEvent;
 import org.bobpark.maintenanceservice.domain.maintenance.cqrs.event.CreatedChatRoomEvent;
-import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatId;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatResponse;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatRoomResponse;
 
 @Slf4j
 @RequiredArgsConstructor
-@Component
+@Aggregate
 public class CustomerChatAggregate {
 
     private final ApplicationEventPublisher eventPublisher;
@@ -41,22 +43,18 @@ public class CustomerChatAggregate {
             .build();
     }
 
+    @CommandHandler(pushEvent = CreatedChatEvent.class)
     public CustomerChatResponse handleCreateChat(CreateChatCommand createCommand) {
 
-        CustomerChatId id = new CustomerChatId();
-
-        eventPublisher.publishEvent(
-            CreatedChatEvent.builder()
-                .id(id)
-                .roomId(createCommand.roomId())
-                .writer(createCommand.writer())
-                .contents(createCommand.contents())
-                .build());
-
         return CustomerChatResponse.builder()
-            .id(id.getId())
+            .id(createCommand.id())
             .contents(createCommand.contents())
             .build();
+    }
+
+    @EventSourcingHandler
+    public void createdChatEvent(CreatedChatEvent createEvent){
+        log.debug("created chat event. ({})", createEvent);
     }
 
 }

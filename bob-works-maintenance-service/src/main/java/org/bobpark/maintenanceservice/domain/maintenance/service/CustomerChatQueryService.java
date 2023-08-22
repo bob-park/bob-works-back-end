@@ -46,9 +46,7 @@ public class CustomerChatQueryService {
                 .contents(item.getContents())
                 .isRead(item.getIsRead())
                 .createdDate(item.getCreatedDate())
-                .createdBy(item.getCreatedBy())
                 .lastModifiedDate(item.getLastModifiedDate())
-                .lastModifiedBy(item.getLastModifiedBy())
                 .build());
     }
 }

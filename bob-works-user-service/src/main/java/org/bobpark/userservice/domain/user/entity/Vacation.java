@@ -1,5 +1,7 @@
 package org.bobpark.userservice.domain.user.entity;
 
+import static org.apache.commons.lang3.ObjectUtils.*;
+
 import jakarta.persistence.Embeddable;
 
 import lombok.AccessLevel;
@@ -20,9 +22,9 @@ public class Vacation {
     private double usedCount;
 
     @Builder
-    private Vacation(double totalCount, double usedCount) {
-        this.totalCount = totalCount;
-        this.usedCount = usedCount;
+    private Vacation(Double totalCount, Double usedCount) {
+        this.totalCount = defaultIfNull(totalCount, 0.0);
+        this.usedCount = defaultIfNull(usedCount, 0.0);
     }
 
     public void useVacation(double count) {
