@@ -33,4 +33,14 @@ dependencies {
 
     // bobson client
     implementation 'org.bobpark:bobson-client-spring-boot-starter:0.0.3'
+
+    testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.11.5'
+}
+
+openapi3 { // (3)
+    server = 'http://localhost:8080'
+    title = 'maintenance service API'
+    description = '유지보수 관리 서비스 API docs'
+    version = '0.1.0'
+    format = 'yml'
 }
