@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -22,6 +20,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
 import org.bobpark.documentservice.domain.document.model.vacation.SearchVacationDocumentRequest;
 import org.bobpark.documentservice.domain.document.repository.query.VacationDocumentQueryRepository;
+import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 
 @RequiredArgsConstructor
 public class VacationDocumentQueryRepositoryImpl implements VacationDocumentQueryRepository {
@@ -36,7 +35,8 @@ public class VacationDocumentQueryRepositoryImpl implements VacationDocumentQuer
             query.selectFrom(vacationDocument)
                 .where(
                     mappingCondition(searchRequest),
-                    writerId != null ? vacationDocument.writerId.eq(writerId) : null)
+                    writerId != null ? vacationDocument.writerId.eq(writerId) : null,
+                    vacationDocument.status.eq(DocumentStatus.APPROVE))
                 .orderBy(vacationDocument.vacationDateFrom.asc())
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
