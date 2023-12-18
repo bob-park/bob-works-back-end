@@ -11,6 +11,9 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,7 @@ import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.vacation.VacationDocument;
 import org.bobpark.documentservice.domain.document.model.vacation.CreateVacationDocumentRequest;
+import org.bobpark.documentservice.domain.document.model.vacation.SearchVacationDocumentRequest;
 import org.bobpark.documentservice.domain.document.model.vacation.VacationDocumentResponse;
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
@@ -76,5 +80,21 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                 .orElseThrow(() -> new NotFoundException(documentId));
 
         return toResponse(vacationDocument);
+    }
+
+    @Override
+    public Page<VacationDocumentResponse> search(SearchVacationDocumentRequest searchRequest, Pageable pageable) {
+
+        Long writerId = null;
+
+        if (!AuthenticationUtils.getInstance().isManager()) {
+            Authentication auth = AuthenticationUtils.getInstance().getAuthentication();
+            UserResponse user = AuthenticationUtils.getInstance().getUser(auth.getName());
+            writerId = user.id();
+        }
+
+        Page<VacationDocument> result = vacationDocumentRepository.search(writerId, searchRequest, pageable);
+
+        return result.map(VacationDocumentResponse::toResponse);
     }
 }
