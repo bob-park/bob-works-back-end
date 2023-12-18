@@ -6,21 +6,23 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
+import org.bobpark.client.common.page.Page;
 import org.bobpark.client.common.utils.DocumentUtils;
 import org.bobpark.client.domain.document.feign.DocumentClient;
 import org.bobpark.client.domain.document.feign.DocumentTypeClient;
 import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
 import org.bobpark.client.domain.document.model.DocumentTypeResponse;
+import org.bobpark.client.domain.document.model.SearchVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.model.response.DocumentTypeApprovalLineStatusResponse;
 import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
 import org.bobpark.client.domain.document.service.VacationDocumentService;
-import org.bobpark.client.domain.user.feign.UserClient;
 import org.bobpark.client.domain.user.feign.UserV1AlternativeVacationClient;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.model.vacation.UserAlternativeVacationResponse;
@@ -67,6 +69,27 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                     .build())
             .lines(lines)
             .useAlternativeVacations(usedAlternativeVacations)
+            .build();
+    }
+
+    @Override
+    public Page<VacationDocumentResponse> search(SearchVacationDocumentRequest searchRequest, Pageable pageable) {
+
+        Page<VacationDocumentResponse> result =
+            documentClient.searchVacation(searchRequest, pageable);
+
+        List<VacationDocumentResponse> contents =
+            result.content().stream()
+                .map((item) ->
+                    item.toBuilder()
+                        .writer(DocumentUtils.getInstance().getUser(item.writerId()))
+                        .build())
+                .toList();
+
+        return Page.<VacationDocumentResponse>builder()
+            .content(contents)
+            .total(result.total())
+            .pageable(result.pageable())
             .build();
     }
 
