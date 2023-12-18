@@ -51,8 +51,7 @@ public class DefaultSecurityConfiguration {
                     .requestMatchers("/login").permitAll()
                     .anyRequest().authenticated());
 
-        http.formLogin()
-            .loginPage("/login");
+        http.formLogin(formLogin -> formLogin.loginPage("/login"));
 
         http.exceptionHandling(
             exceptionHandler ->

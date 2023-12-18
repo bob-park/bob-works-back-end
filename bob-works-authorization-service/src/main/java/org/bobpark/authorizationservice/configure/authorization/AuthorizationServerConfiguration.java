@@ -104,7 +104,7 @@ public class AuthorizationServerConfiguration {
             exception ->
                 exception.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 
-        http.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
+        http.oauth2ResourceServer(oauthResourceServer -> oauthResourceServer.jwt(Customizer.withDefaults()));
 
         log.debug("build oauth 2.0 authorization server.");
 
