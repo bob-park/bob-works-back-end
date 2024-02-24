@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import org.bobpark.documentservice.domain.user.model.UserResponse;
+import org.bobpark.documentservice.domain.user.model.notification.SendUserNotificationV1Request;
 import org.bobpark.documentservice.domain.user.model.vacation.AddAlternativeVacationRequest;
 import org.bobpark.documentservice.domain.user.model.vacation.CancelUserVacationRequest;
 import org.bobpark.documentservice.domain.user.model.vacation.UseUserVacationRequest;
@@ -32,5 +33,8 @@ public interface UserClient {
 
     @PostMapping(path = "v1/user/{id:\\d+}/alternative/vacation")
     UserResponse addAlternativeVacation(@PathVariable long id, @RequestBody AddAlternativeVacationRequest addRequest);
+
+    @PostMapping(path = "v1/user/{id:\\d+}/notification/send")
+    void sendMessage(@PathVariable long id, @RequestBody SendUserNotificationV1Request sendRequest);
 
 }

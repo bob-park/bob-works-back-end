@@ -29,7 +29,9 @@ import org.bobpark.documentservice.domain.document.model.vacation.VacationDocume
 import org.bobpark.documentservice.domain.document.repository.DocumentTypeRepository;
 import org.bobpark.documentservice.domain.document.repository.VacationDocumentRepository;
 import org.bobpark.documentservice.domain.document.service.vacation.VacationDocumentService;
+import org.bobpark.documentservice.domain.user.feign.client.UserClient;
 import org.bobpark.documentservice.domain.user.model.UserResponse;
+import org.bobpark.documentservice.domain.user.model.notification.SendUserNotificationV1Request;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -96,5 +98,24 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
         Page<VacationDocument> result = vacationDocumentRepository.search(writerId, searchRequest, pageable);
 
         return result.map(VacationDocumentResponse::toResponse);
+    }
+
+    private void sendNotification(UserResponse writer, VacationDocument document) {
+
+        String vacationType =
+            switch (document.getVacationType()) {
+                case GENERAL -> "연차";
+                case ALTERNATIVE -> "대체휴가";
+            };
+
+        String message =
+            String.format(
+                "%s(%s-%s)이(가) %s을(를) 신청하였습니다.",
+                writer.name(),
+                writer.team().name(),
+                writer.position().name(),
+                vacationType);
+
+
     }
 }
