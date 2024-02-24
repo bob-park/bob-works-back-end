@@ -116,23 +116,12 @@ public class SlackNotificationProvider implements NotificationProvider {
         fields.add(
             SlackMessageBlockText.builder()
                 .type("mrkdwn")
-                .text("*Writer*")
+                .text("*Writer:*\n" + writerId)
                 .build());
         fields.add(
             SlackMessageBlockText.builder()
                 .type("mrkdwn")
-                .text("*Create At*")
-                .build());
-        fields.add(
-            SlackMessageBlockText.builder()
-                .type("plain_text")
-                .text(writerId)
-                .build());
-
-        fields.add(
-            SlackMessageBlockText.builder()
-                .type("plain_text")
-                .text(LocalDateTime.now().format(DEFAULT_DATE_TIME_FORMATTER))
+                .text("*Create At:*\n" + LocalDateTime.now().format(DEFAULT_DATE_TIME_FORMATTER))
                 .build());
 
         blocks.add(
