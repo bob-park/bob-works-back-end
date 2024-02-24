@@ -1,7 +1,7 @@
 -- users_notification
 create table users_notification_servers
 (
-    id                 varchar(41)             not null primary key,
+    id                 bigserial               not null primary key,
     user_id            bigint                  not null,
     type               varchar(50)             not null,
     hook_url           varchar(1000),
