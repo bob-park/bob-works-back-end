@@ -31,6 +31,7 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.userservice.common.entity.BaseEntity;
 import org.bobpark.userservice.domain.position.entity.Position;
 import org.bobpark.userservice.domain.team.entity.TeamUser;
+import org.bobpark.userservice.domain.user.entity.notification.UserNotificationServer;
 import org.bobpark.userservice.domain.user.entity.vacation.UserAlternativeVacation;
 import org.bobpark.userservice.domain.user.entity.vacation.UserUsedVacation;
 import org.bobpark.userservice.domain.user.type.VacationType;
@@ -87,6 +88,10 @@ public class User extends BaseEntity {
     @Exclude
     @OneToMany(mappedBy = "user")
     private List<UserUsedVacation> usedVacations = new ArrayList<>();
+
+    @Exclude
+    @OneToMany(mappedBy = "user")
+    private List<UserNotificationServer> notificationServers = new ArrayList<>();
 
     @Builder
     private User(Long id, String userId, String encryptPassword, String name, String email, Long roleId,
@@ -210,6 +215,13 @@ public class User extends BaseEntity {
 
         getVacations().add(createVacation);
 
+    }
+
+    public void addNotificationServer(UserNotificationServer notificationServer) {
+
+        notificationServer.updateUser(this);
+
+        getNotificationServers().add(notificationServer);
     }
 
     private Vacation selectVacation(VacationType type) {

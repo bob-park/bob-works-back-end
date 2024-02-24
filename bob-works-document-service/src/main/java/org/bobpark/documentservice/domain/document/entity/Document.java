@@ -29,9 +29,15 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
 
+import org.springframework.security.core.Authentication;
+
 import org.bobpark.documentservice.common.entity.BaseEntity;
+import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
+import org.bobpark.documentservice.common.utils.notification.NotificationUtils;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
 import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
+import org.bobpark.documentservice.domain.user.model.UserResponse;
+import org.bobpark.documentservice.domain.user.utils.UserUtils;
 
 @ToString
 @Getter
@@ -94,9 +100,33 @@ public abstract class Document extends BaseEntity {
 
     public void addApproval(DocumentApproval approval) {
         getApprovals().add(approval);
+
+        // send user notification
+        sendMessageApprovalUser(approval);
     }
 
     public void updateStatus(DocumentStatus status) {
         this.status = status;
     }
+
+    private void sendMessageApprovalUser(DocumentApproval approval) {
+
+        DocumentTypeApprovalLine approvalLine = approval.getApprovalLine();
+        Authentication auth = AuthenticationUtils.getInstance().getAuthentication();
+        UserResponse user = AuthenticationUtils.getInstance().getUser(auth.getName());
+
+        String message =
+            String.format(
+                "%s(%s - %s) 이(가) %s 을(를) 결재 신청하였습니다.",
+                user.name(),
+                user.team().name(),
+                user.position().name(),
+                getDocumentType().getName());
+
+
+
+        NotificationUtils.getInstance().sendMessage(approvalLine.getUserId(), message);
+
+    }
+
 }

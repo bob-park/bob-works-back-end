@@ -20,6 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 
 import org.bobpark.documentservice.common.utils.authentication.AuthenticationUtils;
+import org.bobpark.documentservice.common.utils.notification.NotificationUtils;
 import org.bobpark.documentservice.domain.document.listener.DelegatingDocumentProvider;
 import org.bobpark.documentservice.domain.document.listener.DocumentProvider;
 import org.bobpark.documentservice.domain.document.listener.holiday.HolidayWorkReportProvider;
@@ -71,5 +72,10 @@ public class AppConfiguration {
         documentListener.addDocumentListener(new HolidayWorkReportProvider(userClient, documentApprovalRepository));
 
         return documentListener;
+    }
+
+    @Bean
+    public NotificationUtils notificationUtils() {
+        return NotificationUtils.getInstance();
     }
 }
