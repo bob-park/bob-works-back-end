@@ -55,6 +55,13 @@ public class UserController {
         return userService.updatePassword(userinfo.id(), updateRequest);
     }
 
+    @GetMapping(path = "avatar")
+    public Resource getUserAvatar(@AuthenticationPrincipal OidcUser user) {
+        UserResponse userInfo = parseToUserResponse(user);
+
+        return userService.getUserAvatar(userInfo.id());
+    }
+
     @PostMapping(path = "avatar")
     public UserResponse updateAvatar(@AuthenticationPrincipal OidcUser user,
         UpdateUserAvatarRequest updateRequest) {

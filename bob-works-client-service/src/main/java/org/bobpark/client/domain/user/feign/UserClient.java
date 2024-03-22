@@ -36,6 +36,9 @@ public interface UserClient {
     @PutMapping(path = "user/{id}/password")
     UserResponse updatePassword(@PathVariable long id, UpdateUserPasswordRequest updateRequest);
 
+    @GetMapping(path = "user/{id}/avatar")
+    Resource getUserAvatar(@PathVariable long id);
+
     @PostMapping(path = "user/{id}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     UserResponse updateAvatar(@PathVariable long id, @RequestPart("avatar") MultipartFile avatar);
 

@@ -38,6 +38,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Resource getUserAvatar(long id) {
+        return userClient.getUserAvatar(id);
+    }
+
+    @Override
     public UserResponse updateAvatar(long id, UpdateUserAvatarRequest updateRequest) {
         return userClient.updateAvatar(id, updateRequest.avatar());
     }

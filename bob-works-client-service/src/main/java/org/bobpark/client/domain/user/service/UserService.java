@@ -17,6 +17,8 @@ public interface UserService {
 
     UserResponse updatePassword(long id, UpdateUserPasswordRequest updateRequest);
 
+    Resource getUserAvatar(long id);
+
     UserResponse updateAvatar(long id, UpdateUserAvatarRequest updateRequest);
 
     Resource getDocumentSignature(long id);
