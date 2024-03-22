@@ -19,8 +19,10 @@ import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.core.exception.ServiceRuntimeException;
 import org.bobpark.core.model.common.Id;
 import org.bobpark.userservice.configure.user.properties.UserProperties;
+import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserAvatar;
 import org.bobpark.userservice.domain.user.repository.UserAvatarRepository;
+import org.bobpark.userservice.domain.user.repository.UserRepository;
 import org.bobpark.userservice.domain.user.service.UserAvatarResourceService;
 
 @Slf4j
@@ -33,6 +35,7 @@ public class UserAvatarResourceServiceImpl implements UserAvatarResourceService 
 
     private final UserProperties properties;
 
+    private final UserRepository userRepository;
     private final UserAvatarRepository userAvatarRepository;
 
     @Override
@@ -41,6 +44,22 @@ public class UserAvatarResourceServiceImpl implements UserAvatarResourceService 
         UserAvatar userAvatar =
             userAvatarRepository.findById(avatarId.getValue())
                 .orElseThrow(() -> new NotFoundException(avatarId));
+
+        if (StringUtils.isBlank(userAvatar.getAvatarPath())) {
+            return getDefaultUserAvatar();
+        }
+
+        return getUserAvatar(userAvatar.getAvatarPath());
+    }
+
+    @Override
+    public Resource getUserAvatar(Id<User, Long> userId) {
+
+        User user =
+            userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(userId));
+
+        UserAvatar userAvatar = user.getAvatar();
 
         if (StringUtils.isBlank(userAvatar.getAvatarPath())) {
             return getDefaultUserAvatar();
