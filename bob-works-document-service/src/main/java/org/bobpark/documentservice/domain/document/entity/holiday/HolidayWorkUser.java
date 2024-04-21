@@ -30,6 +30,7 @@ import lombok.ToString.Exclude;
 import org.apache.commons.lang3.StringUtils;
 
 import org.bobpark.documentservice.common.entity.BaseEntity;
+import org.bobpark.documentservice.common.utils.documents.DocumentsUtils;
 
 @ToString
 @Getter
@@ -109,7 +110,7 @@ public class HolidayWorkUser extends BaseEntity {
         this.paymentTime = getTotalWorkTime();
 
         if (getIsVacation()) {
-            this.paymentTime = getTotalWorkTime() % VACATION_TIME;
+            this.paymentTime = calculatePaymentTime(getTotalWorkTime());
         }
 
         if (paymentTime == getTotalWorkTime()) {
@@ -125,4 +126,13 @@ public class HolidayWorkUser extends BaseEntity {
         return Boolean.TRUE.equals(getIsVacation());
     }
 
+    private double calculatePaymentTime(double workTimes) {
+
+        double result = workTimes;
+        double count = DocumentsUtils.calculateVacationCount(result);
+
+        result = count > 0 ? result - (count * VACATION_TIME) : result;
+
+        return result;
+    }
 }

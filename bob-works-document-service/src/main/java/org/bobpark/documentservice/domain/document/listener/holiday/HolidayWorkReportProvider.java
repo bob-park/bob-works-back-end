@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.bobpark.core.exception.NotFoundException;
+import org.bobpark.documentservice.common.utils.documents.DocumentsUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentApproval;
 import org.bobpark.documentservice.domain.document.entity.holiday.HolidayWorkReport;
@@ -17,8 +18,6 @@ import org.bobpark.documentservice.domain.user.model.vacation.AddAlternativeVaca
 @Slf4j
 @RequiredArgsConstructor
 public class HolidayWorkReportProvider implements DocumentProvider {
-
-    private static final double VACATION_HALF_TIME = 0.5;
 
     private final UserClient userClient;
     private final DocumentApprovalRepository documentApprovalRepository;
@@ -42,10 +41,8 @@ public class HolidayWorkReportProvider implements DocumentProvider {
 
                 if (!workUser.isManualInput() && workUser.isVacation()) {
 
-                    // double addAlternativeVacationCount =
-                    //     calculateVacationCount(workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME);
-
-                    int addAlternativeVacationCount = (int)workUser.getTotalWorkTime() / HolidayWorkUser.VACATION_TIME;
+                    double addAlternativeVacationCount =
+                        DocumentsUtils.calculateVacationCount(workUser.getTotalWorkTime());
 
                     if (addAlternativeVacationCount > 0) {
                         AddAlternativeVacationRequest addRequest =
@@ -99,23 +96,6 @@ public class HolidayWorkReportProvider implements DocumentProvider {
     private DocumentApproval getApprovalById(long approvalId) {
         return documentApprovalRepository.findById(approvalId)
             .orElseThrow(() -> new NotFoundException(DocumentApproval.class, approvalId));
-    }
-
-    private double calculateVacationCount(double count) {
-        double result = 0;
-
-        double calculateCount = count - VACATION_HALF_TIME;
-
-        if (calculateCount > 0) {
-            result += VACATION_HALF_TIME;
-        }
-
-        if (calculateCount >= VACATION_HALF_TIME) {
-
-            result += calculateVacationCount(calculateCount);
-        }
-
-        return result;
     }
 
 }
