@@ -9,7 +9,7 @@ public interface DocumentsUtils {
 
         double calculateCount = count - VACATION_HALF_TIME;
 
-        if (calculateCount > 0) {
+        if (calculateCount >= 0) {
             result += 0.5;
         }
 
