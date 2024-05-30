@@ -1,5 +1,7 @@
 package org.bobpark.client.domain.document.controller;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.bobpark.client.common.page.Page;
 import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
 import org.bobpark.client.domain.document.model.SearchVacationDocumentRequest;
+import org.bobpark.client.domain.document.model.UsageVacationResponse;
 import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
 import org.bobpark.client.domain.document.service.VacationDocumentService;
@@ -40,5 +43,10 @@ public class VacationDocumentController {
     public Page<VacationDocumentResponse> search(SearchVacationDocumentRequest searchRequest,
         @PageableDefault(size = 30) Pageable pageable) {
         return vacationDocumentService.search(searchRequest, pageable);
+    }
+
+    @GetMapping(path = "usage")
+    public List<UsageVacationResponse> usage(){
+        return vacationDocumentService.usage();
     }
 }

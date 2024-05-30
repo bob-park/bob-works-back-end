@@ -1,11 +1,13 @@
 package org.bobpark.client.domain.document.service.impl;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
 import org.bobpark.client.domain.document.model.DocumentTypeResponse;
 import org.bobpark.client.domain.document.model.SearchVacationDocumentRequest;
+import org.bobpark.client.domain.document.model.UsageVacationResponse;
 import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.model.response.DocumentTypeApprovalLineStatusResponse;
 import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
@@ -91,6 +94,27 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
             .total(result.total())
             .pageable(result.pageable())
             .build();
+    }
+
+    @Override
+    public List<UsageVacationResponse> usage() {
+
+        LocalDate now = LocalDate.now();
+
+        SearchVacationDocumentRequest searchRequest =
+            SearchVacationDocumentRequest.builder()
+                .startDate(LocalDate.of(now.getYear(), 1, 1))
+                .endDate(LocalDate.of(now.getYear(), 12, 31))
+                .build();
+
+        Pageable pageable = PageRequest.of(0, 100);
+
+        Page<VacationDocumentResponse> result =
+            documentClient.searchVacation(searchRequest, pageable);
+
+        userAlternativeVacationClient.
+
+        return List.of();
     }
 
 }
