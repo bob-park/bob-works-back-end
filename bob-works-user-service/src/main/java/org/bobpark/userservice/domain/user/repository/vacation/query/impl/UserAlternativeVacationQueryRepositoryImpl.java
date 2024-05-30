@@ -3,9 +3,12 @@ package org.bobpark.userservice.domain.user.repository.vacation.query.impl;
 import static org.bobpark.userservice.domain.user.entity.QUser.*;
 import static org.bobpark.userservice.domain.user.entity.vacation.QUserAlternativeVacation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.cglib.core.Local;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -39,6 +42,21 @@ public class UserAlternativeVacationQueryRepositoryImpl implements UserAlternati
             .where(
                 userAlternativeVacation.isExpired.eq(false),
                 eqIds(ids))
+            .orderBy(userAlternativeVacation.effectiveDate.asc())
+            .fetch();
+    }
+
+    @Override
+    public List<UserAlternativeVacation> findAllByUser(Id<User, Long> id) {
+
+        LocalDate now = LocalDate.now();
+
+        return query.selectFrom(userAlternativeVacation)
+            .join(userAlternativeVacation.user, user).fetchJoin()
+            .where(
+                eqUserId(id),
+                userAlternativeVacation.effectiveDate.goe(LocalDate.of(now.getYear(), 1, 1)),
+                userAlternativeVacation.effectiveDate.loe(LocalDate.of(now.getYear(), 12, 31)))
             .orderBy(userAlternativeVacation.effectiveDate.asc())
             .fetch();
     }

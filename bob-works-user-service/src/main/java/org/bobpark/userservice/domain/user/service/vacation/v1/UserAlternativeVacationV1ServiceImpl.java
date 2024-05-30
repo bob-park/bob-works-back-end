@@ -76,4 +76,14 @@ public class UserAlternativeVacationV1ServiceImpl implements UserAlternativeVaca
             .map(UserAlternativeVacationResponse::toResponse)
             .toList();
     }
+
+    @Override
+    public List<UserAlternativeVacationResponse> getAll(Id<User, Long> userId) {
+
+        List<UserAlternativeVacation> result = userAlternativeVacationRepository.findAllByUser(userId);
+
+        return result.stream()
+            .map(UserAlternativeVacationResponse::toResponse)
+            .toList();
+    }
 }

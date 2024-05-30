@@ -12,4 +12,5 @@ public interface UserAlternativeVacationQueryRepository {
 
     List<UserAlternativeVacation> findAllByIds(List<Long> ids);
 
+    List<UserAlternativeVacation> findAllByUser(Id<User, Long> id);
 }

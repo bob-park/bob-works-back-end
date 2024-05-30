@@ -2,6 +2,8 @@ package org.bobpark.userservice.domain.user.controller.vacation;
 
 import java.util.List;
 
+import jakarta.ws.rs.Path;
+
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,6 +37,11 @@ public class UserAlternativeVacationV1Controller {
     @GetMapping(path = "usable")
     public List<UserAlternativeVacationResponse> getUsableAlternativeVacations(@PathVariable long id) {
         return userAlternativeVacationService.getUsableAlternativeVacations(Id.of(User.class, id));
+    }
+
+    @GetMapping(path = "all")
+    public List<UserAlternativeVacationResponse> getAll(@PathVariable long id) {
+        return userAlternativeVacationService.getAll(Id.of(User.class, id));
     }
 
     @GetMapping(path = "find/ids")

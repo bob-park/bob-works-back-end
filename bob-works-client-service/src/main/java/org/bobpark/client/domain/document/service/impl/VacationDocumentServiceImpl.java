@@ -1,11 +1,13 @@
 package org.bobpark.client.domain.document.service.impl;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import org.bobpark.client.domain.document.model.AddVacationDocumentRequest;
 import org.bobpark.client.domain.document.model.DocumentResponse;
 import org.bobpark.client.domain.document.model.DocumentTypeResponse;
 import org.bobpark.client.domain.document.model.SearchVacationDocumentRequest;
+import org.bobpark.client.domain.document.model.UsageVacationResponse;
 import org.bobpark.client.domain.document.model.VacationDocumentResponse;
 import org.bobpark.client.domain.document.model.response.DocumentTypeApprovalLineStatusResponse;
 import org.bobpark.client.domain.document.model.response.VacationDocumentDetailResponse;
@@ -91,6 +94,55 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
             .total(result.total())
             .pageable(result.pageable())
             .build();
+    }
+
+    @Override
+    public List<UsageVacationResponse> usage(long userId) {
+
+        LocalDate now = LocalDate.now();
+
+        SearchVacationDocumentRequest searchRequest =
+            SearchVacationDocumentRequest.builder()
+                .startDate(LocalDate.of(now.getYear(), 1, 1))
+                .endDate(LocalDate.of(now.getYear(), 12, 31))
+                .build();
+
+        Pageable pageable = PageRequest.of(0, 100);
+
+        List<VacationDocumentResponse> result = documentClient.searchVacation(searchRequest, pageable).content();
+
+        List<UserAlternativeVacationResponse> allAlternative = userAlternativeVacationClient.getAll(userId);
+
+        return result.stream()
+            .map(item -> {
+
+                List<Long> alterIds = item.useAlternativeVacationIds();
+
+                List<UserAlternativeVacationResponse> alterList =
+                    allAlternative.stream()
+                        .filter(alter -> alterIds.contains(alter.id()))
+                        .toList();
+
+                return UsageVacationResponse.builder()
+                    .id(item.id())
+                    .type(item.type())
+                    .typeId(item.typeId())
+                    .writer(DocumentUtils.getInstance().getUser(item.writerId()))
+                    .status(item.status())
+                    .createdDate(item.createdDate())
+                    .createdBy(item.createdBy())
+                    .lastModifiedDate(item.lastModifiedDate())
+                    .lastModifiedBy(item.lastModifiedBy())
+                    .vacationType(item.vacationType())
+                    .vacationSubType(item.vacationSubType())
+                    .vacationDateFrom(item.vacationDateFrom())
+                    .vacationDateTo(item.vacationDateTo())
+                    .daysCount(item.daysCount())
+                    .reason(item.reason())
+                    .alternativeVacations(alterList)
+                    .build();
+            })
+            .toList();
     }
 
 }
