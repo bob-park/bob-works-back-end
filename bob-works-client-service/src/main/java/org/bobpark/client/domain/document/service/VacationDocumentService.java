@@ -20,6 +20,6 @@ public interface VacationDocumentService {
 
     Page<VacationDocumentResponse> search(SearchVacationDocumentRequest searchRequest, Pageable pageable);
 
-    List<UsageVacationResponse> usage();
+    List<UsageVacationResponse> usage(long userId);
 
 }

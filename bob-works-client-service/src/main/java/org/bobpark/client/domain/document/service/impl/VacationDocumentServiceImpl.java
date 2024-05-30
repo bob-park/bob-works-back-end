@@ -97,7 +97,7 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
     }
 
     @Override
-    public List<UsageVacationResponse> usage() {
+    public List<UsageVacationResponse> usage(long userId) {
 
         LocalDate now = LocalDate.now();
 
@@ -109,12 +109,40 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
 
         Pageable pageable = PageRequest.of(0, 100);
 
-        Page<VacationDocumentResponse> result =
-            documentClient.searchVacation(searchRequest, pageable);
+        List<VacationDocumentResponse> result = documentClient.searchVacation(searchRequest, pageable).content();
 
-        userAlternativeVacationClient.
+        List<UserAlternativeVacationResponse> allAlternative = userAlternativeVacationClient.getAll(userId);
 
-        return List.of();
+        return result.stream()
+            .map(item -> {
+
+                List<Long> alterIds = item.useAlternativeVacationIds();
+
+                List<UserAlternativeVacationResponse> alterList =
+                    allAlternative.stream()
+                        .filter(alter -> alterIds.contains(alter.id()))
+                        .toList();
+
+                return UsageVacationResponse.builder()
+                    .id(item.id())
+                    .type(item.type())
+                    .typeId(item.typeId())
+                    .writer(DocumentUtils.getInstance().getUser(item.writerId()))
+                    .status(item.status())
+                    .createdDate(item.createdDate())
+                    .createdBy(item.createdBy())
+                    .lastModifiedDate(item.lastModifiedDate())
+                    .lastModifiedBy(item.lastModifiedBy())
+                    .vacationType(item.vacationType())
+                    .vacationSubType(item.vacationSubType())
+                    .vacationDateFrom(item.vacationDateFrom())
+                    .vacationDateTo(item.vacationDateTo())
+                    .daysCount(item.daysCount())
+                    .reason(item.reason())
+                    .alternativeVacations(alterList)
+                    .build();
+            })
+            .toList();
     }
 
 }

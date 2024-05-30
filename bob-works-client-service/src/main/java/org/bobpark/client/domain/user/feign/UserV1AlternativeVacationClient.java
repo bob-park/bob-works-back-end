@@ -18,4 +18,7 @@ public interface UserV1AlternativeVacationClient {
     @GetMapping(path = "v1/user/{id:\\d+}/alternative/vacation/find/ids")
     List<UserAlternativeVacationResponse> findAllByIds(@PathVariable long id,
         @RequestParam List<Long> alternativeVacationIds);
+
+    @GetMapping(path = "v1/user/{id:\\d+}/alternative/vacation/all")
+    List<UserAlternativeVacationResponse> getAll(@PathVariable long id);
 }
