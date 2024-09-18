@@ -2,6 +2,7 @@ package org.bobpark.client.domain.maintenance.controller;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +41,11 @@ public class CustomerChatController {
     @PostMapping(path = "room")
     public CustomerChatRoomResponse createRoom(@RequestBody CreateChatRoomRequest createRequest) {
         return chatClient.createRoom(createRequest);
+    }
+
+    @GetMapping(path = "room/all")
+    public Page<CustomerChatRoomResponse> searchByRoomAll(Pageable pageable) {
+        return chatClient.getAll(pageable);
     }
 
     @GetMapping(path = "room/latest")

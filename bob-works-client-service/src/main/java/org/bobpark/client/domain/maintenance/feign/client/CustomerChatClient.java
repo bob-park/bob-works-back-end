@@ -1,6 +1,7 @@
 package org.bobpark.client.domain.maintenance.feign.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,9 @@ public interface CustomerChatClient {
 
     @PostMapping(path = "maintenance/customer/chat/room")
     CustomerChatRoomResponse createRoom(@RequestBody CreateChatRoomRequest createRequest);
+
+    @GetMapping(path = "maintenance/customer/chat/room/all")
+    Page<CustomerChatRoomResponse> getAll(Pageable pageable);
 
     @GetMapping(path = "maintenance/customer/chat/room/latest")
     CustomerChatRoomResponse getLatestChatRoom();
