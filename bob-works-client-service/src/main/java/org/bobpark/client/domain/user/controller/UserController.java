@@ -17,11 +17,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.bobpark.client.domain.maintenance.feign.client.CustomerChatClient;
+import org.bobpark.client.domain.maintenance.model.CreateChatRoomRequest;
+import org.bobpark.client.domain.maintenance.model.CustomerChatRoomResponse;
+import org.bobpark.client.domain.maintenance.service.CustomerChatService;
 import org.bobpark.client.domain.user.model.UpdateUserAvatarRequest;
 import org.bobpark.client.domain.user.model.UpdateUserDocumentSignatureRequest;
 import org.bobpark.client.domain.user.model.UpdateUserPasswordRequest;
 import org.bobpark.client.domain.user.model.UserResponse;
 import org.bobpark.client.domain.user.service.UserService;
+import org.bobpark.core.exception.NotFoundException;
 
 @RequiredArgsConstructor
 @RestController
@@ -29,10 +34,26 @@ import org.bobpark.client.domain.user.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final CustomerChatClient chatClient;
 
     @GetMapping(path = "")
     public UserResponse getUser(@AuthenticationPrincipal OidcUser user) {
-        return parseToUserResponse(user);
+        UserResponse result = parseToUserResponse(user);
+
+        CustomerChatRoomResponse chatRoom = null;
+
+        try {
+            chatRoom = chatClient.getLatestChatRoom();
+        } catch (NotFoundException e) {
+            chatRoom = chatClient.createRoom(
+                CreateChatRoomRequest.builder()
+                    .title(String.format("%s(%s) 고객의 소리", result.userId(), result.name()))
+                    .build());
+        }
+
+        return result.toBuilder()
+            .chatRoom(chatRoom)
+            .build();
 
     }
 
@@ -61,6 +82,12 @@ public class UserController {
 
         return userService.getUserAvatar(userInfo.id());
     }
+
+    @GetMapping(path = "{id:\\d+}/avatar")
+    public Resource getUserAvatar(@PathVariable long id) {
+        return userService.getUserAvatar(id);
+    }
+
 
     @PostMapping(path = "avatar")
     public UserResponse updateAvatar(@AuthenticationPrincipal OidcUser user,

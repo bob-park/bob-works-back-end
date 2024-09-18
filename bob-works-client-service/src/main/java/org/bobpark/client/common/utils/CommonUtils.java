@@ -2,9 +2,14 @@ package org.bobpark.client.common.utils;
 
 import static org.apache.commons.lang3.math.NumberUtils.*;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +24,15 @@ public interface CommonUtils {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    static UserResponse parseToUserResponse(OidcUser user){
+    static UserResponse parseToUserResponse(OidcUser user) {
+
+        List<String> authorities =
+            user.getAuthorities().stream()
+                .filter(item -> item.getAuthority().startsWith("SCOPE_ROLE"))
+                .map(item -> item.getAuthority())
+                .map(item -> StringUtils.replace(item, "SCOPE_", ""))
+                .toList();
+
         Map<String, Object> profile = user.getUserInfo().getClaim("profile");
 
         Map<String, Object> positionMap = (Map<String, Object>)profile.get("position");
@@ -41,6 +54,7 @@ public interface CommonUtils {
             .email(user.getUserInfo().getEmail())
             .name((String)profile.get("name"))
             .userId(user.getClaimAsString("sub"))
+            .role(authorities.isEmpty() ? null : authorities.get(0))
             .avatar((String)profile.get("avatar"))
             .nowVacation(userVacationResponse)
             .position(

@@ -64,4 +64,9 @@ public class CustomerChatController {
         return chatRoomQueryService.getLatestChatRoom();
     }
 
+    @GetMapping(path = "room/{roomId}")
+    public CustomerChatRoomResponse getById(@PathVariable String roomId) {
+        return chatRoomQueryService.getById(roomId);
+    }
+
 }

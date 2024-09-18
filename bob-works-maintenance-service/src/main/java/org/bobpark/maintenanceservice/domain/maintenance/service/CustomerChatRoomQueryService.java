@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.bobpark.core.exception.NotFoundException;
 import org.bobpark.maintenanceservice.common.utils.user.UserProvider;
 import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoom;
+import org.bobpark.maintenanceservice.domain.maintenance.entity.CustomerChatRoomId;
 import org.bobpark.maintenanceservice.domain.maintenance.model.CustomerChatRoomResponse;
 import org.bobpark.maintenanceservice.domain.maintenance.repository.CustomerChatRoomRepository;
 import org.bobpark.maintenanceservice.domain.user.model.UserResponse;
@@ -67,4 +68,19 @@ public class CustomerChatRoomQueryService {
         });
     }
 
+    public CustomerChatRoomResponse getById(String roomId) {
+
+        CustomerChatRoom room =
+            chatRoomRepository.findById(new CustomerChatRoomId(roomId))
+                .orElseThrow(() -> new NotFoundException("No exist customer chatting rooms."));
+
+        return CustomerChatRoomResponse.builder()
+            .id(room.getId().getId())
+            .title(room.getTitle())
+            .customerId(room.getCustomerId())
+            .description(room.getDescription())
+            .createdDate(room.getCreatedDate())
+            .lastModifiedDate(room.getLastModifiedDate())
+            .build();
+    }
 }

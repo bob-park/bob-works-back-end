@@ -30,4 +30,8 @@ public interface CustomerChatClient {
 
     @GetMapping(path = "maintenance/customer/chat/room/latest")
     CustomerChatRoomResponse getLatestChatRoom();
+
+    @GetMapping(path = "maintenance/customer/chat/room/{roomId}")
+    CustomerChatRoomResponse getChatRoom(@PathVariable String roomId);
 }
+
