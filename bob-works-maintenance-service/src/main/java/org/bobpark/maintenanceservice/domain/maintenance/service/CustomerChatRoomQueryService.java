@@ -74,10 +74,18 @@ public class CustomerChatRoomQueryService {
             chatRoomRepository.findById(new CustomerChatRoomId(roomId))
                 .orElseThrow(() -> new NotFoundException("No exist customer chatting rooms."));
 
+        List<UserResponse> users = UserProvider.getInstance().getUsers();
+
+        UserResponse customer =
+            users.stream()
+                .filter(user -> user.id().equals(room.getCustomerId())).findAny()
+                .orElse(null);
+
         return CustomerChatRoomResponse.builder()
             .id(room.getId().getId())
             .title(room.getTitle())
             .customerId(room.getCustomerId())
+            .customer(customer)
             .description(room.getDescription())
             .createdDate(room.getCreatedDate())
             .lastModifiedDate(room.getLastModifiedDate())
