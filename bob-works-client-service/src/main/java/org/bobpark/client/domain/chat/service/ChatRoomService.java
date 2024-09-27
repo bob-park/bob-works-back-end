@@ -4,10 +4,13 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import org.bobpark.client.common.page.Page;
 import org.bobpark.client.domain.chat.feign.client.ChatRoomFeignClient;
 import org.bobpark.client.domain.chat.model.AddChatRoomUserRequest;
+import org.bobpark.client.domain.chat.model.ChatResponse;
 import org.bobpark.client.domain.chat.model.ChatRoomResponse;
 import org.bobpark.client.domain.chat.model.ChatRoomUserResponse;
 import org.bobpark.client.domain.chat.model.SearchChatRoomRequest;
@@ -33,5 +36,9 @@ public class ChatRoomService {
 
     public List<ChatRoomUserResponse> addUsers(long roomId, AddChatRoomUserRequest addRequest) {
         return chatRoomClient.addRoomUser(roomId, addRequest);
+    }
+
+    public Page<ChatResponse> getChats(long roomId, Pageable pageable) {
+        return chatRoomClient.getAllChats(roomId, pageable);
     }
 }
