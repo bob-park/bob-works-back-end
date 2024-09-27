@@ -45,10 +45,10 @@ public class UserController {
         try {
             chatRoom = chatClient.getLatestChatRoom();
         } catch (NotFoundException e) {
-            chatRoom = chatClient.createRoom(
-                CreateChatRoomRequest.builder()
-                    .title(String.format("%s(%s) 고객의 소리", result.userId(), result.name()))
-                    .build());
+            // chatRoom = chatClient.createRoom(
+            //     CreateChatRoomRequest.builder()
+            //         .title(String.format("%s(%s) 고객의 소리", result.userId(), result.name()))
+            //         .build());
         }
 
         return result.toBuilder()
