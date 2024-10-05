@@ -89,11 +89,9 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
 
         Long writerId = null;
 
-        if (!AuthenticationUtils.getInstance().isManager()) {
-            Authentication auth = AuthenticationUtils.getInstance().getAuthentication();
-            UserResponse user = AuthenticationUtils.getInstance().getUser(auth.getName());
-            writerId = user.id();
-        }
+        Authentication auth = AuthenticationUtils.getInstance().getAuthentication();
+        UserResponse user = AuthenticationUtils.getInstance().getUser(auth.getName());
+        writerId = user.id();
 
         Page<VacationDocument> result = vacationDocumentRepository.search(writerId, searchRequest, pageable);
 
@@ -115,7 +113,6 @@ public class VacationDocumentServiceImpl implements VacationDocumentService {
                 writer.team().name(),
                 writer.position().name(),
                 vacationType);
-
 
     }
 }
