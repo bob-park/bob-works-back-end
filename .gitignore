@@ -43,3 +43,4 @@ gradle.properties
 application-dev.yml
 Dockerfile-Debug
 docker-compose-debug.yml
+*-dev.*
