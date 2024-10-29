@@ -36,10 +36,11 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
-
     properties:
       hibernate:
         default_batch_fetch_size: 100
+        discriminator:
+          ignore_explicit_for_joined: on
 
   security:
     oauth2:

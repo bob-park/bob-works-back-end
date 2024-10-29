@@ -25,6 +25,7 @@ import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.entity.converter.ParseNumberArrayConverter;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
+import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 import org.bobpark.documentservice.domain.document.type.VacationSubType;
 import org.bobpark.documentservice.domain.document.type.VacationType;
 
@@ -54,12 +55,13 @@ public class VacationDocument extends Document {
     @Builder
     private VacationDocument(Long id, DocumentType documentType, Long writerId, Long teamId, DocumentStatus status,
         VacationType vacationType, VacationSubType vacationSubType, LocalDate vacationDateFrom,
-        LocalDate vacationDateTo, String reason, List<Long> useAlternativeVacationIds) {
-        super(id, documentType, writerId, teamId, status);
+        LocalDate vacationDateTo, Double daysCount, String reason, List<Long> useAlternativeVacationIds) {
+        super(id, DocumentTypeName.VACATION, documentType, writerId, teamId, status);
 
         checkArgument(isNotEmpty(vacationType), "vacationType must be provided.");
         checkArgument(isNotEmpty(vacationDateFrom), "vacationDateFrom must be provided.");
         checkArgument(isNotEmpty(vacationDateTo), "vacationDateTo must be provided.");
+        checkArgument(isNotEmpty(daysCount), "daysCount must be provided.");
         checkArgument(isNotEmpty(reason), "reason must be provided.");
 
         checkArgument(vacationSubType == null || vacationDateFrom.isEqual(vacationDateTo),
@@ -77,17 +79,18 @@ public class VacationDocument extends Document {
         this.vacationSubType = vacationSubType;
         this.vacationDateFrom = vacationDateFrom;
         this.vacationDateTo = vacationDateTo;
-        this.daysCount = setDayCount(vacationSubType, vacationDateFrom, vacationDateTo);
+        // this.daysCount = setDayCount(vacationSubType, vacationDateFrom, vacationDateTo);
+        this.daysCount = daysCount;
         this.reason = reason;
         this.useAlternativeVacationIds = useAlternativeVacationIds;
     }
 
-    private double setDayCount(VacationSubType subType, LocalDate from, LocalDate to) {
-
-        if (subType != null) {
-            return 0.5;
-        }
-
-        return to.getDayOfYear() - from.getDayOfYear() + 1f;
-    }
+    // private double setDayCount(VacationSubType subType, LocalDate from, LocalDate to) {
+    //
+    //     if (subType != null) {
+    //         return 0.5;
+    //     }
+    //
+    //     return to.getDayOfYear() - from.getDayOfYear() + 1f;
+    // }
 }

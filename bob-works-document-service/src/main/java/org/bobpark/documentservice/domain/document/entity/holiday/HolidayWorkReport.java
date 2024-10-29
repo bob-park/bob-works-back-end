@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bobpark.documentservice.domain.document.entity.Document;
 import org.bobpark.documentservice.domain.document.entity.DocumentType;
 import org.bobpark.documentservice.domain.document.type.DocumentStatus;
+import org.bobpark.documentservice.domain.document.type.DocumentTypeName;
 
 @ToString
 @Getter
@@ -42,7 +43,7 @@ public class HolidayWorkReport extends Document {
     @Builder
     private HolidayWorkReport(Long id, DocumentType documentType, Long writerId, Long teamId, DocumentStatus status,
         String workPurpose) {
-        super(id, documentType, writerId, teamId, status);
+        super(id, DocumentTypeName.HOLIDAY_WORK, documentType, writerId, teamId, status);
 
         checkArgument(StringUtils.isNotBlank(workPurpose), "workPurpose must be provided.");
 

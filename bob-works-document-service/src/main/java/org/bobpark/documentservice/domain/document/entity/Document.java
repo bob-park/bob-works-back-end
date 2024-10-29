@@ -52,7 +52,7 @@ public abstract class Document extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(insertable = false, updatable = false)
+    @Column(updatable = false)
     @Enumerated(EnumType.STRING)
     private DocumentTypeName type;
 
@@ -70,13 +70,17 @@ public abstract class Document extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "document", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DocumentApproval> approvals = new ArrayList<>();
 
-    protected Document(Long id, DocumentType documentType, Long writerId, Long teamId, DocumentStatus status) {
+    protected Document(Long id, DocumentTypeName type, DocumentType documentType, Long writerId, Long teamId,
+        DocumentStatus status) {
 
+        checkArgument(isNotEmpty(type), "type must be provided.");
         checkArgument(isNotEmpty(documentType), "documentType must be provided.");
         checkArgument(isNotEmpty(writerId), "writer must be provided.");
         checkArgument(isNotEmpty(teamId), "teamId must be provided.");
 
+
         this.id = id;
+        this.type = type;
         this.documentType = documentType;
         this.writerId = writerId;
         this.status = defaultIfNull(status, DocumentStatus.PROCEEDING);
@@ -122,8 +126,6 @@ public abstract class Document extends BaseEntity {
                 user.team().name(),
                 user.position().name(),
                 getDocumentType().getName());
-
-
 
         NotificationUtils.getInstance().sendMessage(approvalLine.getUserId(), message);
 
