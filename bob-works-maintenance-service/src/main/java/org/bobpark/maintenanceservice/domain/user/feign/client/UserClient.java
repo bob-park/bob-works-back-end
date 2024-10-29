@@ -1,5 +1,7 @@
 package org.bobpark.maintenanceservice.domain.user.feign.client;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,4 +17,7 @@ public interface UserClient {
 
     @GetMapping(path = "user/{uniqueId:\\d+}")
     UserResponse getUserByUniqueId(@PathVariable long uniqueId);
+
+    @GetMapping(path = "user/all")
+    List<UserResponse> getAll();
 }
