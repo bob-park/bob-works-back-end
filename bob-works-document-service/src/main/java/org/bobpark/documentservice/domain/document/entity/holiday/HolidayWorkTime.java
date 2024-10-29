@@ -133,7 +133,7 @@ public class HolidayWorkTime extends BaseEntity {
             addLog(
                 HolidayWorkTimeLog.builder()
                     .calculationLog(
-                        String.format("%sh - %sh (4시간 이상 근무시 의무 휴계 시간 적용)", df.format(result), df.format(minusTime)))
+                        String.format("%sh - %sh (4시간 이상 근무시 의무 휴게시간 적용)", df.format(result), df.format(minusTime)))
                     .build());
 
             result -= (restTime * 0.5);
