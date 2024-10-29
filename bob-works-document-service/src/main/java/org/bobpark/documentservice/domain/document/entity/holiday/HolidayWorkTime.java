@@ -30,6 +30,9 @@ import org.bobpark.documentservice.common.entity.BaseEntity;
 @Table(name = "holiday_work_times")
 public class HolidayWorkTime extends BaseEntity {
 
+    // 휴계 근무 시간
+    private static final int STANDARD_REST_WORK_TIME = 4;
+
     // 점심 시간
     private static final LocalTime START_REST_TIME = LocalTime.of(12, 0);
     private static final LocalTime END_REST_TIME = LocalTime.of(13, 0);
@@ -102,9 +105,16 @@ public class HolidayWorkTime extends BaseEntity {
 
         double bonus = 1.5;
 
-        if (isRestTime(getStartTime(), getEndTime())) {
-            result--;
+        // 4시간 이상 근무시 4시간 마다 30m 제거
+        int restTime = (int)(result / STANDARD_REST_WORK_TIME);
+
+        if(restTime > 0){
+           result -= (restTime * 0.5);
         }
+
+        // if (isRestTime(getStartTime(), getEndTime())) {
+        //     result--;
+        // }
 
         if (isNightWorkTime(getStartTime(), getEndTime())) {
             bonus = 2;
