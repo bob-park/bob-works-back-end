@@ -3,6 +3,7 @@ package org.bobpark.documentservice.domain.document.entity.holiday;
 import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,9 +114,11 @@ public class HolidayWorkTime extends BaseEntity {
 
         result += (hour + minute);
 
+        DecimalFormat df = new DecimalFormat("#.##");
+
         addLog(
             HolidayWorkTimeLog.builder()
-                .calculationLog(String.format("총 근무 시간: %02.2fh", result))
+                .calculationLog(String.format("총 근무 시간: %sh", df.format(result)))
                 .build());
 
         double bonus = 1.5;
@@ -129,7 +132,8 @@ public class HolidayWorkTime extends BaseEntity {
 
             addLog(
                 HolidayWorkTimeLog.builder()
-                    .calculationLog(String.format("%02.2f - %02.2fh (4시간 이상 근무 의무 휴계 시간 적용)", result, minusTime))
+                    .calculationLog(
+                        String.format("%sh - %sh (4시간 이상 근무시 의무 휴계 시간 적용)", df.format(result), df.format(minusTime)))
                     .build());
 
             result -= (restTime * 0.5);
@@ -146,7 +150,13 @@ public class HolidayWorkTime extends BaseEntity {
 
         addLog(
             HolidayWorkTimeLog.builder()
-                .calculationLog(String.format("%02.2f * %.1f = %02.2f %s", result, bonus, calculationTime, description))
+                .calculationLog(
+                    String.format(
+                        "%sh * %s = %sh %s",
+                        df.format(result),
+                        df.format(bonus),
+                        df.format(calculationTime),
+                        description))
                 .build());
 
         return calculationTime;
