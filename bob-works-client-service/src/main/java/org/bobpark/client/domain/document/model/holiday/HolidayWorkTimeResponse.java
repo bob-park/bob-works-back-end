@@ -5,7 +5,8 @@ import java.time.LocalTime;
 import lombok.Builder;
 
 @Builder
-public record HolidayWorkTimeResponse(boolean existBreakTime,
+public record HolidayWorkTimeResponse(Long id,
+                                      boolean existBreakTime,
                                       LocalTime startTime,
                                       LocalTime endTime) {
 }

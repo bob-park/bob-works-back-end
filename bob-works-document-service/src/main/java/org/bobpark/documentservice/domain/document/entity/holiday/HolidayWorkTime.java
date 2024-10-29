@@ -1,10 +1,14 @@
 package org.bobpark.documentservice.domain.document.entity.holiday;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.*;
 import static org.apache.commons.lang3.ObjectUtils.*;
 
+import java.text.DecimalFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import lombok.AccessLevel;
@@ -20,6 +25,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.ToString.Exclude;
+
+import org.hibernate.collection.spi.PersistentBag;
 
 import org.bobpark.documentservice.common.entity.BaseEntity;
 
@@ -58,6 +65,10 @@ public class HolidayWorkTime extends BaseEntity {
 
     private LocalTime startTime;
     private LocalTime endTime;
+
+    @Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "workTime", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HolidayWorkTimeLog> logs = new ArrayList<>();
 
     @Builder
     private HolidayWorkTime(Long id, Boolean existBreakTime, LocalTime startTime, LocalTime endTime) {
@@ -103,41 +114,64 @@ public class HolidayWorkTime extends BaseEntity {
 
         result += (hour + minute);
 
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        addLog(
+            HolidayWorkTimeLog.builder()
+                .calculationLog(String.format("총 근무 시간: %sh", df.format(result)))
+                .build());
+
         double bonus = 1.5;
 
         // 4시간 이상 근무시 4시간 마다 30m 제거
         int restTime = (int)(result / STANDARD_REST_WORK_TIME);
 
-        if(restTime > 0){
-           result -= (restTime * 0.5);
+        if (restTime > 0) {
+
+            double minusTime = restTime * 0.5;
+
+            addLog(
+                HolidayWorkTimeLog.builder()
+                    .calculationLog(
+                        String.format("%sh - %sh (4시간 이상 근무시 의무 휴게시간 적용)", df.format(result), df.format(minusTime)))
+                    .build());
+
+            result -= (restTime * 0.5);
         }
 
-        // if (isRestTime(getStartTime(), getEndTime())) {
-        //     result--;
-        // }
+        String description = "(주간 근무 06:00 ~ 22:00)";
 
         if (isNightWorkTime(getStartTime(), getEndTime())) {
             bonus = 2;
+            description = "(야간 근무 22:00 ~ 06:00)";
         }
 
-        return result * bonus;
+        double calculationTime = result * bonus;
+
+        addLog(
+            HolidayWorkTimeLog.builder()
+                .calculationLog(
+                    String.format(
+                        "%sh * %s = %sh %s",
+                        df.format(result),
+                        df.format(bonus),
+                        df.format(calculationTime),
+                        description))
+                .build());
+
+        return calculationTime;
     }
 
-    private boolean isRestTime(LocalTime startTime, LocalTime endTime) {
+    public void addLog(HolidayWorkTimeLog log) {
 
-        if (!getExistBreakTime()) {
-            return false;
-        }
+        log.setWorkTime(this);
 
-        return START_REST_TIME.isAfter(startTime) && END_REST_TIME.isBefore(endTime);
-    }
-
-    private boolean isWorkTime(LocalTime startTime, LocalTime endTime) {
-        return START_WORK_TIME.isAfter(startTime) && END_WORK_TIME.isBefore(endTime);
+        getLogs().add(log);
     }
 
     private boolean isNightWorkTime(LocalTime startTime, LocalTime endTime) {
         return (START_NIGHT_WORK_TIME.isAfter(startTime) || END_NIGHT_WORK_TIME.isBefore(startTime))
             && (END_NIGHT_WORK_TIME.isAfter(endTime));
     }
+
 }
