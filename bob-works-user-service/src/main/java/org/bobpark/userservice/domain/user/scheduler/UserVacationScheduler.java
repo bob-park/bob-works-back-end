@@ -1,6 +1,5 @@
 package org.bobpark.userservice.domain.user.scheduler;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.userservice.domain.user.entity.User;
-import org.bobpark.userservice.domain.user.model.SearchUserRequest;
+import org.bobpark.userservice.domain.user.entity.UserVacation;
 import org.bobpark.userservice.domain.user.repository.UserRepository;
 
 @Slf4j
@@ -34,15 +33,13 @@ public class UserVacationScheduler {
 
         LocalDate now = LocalDate.now();
 
-        List<User> users =
-            userRepository.search(
-                SearchUserRequest.builder()
-                    .vacationYear(now.getYear())
-                    .build());
+        List<User> users = userRepository.getUsersAll();
 
         for (User user : users) {
+            List<UserVacation> vacations = user.getVacations();
 
-            if (!user.getVacations().isEmpty()) {
+            if (vacations.stream()
+                .anyMatch(vacation -> vacation.getYear() == now.getYear())) {
                 continue;
             }
 
