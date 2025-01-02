@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.bobpark.userservice.domain.user.entity.User;
 import org.bobpark.userservice.domain.user.entity.UserVacation;
+import org.bobpark.userservice.domain.user.model.SearchUserRequest;
 import org.bobpark.userservice.domain.user.repository.UserRepository;
 
 @Slf4j
@@ -33,7 +34,7 @@ public class UserVacationScheduler {
 
         LocalDate now = LocalDate.now();
 
-        List<User> users = userRepository.getUsersAll();
+        List<User> users = userRepository.search(SearchUserRequest.builder().build());
 
         for (User user : users) {
             List<UserVacation> vacations = user.getVacations();
